@@ -4,8 +4,11 @@ This is where all of the infrastructure related code is located. We are using An
 
 ## Get Started
 
-1. Install Ansible from the [Ansible website](https://www.ansible.com/).
+1. Install Python 3 (Latest version is fine)
 2. Run `./scripts/setup.sh` which will configure your local machine to run using our configuration.
+    Namely it will create a python venv so we can manage package versions independently of the system configuration. It will also install the correct version of Ansible and a few other useful tools.
+3. Run `source virtual_enviroment/bin/activate` from the `infra` folder to enter the development environment.
+    **Run `deactivate` when you are done to leave the dev environment.**
 
 
 ## Ethan's Temporary Link Holding

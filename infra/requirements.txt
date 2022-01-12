@@ -1,0 +1,8 @@
+# core ansible stuff
+ansible==5.1.0
+
+# Testing
+molecule[docker,lint]==3.5.2
+
+# linting
+ansible-lint[community,yamllint]==5.3.2

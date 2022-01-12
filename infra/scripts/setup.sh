@@ -1,12 +1,14 @@
 #!/bin/bash
 
-# cd to root project folder
-cd "$(dirname "$0")"/../.. || exit
+# cd to infra root folder
+cd "$(dirname "$0")"/.. || exit
 
-# create /etc/ansible if it doesn't already exist
-if [ ! -d /etc/ansible ]; then
-    mkdir -p /etc/ansible
-fi
+# create virtual enviroment named virtual_enviroment
+python3 -m venv virtual_enviroment
 
-# link /etc/ansible/hosts to hosts
-ln -s /etc/ansible/hosts ./hosts
+# activate virtual enviroment
+source virtual_enviroment/bin/activate
+
+pip install -r requirements.txt
+
+printf "\n\nPlease run 'source virtual_enviroment/bin/activate' from the infra folder to activate virtual enviroment\n"
