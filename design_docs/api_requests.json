@@ -1,0 +1,44 @@
+[
+    {
+        "androidID": "android-25621ofk8and221h",
+        "testID": "23js984jl9",
+        "downloadSpeed": "1424736",
+        "uploadSpeed": "85744",
+        "latency": "31",
+        "jitter": "6",
+        "packetLoss": "001"
+    },
+    {
+        "iphoneXSID": "fjs934ks-8k3nslfneiskanqq3",
+        "testID": "jfkd943kd9",
+        "downloadSpeed": "3856667",
+        "uploadSpeed": "8294441",
+        "latency": "16",
+        "jitter": "4",
+        "packetLoss": "000"
+    },
+    {
+        "iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
+        "testID": "92kd84ndk1",
+        "downloadSpeed": "293859483712",
+        "uploadSpeed": "210937465527",
+        "latency": "3",
+        "jitter": "1",
+        "packetLoss": "000"
+    },
+    {
+        "phoneID": "fjs934ks-8k3nslfneiskanqq3",
+        "firstname": "john",
+        "lastname": "cena",
+        "address": {
+            "street": "1234 blue road",
+            "postalCode": "97333",
+            "city": "Boring",
+            "state": "Oregon"
+        },
+        "longitude": "12.345",
+        "latitude": "12.345",
+        "precision": "12m",
+        "internetPlanImage": "a lot of letters and numbers (base64 encoded image)"
+    }
+]
