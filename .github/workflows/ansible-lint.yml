@@ -28,4 +28,4 @@ jobs:
       run: |
         cd infra/
         ansible-playbook -i test-hosts site.yml --syntax-check
-        ansible-lint site.yml
+        ansible-lint
