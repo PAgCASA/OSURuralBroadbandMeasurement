@@ -15,6 +15,14 @@ This is where all of the infrastructure related code is located. We are using An
 
 These are links that I will be looking into more, but just want to put here for reference
 
+Security/configuration:
+- https://github.com/geerlingguy/ansible-for-devops
+- https://github.com/geerlingguy/ansible-for-devops/tree/master/security
+- https://github.com/dev-sec/ansible-collection-hardening
+- https://github.com/geerlingguy/ansible-role-nginx
+
+
+Other:
 - MySQL role - https://gist.github.com/ihassin/8106956
 - Testing w/ Molecule, apparently officially supported - https://molecule.readthedocs.io/en/latest/index.html
 - Testing Ansible w/ Docker - [First one](https://www.ansible.com/blog/testing-ansible-roles-with-docker), [Second one](https://github.com/chrismeyersfsu/role-iptables/tree/master/test)
