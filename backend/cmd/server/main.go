@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -58,6 +59,28 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	// see design_docs/api_requests.json, only deal with the first 3 entries. See that the only thing that changes between them is the name and format of the phone ID
 	// return OK to client if valid, else return error.
 	// Note: the struct should be named "SpeedTestResult"
+
+	type SpeedTestResult struct {
+		PhoneID       string `json:"androidID"`
+		TestID        string `json:"testID"`
+		DownloadSpeed string `json:"downloadSpeed"`
+		UploadSpeed   string `json:"uploadSpeed"`
+		Latency       string `json:"latency"`
+		Jitter        string `json:"jitter"`
+		PacketLoss    string `json:"packetLoss"`
+	}
+	p := new(SpeedTestResult)
+	if err := c.BodyParser(p); err != nil {
+		fmt.Println(err)
+		return err
+	}
+	log.Println(p.PhoneID)
+	log.Println(p.TestID)
+	log.Println(p.DownloadSpeed)
+	log.Println(p.UploadSpeed)
+	log.Println(p.Latency)
+	log.Println(p.Jitter)
+	log.Println(p.PacketLoss)
 
 	c.Response().AppendBodyString("Not Implemented Yet")
 	return nil
