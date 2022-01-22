@@ -23,6 +23,7 @@ func TestSubmitSpeedTestAndroid(t *testing.T) {
 			"jitter": "6",
 			"packetLoss": "001"
 		}`)))
+	req.Header.Set("Content-Type", "application/json")
 
 	app := createApp()
 	resp, err := app.Test(req)
@@ -47,6 +48,7 @@ func TestSubmitSpeedTestIOSXSID(t *testing.T) {
 			"jitter": "4",
 			"packetLoss": "000"
 		}`)))
+	req.Header.Set("Content-Type", "application/json")
 
 	app := createApp()
 	resp, err := app.Test(req)
@@ -71,6 +73,7 @@ func TestSubmitSpeedTestIOSX(t *testing.T) {
 			"jitter": "1",
 			"packetLoss": "000"
 		}`)))
+	req.Header.Set("Content-Type", "application/json")
 
 	app := createApp()
 	resp, err := app.Test(req)
@@ -95,6 +98,7 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 			"jitter": "1",
 			"packetLoss": "000"
 		}`)))
+	req.Header.Set("Content-Type", "application/json")
 
 	app := createApp()
 	resp, err := app.Test(req)
@@ -117,6 +121,7 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 			"jitter": "1",
 			"packetLoss": "000"
 		}`)))
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err = app.Test(req)
 	if err != nil {
@@ -138,6 +143,7 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 				"jitter": "1",
 				"packetLoss": "101"
 			}`)))
+	req.Header.Set("Content-Type", "application/json")
 
 	resp, err = app.Test(req)
 	if err != nil {
