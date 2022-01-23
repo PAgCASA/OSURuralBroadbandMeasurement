@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
@@ -60,8 +61,11 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	// return OK to client if valid, else return error.
 	// Note: the struct should be named "SpeedTestResult"
 
-	type SpeedTestResult struct {
-		PhoneID       string `json:"androidID"`
+	type SpeedTestResultOriginal struct {
+		AndroidID     string `json:"androidID"`
+		IphoneXSID    string `json:"iphoneXSID"`
+		IphoneID      string `json:"iphoneID"`
+		PhoneID       string `json:"phoneID"`
 		TestID        string `json:"testID"`
 		DownloadSpeed string `json:"downloadSpeed"`
 		UploadSpeed   string `json:"uploadSpeed"`
@@ -69,18 +73,43 @@ func submitSpeedTest(c *fiber.Ctx) error {
 		Jitter        string `json:"jitter"`
 		PacketLoss    string `json:"packetLoss"`
 	}
-	p := new(SpeedTestResult)
-	if err := c.BodyParser(p); err != nil {
-		fmt.Println(err)
+	type SpeedTestResult struct {
+		PhoneID       string
+		TestID        string
+		DownloadSpeed int
+		UploadSpeed   int
+		Latency       int
+		Jitter        int
+		PacketLoss    int
+	}
+	o := new(SpeedTestResultOriginal)
+	if err := c.BodyParser(o); err != nil {
 		return err
 	}
-	log.Println(p.PhoneID)
-	log.Println(p.TestID)
-	log.Println(p.DownloadSpeed)
-	log.Println(p.UploadSpeed)
-	log.Println(p.Latency)
-	log.Println(p.Jitter)
-	log.Println(p.PacketLoss)
+	var r SpeedTestResult
+	do, err := strconv.Atoi(o.DownloadSpeed)
+	up, err := strconv.Atoi(o.UploadSpeed)
+	la, err := strconv.Atoi(o.Latency)
+	ji, err := strconv.Atoi(o.Jitter)
+	pa, err := strconv.Atoi(o.PacketLoss)
+	if err != nil {
+		fmt.Printf("%v ", o.DownloadSpeed)
+	}
+	r.PhoneID = o.AndroidID + o.IphoneXSID + o.IphoneID + o.PhoneID
+	r.TestID = o.TestID
+	r.DownloadSpeed = do
+	r.UploadSpeed = up
+	r.Latency = la
+	r.Jitter = ji
+	r.PacketLoss = pa
+
+	log.Println(r.PhoneID)
+	log.Println(r.TestID)
+	log.Println(r.DownloadSpeed)
+	log.Println(r.UploadSpeed)
+	log.Println(r.Latency)
+	log.Println(r.Jitter)
+	log.Println(r.PacketLoss)
 
 	c.Response().AppendBodyString("Not Implemented Yet")
 	return nil
