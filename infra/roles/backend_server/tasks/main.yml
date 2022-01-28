@@ -1,0 +1,27 @@
+- name: Install git and golang from yum repo
+  yum:
+    name:
+      - git
+      - golang
+    state: present
+
+- name: Clone OSURuralBroadbandMeasurement
+  git:
+    repo: https://github.com/PAgCASA/OSURuralBroadbandMeasurement
+    version: main
+    dest: /usr/local/OSURuralBroadbandMeasurement/repo
+    depth: 1
+  register: git_result
+  notify:
+    - build server
+
+# install systemd service
+- name: Install systemd service
+  template:
+    src: server.service
+    dest: /usr/lib/systemd/system/PAgCASA-server.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart server

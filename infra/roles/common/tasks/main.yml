@@ -24,4 +24,6 @@
 
 # extract node_exporter binary
 - name: Extract node_exporter binary
-  shell: tar -xvf /tmp/node_exporter.tar.gz -C /usr/local/
+  unarchive:
+    src: /tmp/node_exporter.tar.gz
+    dest: /usr/local/node_exporter
