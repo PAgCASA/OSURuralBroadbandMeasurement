@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -9,6 +8,16 @@ import (
 	"github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 )
+
+type SpeedTestResult struct {
+	PhoneID       string
+	TestID        string
+	DownloadSpeed int
+	UploadSpeed   int
+	Latency       int
+	Jitter        int
+	PacketLoss    int
+}
 
 // var db *sql.DB
 
@@ -55,12 +64,9 @@ func createApp() *fiber.App {
 	return app
 }
 
+//TODO match incoming data with what will actually be submitted by the frontend
+// where speed tests are submitted
 func submitSpeedTest(c *fiber.Ctx) error {
-	// TODO use https://docs.gofiber.io/api/ctx#bodyparser to read the body of the request and put it into a struct with the correct fields.
-	// see design_docs/api_requests.json, only deal with the first 3 entries. See that the only thing that changes between them is the name and format of the phone ID
-	// return OK to client if valid, else return error.
-	// Note: the struct should be named "SpeedTestResult"
-
 	type SpeedTestResultOriginal struct {
 		AndroidID     string `json:"androidID"`
 		IphoneXSID    string `json:"iphoneXSID"`
@@ -73,28 +79,18 @@ func submitSpeedTest(c *fiber.Ctx) error {
 		Jitter        string `json:"jitter"`
 		PacketLoss    string `json:"packetLoss"`
 	}
-	type SpeedTestResult struct {
-		PhoneID       string
-		TestID        string
-		DownloadSpeed int
-		UploadSpeed   int
-		Latency       int
-		Jitter        int
-		PacketLoss    int
-	}
+
 	o := new(SpeedTestResultOriginal)
 	if err := c.BodyParser(o); err != nil {
 		return err
 	}
 	var r SpeedTestResult
-	do, err := strconv.Atoi(o.DownloadSpeed)
-	up, err := strconv.Atoi(o.UploadSpeed)
-	la, err := strconv.Atoi(o.Latency)
-	ji, err := strconv.Atoi(o.Jitter)
-	pa, err := strconv.Atoi(o.PacketLoss)
-	if err != nil {
-		fmt.Printf("%v ", o.DownloadSpeed)
-	}
+	do, _ := strconv.Atoi(o.DownloadSpeed)
+	up, _ := strconv.Atoi(o.UploadSpeed)
+	la, _ := strconv.Atoi(o.Latency)
+	ji, _ := strconv.Atoi(o.Jitter)
+	pa, _ := strconv.Atoi(o.PacketLoss)
+
 	r.PhoneID = o.AndroidID + o.IphoneXSID + o.IphoneID + o.PhoneID
 	r.TestID = o.TestID
 	r.DownloadSpeed = do
@@ -103,13 +99,6 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	r.Jitter = ji
 	r.PacketLoss = pa
 
-	log.Println("PhoneID: ", r.PhoneID)
-	log.Println("TestID: ", r.TestID)
-	log.Println("DownloadSpeed: ", r.DownloadSpeed)
-	log.Println("UploadSpeed: ", r.UploadSpeed)
-	log.Println("Latency: ", r.Latency)
-	log.Println("Jitter: ", r.Jitter)
-	log.Println("PacketLoss: ", r.PacketLoss)
 	if r.DownloadSpeed < 1 {
 		c.Response().AppendBodyString("Invalid value for downloadSpeed")
 		return c.SendStatus(400)
