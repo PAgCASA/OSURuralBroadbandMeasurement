@@ -1,14 +1,14 @@
 - name: build server
-  command: go build -v backend/cmd/server/main.go -o /usr/local/OSURuralBroadbandMeasurement/server
+  command: go build -v -o /var/www/services/backend/server backend/cmd/server/main.go
   args:
     chdir: /usr/local/OSURuralBroadbandMeasurement/repo
   notify:
     - restart server
 
-# restart systemd service TODO verify this is working as expected
+# restart systemd service
 - name: restart server
   systemd:
     name: PAgCASA-server
     state: restarted
     enabled: true
-    action: restart
+    daemon_reload: true

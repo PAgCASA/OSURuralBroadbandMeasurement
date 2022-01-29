@@ -5,6 +5,14 @@
       - golang
     state: present
 
+- name: Create /var/www/services/backend
+  file:
+    path: /var/www/services/backend
+    state: directory
+    owner: backend-server
+    group: backend-server
+    mode: "755"
+
 - name: Clone OSURuralBroadbandMeasurement
   git:
     repo: https://github.com/PAgCASA/OSURuralBroadbandMeasurement
@@ -14,6 +22,14 @@
   register: git_result
   notify:
     - build server
+
+- name: make sure server exists
+  command: "echo 'server file does not exist'"
+  args:
+    creates: /var/www/services/backend/server
+  notify:
+    - build server
+    - restart server
 
 # install systemd service
 - name: Install systemd service
@@ -25,3 +41,19 @@
     mode: 0644
   notify:
     - restart server
+
+# create backend-server user
+- name: Create backend-server user
+  user:
+    name: backend-server
+    state: present
+
+# make sure that we actually have an executable to run before we try to start the service
+- name: Flush handlers
+  meta: flush_handlers
+
+- name: Make sure server is enabled and started
+  systemd:
+    name: PAgCASA-server
+    state: started
+    enabled: true
