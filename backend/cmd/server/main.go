@@ -57,6 +57,12 @@ func main() {
 func createApp() *fiber.App {
 	app := fiber.New()
 
+	// a quick status check to make sure everything is working, will also check DB connection later on
+	app.Get("/status", func(c *fiber.Ctx) error {
+		c.Response().AppendBodyString("OK")
+		return c.SendStatus(200)
+	})
+
 	api := app.Group("/api/v0")
 
 	api.Post("/submitSpeedTest", submitSpeedTest)
