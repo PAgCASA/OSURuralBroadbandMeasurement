@@ -103,14 +103,26 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	r.Jitter = ji
 	r.PacketLoss = pa
 
-	log.Println(r.PhoneID)
-	log.Println(r.TestID)
-	log.Println(r.DownloadSpeed)
-	log.Println(r.UploadSpeed)
-	log.Println(r.Latency)
-	log.Println(r.Jitter)
-	log.Println(r.PacketLoss)
+	log.Println("PhoneID: ", r.PhoneID)
+	log.Println("TestID: ", r.TestID)
+	log.Println("DownloadSpeed: ", r.DownloadSpeed)
+	log.Println("UploadSpeed: ", r.UploadSpeed)
+	log.Println("Latency: ", r.Latency)
+	log.Println("Jitter: ", r.Jitter)
+	log.Println("PacketLoss: ", r.PacketLoss)
+	if r.DownloadSpeed < 1 {
+		c.Response().AppendBodyString("Invalid value for downloadSpeed")
+		return c.SendStatus(400)
+	}
+	if r.UploadSpeed < 1 {
+		c.Response().AppendBodyString("Invalid value for uploadSpeed")
+		return c.SendStatus(400)
+	}
+	if r.PacketLoss > 100 {
+		c.Response().AppendBodyString("packetLoss must be less than 100")
+		return c.SendStatus(400)
+	}
 
-	c.Response().AppendBodyString("Not Implemented Yet")
-	return nil
+	c.Response().AppendBodyString("OK")
+	return c.SendStatus(200)
 }
