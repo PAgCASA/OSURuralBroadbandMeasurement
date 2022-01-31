@@ -1,0 +1,14 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: rockylinux:8  # TODO create image that includes common dependencies so they don't reinstall every time
+    command: /sbin/init
+    privileged: true  # TODO figure out how to work around this, it shouldn't be needed for testing
+provisioner:
+  name: ansible
+verifier:
+  name: ansible

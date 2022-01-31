@@ -1,0 +1,13 @@
+[Unit]
+Description=PAgCASA backend server
+After=network.target
+
+[Service]
+Type=exec
+Restart=always
+User=backend-server
+WorkingDirectory=/var/www/services/backend
+ExecStart=/var/www/services/backend/server
+
+[Install]
+WantedBy=multi-user.target

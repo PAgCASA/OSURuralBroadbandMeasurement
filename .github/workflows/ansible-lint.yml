@@ -1,0 +1,31 @@
+name: Ansible Lint
+
+on: 
+  push:
+    branches: [ main ]
+    paths:
+      - 'infra/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'infra/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.9
+        cache: 'pip'
+    - name: Install dependencies
+      run: |
+        pip install -r infra/requirements.txt
+    - name: Lint playbook
+      run: |
+        cd infra/
+        ansible-playbook -i test-hosts site.yml --syntax-check
+        ansible-lint

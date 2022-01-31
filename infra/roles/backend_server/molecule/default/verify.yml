@@ -1,0 +1,20 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+  # - name: Example assertion
+  #  assert:
+  #    that: true
+  - name: Can we connect to the backend server?
+    uri:
+      url: http://localhost:8080/status
+      return_content: true
+    register: result
+
+  - name: Is status OK?
+    assert:
+      that: result.status == 200 and result.content == "OK"
+      msg: "Status is not OK"

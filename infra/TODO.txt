@@ -1,0 +1,6 @@
+Goal - Setup basic Ansible layout for use:
+- Set up Python virtual enviroment
+- Set up basic testing
+- Confirm testing works
+- Confirm other setup scripts work
+- Document process from cold start to development
