@@ -23,6 +23,7 @@ Security/configuration:
 
 
 Other:
+- Simple Nginx play - https://gist.github.com/jvns/06754e9e65b49dd461fefa071dd4aace
 - MySQL role - https://gist.github.com/ihassin/8106956
 - Testing w/ Molecule, apparently officially supported - https://molecule.readthedocs.io/en/latest/index.html
 - Testing Ansible w/ Docker - [First one](https://www.ansible.com/blog/testing-ansible-roles-with-docker), [Second one](https://github.com/chrismeyersfsu/role-iptables/tree/master/test)

@@ -5,6 +5,12 @@
       - golang
     state: present
 
+# create backend-server user
+- name: Create backend-server user
+  user:
+    name: backend-server
+    state: present
+
 - name: Create /var/www/services/backend
   file:
     path: /var/www/services/backend
@@ -41,12 +47,6 @@
     mode: 0644
   notify:
     - restart server
-
-# create backend-server user
-- name: Create backend-server user
-  user:
-    name: backend-server
-    state: present
 
 # make sure that we actually have an executable to run before we try to start the service
 - name: Flush handlers

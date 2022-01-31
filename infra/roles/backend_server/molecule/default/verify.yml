@@ -10,7 +10,11 @@
   #    that: true
   - name: Can we connect to the backend server?
     uri:
-      url: http://localhost:8080/api/v0/submitSpeedTest
-      method: POST
-      body: "{}"  # TODO will need to eventually use something along the lines of "{{ lookup('file','issue.json') }}"
-      body_format: json
+      url: http://localhost:8080/status
+      return_content: true
+    register: result
+
+  - name: Is status OK?
+    assert:
+      that: result.status == 200 and result.content == "OK"
+      msg: "Status is not OK"
