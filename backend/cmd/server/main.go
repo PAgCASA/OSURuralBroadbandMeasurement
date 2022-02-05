@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"log"
 	"math/rand"
 	"os"
@@ -40,18 +39,8 @@ func main() {
 	}
 	log.Printf("MySQL User: %s", cfg.User)
 
-	// Get a database handle.
-	var err error
-	db, err = sql.Open("mysql", cfg.FormatDSN())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	pingErr := db.Ping()
-	if pingErr != nil {
-		log.Fatal(pingErr)
-	}
-	fmt.Println("Connected to Database!")
+	// connect
+	connectToDB("mysql", cfg.FormatDSN())
 
 	app := createApp()
 
@@ -72,6 +61,23 @@ func createApp() *fiber.App {
 	api.Post("/submitSpeedTest", submitSpeedTest)
 
 	return app
+}
+
+func connectToDB(dbType string, DSN string) *sql.DB {
+	var err error
+	db, err = sql.Open(dbType, DSN)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	//TODO EMH: Add more error handling and things here
+	pingErr := db.Ping()
+	if pingErr != nil {
+		log.Fatal(pingErr)
+	}
+	//fmt.Println("Connected to Database!")
+
+	return db
 }
 
 //TODO match incoming data with what will actually be submitted by the frontend
