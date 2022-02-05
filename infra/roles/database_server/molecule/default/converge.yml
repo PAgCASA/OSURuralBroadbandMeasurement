@@ -1,0 +1,9 @@
+---
+- name: Converge
+  hosts: all
+  tasks:
+    - name: Include group_vars
+      include_vars: "../../../../group_vars/database-creds.enc"
+    - name: "Include database_server"
+      include_role:
+        name: "database_server"
