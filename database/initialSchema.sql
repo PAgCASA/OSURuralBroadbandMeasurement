@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS SpeedTests (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    id INTEGER PRIMARY KEY, -- will need to be unique but we can be a little lax with assignment
     testID TEXT NOT NULL,
     phoneID TEXT NOT NULL,
     uploadSpeed DECIMAL NOT NULL,
