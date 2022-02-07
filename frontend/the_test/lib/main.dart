@@ -65,9 +65,6 @@ class PersonalInformation{
 class MyApp extends StatelessWidget {
 
   Future<void> createSocketAndTest() async {
-    //TODO confirm format of OBJECT/JSON config -> keep as int
-    //TODO discuss UUID for each test
-    //TODO get IP of a single server containing a file for testing
     //TODO change this entire class to a stateful one
 
 
@@ -161,10 +158,10 @@ class MyApp extends StatelessWidget {
       //start with the lowest ping of zero
       int lowestPing = Constants.MAX_INITIAL_PING;
 
-      for(int i = 0; i < Constants.NUMBER_OF_SERVERS; i++) {
-        //TODO iterate through the server list using the loop
-        //serverString = serverlist[i];
-        final ping = Ping(Constants.SERVER_IP,
+      for (int i = 0; i < Constants.NUMBER_OF_SERVERS; i++) {
+        serverString = Constants.SERVER_IP_LIST[i];
+        print('this is the server string $serverString');
+        final ping = Ping(serverString,
             count: Constants.NUMBER_OF_PINGS_TO_SEND_INITIAL);
         //TODO make this a broadcast stream
         ping.stream.listen((event) {
@@ -216,27 +213,20 @@ class MyApp extends StatelessWidget {
 
 
       //******************************************************************JITTER
-      //TODO
-      /*
-      To measure Jitter, we take the difference between samples, then divide by the number of samples (minus 1).
-
-Here's an example. We have collected 5 samples with the following latencies: 136, 184, 115, 148, 125 (in that order). The average latency is 142 - (add them, divide by 5). The 'Jitter' is calculated by taking the difference between samples.
-
-136 to 184, diff = 48
-184 to 115, diff = 69
-115 to 148, diff = 33
-148 to 125, diff = 23
-(Notice how we have only 4 differences for 5 samples). The total difference is 173 - so the jitter is 173 / 4, or 43.25.
-       */
-
-
-
-      double currentJitter = 0;
-      // var times = List(Constants.NUMBER_OF_PINGS_TO_SEND_JITTER);
-      for(int i = 0; i < Constants.NUMBER_OF_PINGS_TO_SEND_JITTER; i++){
-        //pig
-        // times[i] =
-      }
+      var data = Constants.DATA;
+      var codec = new Utf8Codec();
+      String addressToListen = serverString;
+      List<int> dataSendStream = codec.encode(data);
+      RawDatagramSocket.bind(Constants.SERVER_IP, Constants.PORT).then((
+          RawDatagramSocket udpSocket) {
+        udpSocket.forEach((RawSocketEvent event) {
+          if (event == RawSocketEvent.read) {
+            // Datagram dg = udpSocket.receive().noSuchMethod;
+            // dg.data.forEach((x) => print(x));
+          }
+          // udpSocket.send(dataSendStream,  )
+        });
+      });
       //************************************************************************
 
 
