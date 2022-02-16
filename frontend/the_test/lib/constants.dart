@@ -10,6 +10,14 @@ const int NUMBER_OF_PINGS_TO_SEND_JITTER = 100;
 const int MAX_INITIAL_PING = 9007199254740991;
 
 
+//Homepage
+
+const String HOMEPAGE_IMAGE_URL = 'https://images.pexels.com/photos/53504/grass-rush-juicy-green-53504.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500';
+
+
+
+//Results
+const COLUMN_TITLES_RESULTS = ['Date', 'Download', 'Upload', 'Jitter', 'Latency', 'Packet Loss', 'Total Test Duration'];
 
 //jitter, packet loss, latency
 const int UDP_PACKETS_TO_SEND_JITTER = 200;
