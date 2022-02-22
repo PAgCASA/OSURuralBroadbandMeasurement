@@ -136,8 +136,7 @@ func submitSpeedTest(c *fiber.Ctx) error {
 
 func insertSpeedTestResultToDB(r SpeedTestResult) {
 	if db == nil {
-		log.Println("DB not connected") //TODO add db to existing tests
-		return
+		log.Fatal("DB not connected")
 	}
 
 	result, err := db.Exec(`INSERT INTO SpeedTests (

@@ -13,6 +13,11 @@ import (
 )
 
 func TestSubmitSpeedTestAndroid(t *testing.T) {
+	// connect to db
+	db := connectToDB("sqlite", ":memory:")
+	defer db.Close()
+	setUpTestTables(t)
+
 	// http.Request
 	req := httptest.NewRequest(
 		"POST",
@@ -38,6 +43,11 @@ func TestSubmitSpeedTestAndroid(t *testing.T) {
 }
 
 func TestSubmitSpeedTestIOSXSID(t *testing.T) {
+	// connect to db
+	db := connectToDB("sqlite", ":memory:")
+	defer db.Close()
+	setUpTestTables(t)
+
 	// http.Request
 	req := httptest.NewRequest(
 		"POST",
@@ -63,6 +73,11 @@ func TestSubmitSpeedTestIOSXSID(t *testing.T) {
 }
 
 func TestSubmitSpeedTestIOSX(t *testing.T) {
+	// connect to db
+	db := connectToDB("sqlite", ":memory:")
+	defer db.Close()
+	setUpTestTables(t)
+
 	// http.Request
 	req := httptest.NewRequest(
 		"POST",
@@ -88,6 +103,11 @@ func TestSubmitSpeedTestIOSX(t *testing.T) {
 }
 
 func TestSubmitSpeedTestFails(t *testing.T) {
+	// connect to db
+	db := connectToDB("sqlite", ":memory:")
+	defer db.Close()
+	setUpTestTables(t)
+
 	// downloadSpeed
 	req := httptest.NewRequest(
 		"POST",
@@ -161,15 +181,7 @@ func TestSpeedTestDatabaseSubmition(t *testing.T) {
 	db := connectToDB("sqlite", ":memory:")
 	defer db.Close()
 
-	content, err := ioutil.ReadFile("../../../database/initialSchema.sql") // the file is inside the local directory
-	if err != nil {
-		fmt.Printf("Err reading file: %v", err)
-	}
-
-	_, err = db.Exec(string(content))
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
+	setUpTestTables(t)
 
 	// http.Request
 	req := httptest.NewRequest(
@@ -239,5 +251,17 @@ func TestSpeedTestDatabaseSubmition(t *testing.T) {
 
 	if rows.Next() {
 		t.Errorf("Expected only one row, got more")
+	}
+}
+
+func setUpTestTables(t *testing.T) {
+	content, err := ioutil.ReadFile("../../../database/initialSchema.sql") // the file is inside the local directory
+	if err != nil {
+		fmt.Printf("Err reading file: %v", err)
+	}
+
+	_, err = db.Exec(string(content))
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
 	}
 }
