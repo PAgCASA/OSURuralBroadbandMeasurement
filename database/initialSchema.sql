@@ -12,3 +12,25 @@ CREATE TABLE IF NOT EXISTS SpeedTests (
     testDuration INTEGER NOT NULL, -- in milliseconds
     recievedTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS PersonalData (
+    id INTEGER PRIMARY KEY,
+    phoneID TEXT NOT NULL,
+
+    longitude DECIMAL NOT NULL,
+    latitude DECIMAL NOT NULL,
+    accuracy DECIMAL NOT NULL,
+    altitude DECIMAL NOT NULL,
+    speed DECIMAL NOT NULL,
+    heading DECIMAL NOT NULL,
+
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    address TEXT NOT NULL,
+    city TEXT NOT NULL,
+    state TEXT NOT NULL,
+    zip TEXT NOT NULL,
+
+    recievedTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
