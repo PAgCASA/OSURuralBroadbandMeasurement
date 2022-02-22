@@ -186,7 +186,7 @@ func insertSpeedTestResultToDB(r SpeedTestResult) {
 		?,
 		?
 	 )`,
-		rand.Int()%200,
+		rand.Int()%200, //TODO better way to generate id
 		r.PhoneID,
 		r.TestID,
 		r.DownloadSpeed,
@@ -194,8 +194,8 @@ func insertSpeedTestResultToDB(r SpeedTestResult) {
 		r.Latency,
 		r.Jitter,
 		r.PacketLoss,
-		time.Now(),
-		time.Since(time.Now()),
+		time.Now(),             //TODO needs to come from frontend
+		time.Since(time.Now()), //TODO needs to come from frontend
 	)
 	if err != nil {
 		log.Println(err)
