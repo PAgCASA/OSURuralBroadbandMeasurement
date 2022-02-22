@@ -14,7 +14,11 @@ import (
 
 func TestSubmitSpeedTestAndroid(t *testing.T) {
 	// connect to db
-	db := connectToDB("sqlite", ":memory:")
+	newDB, err := connectToDB("sqlite", ":memory:")
+	db = newDB
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 	defer db.Close()
 	setUpTestTables(t)
 
@@ -44,7 +48,11 @@ func TestSubmitSpeedTestAndroid(t *testing.T) {
 
 func TestSubmitSpeedTestIOSXSID(t *testing.T) {
 	// connect to db
-	db := connectToDB("sqlite", ":memory:")
+	newDB, err := connectToDB("sqlite", ":memory:")
+	db = newDB
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 	defer db.Close()
 	setUpTestTables(t)
 
@@ -74,7 +82,11 @@ func TestSubmitSpeedTestIOSXSID(t *testing.T) {
 
 func TestSubmitSpeedTestIOSX(t *testing.T) {
 	// connect to db
-	db := connectToDB("sqlite", ":memory:")
+	newDB, err := connectToDB("sqlite", ":memory:")
+	db = newDB
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 	defer db.Close()
 	setUpTestTables(t)
 
@@ -104,7 +116,11 @@ func TestSubmitSpeedTestIOSX(t *testing.T) {
 
 func TestSubmitSpeedTestFails(t *testing.T) {
 	// connect to db
-	db := connectToDB("sqlite", ":memory:")
+	newDB, err := connectToDB("sqlite", ":memory:")
+	db = newDB
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 	defer db.Close()
 	setUpTestTables(t)
 
@@ -178,7 +194,11 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 
 func TestSpeedTestDatabaseSubmition(t *testing.T) {
 	// connect to db
-	db := connectToDB("sqlite", ":memory:")
+	newDB, err := connectToDB("sqlite", ":memory:")
+	db = newDB
+	if err != nil {
+		t.Errorf("Expected no error, got %v", err)
+	}
 	defer db.Close()
 
 	setUpTestTables(t)

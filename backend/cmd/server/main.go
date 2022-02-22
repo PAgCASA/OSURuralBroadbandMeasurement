@@ -40,7 +40,24 @@ func main() {
 	log.Printf("MySQL User: %s", cfg.User)
 
 	// connect
-	connectToDB("mysql", cfg.FormatDSN())
+	const maxConnectionAttempts = 10
+	for i := 0; i < maxConnectionAttempts; i++ {
+		dbConnection, err := connectToDB("mysql", cfg.FormatDSN())
+		//if connected then start server
+		if err == nil {
+			db = dbConnection //actually assign the db connection
+			break
+		}
+
+		//if not connected then wait and try again, up to 10 times, then exit with error
+		if err != nil && i == maxConnectionAttempts-1 {
+			log.Fatal(err)
+		}
+
+		//wait 5 seconds before trying again
+		log.Println("Could not connect to DB. Retrying in 5 seconds...")
+		time.Sleep(5 * time.Second)
+	}
 
 	app := createApp()
 
@@ -63,21 +80,28 @@ func createApp() *fiber.App {
 	return app
 }
 
-func connectToDB(dbType string, DSN string) *sql.DB {
+func connectToDB(dbType string, DSN string) (*sql.DB, error) {
 	var err error
-	db, err = sql.Open(dbType, DSN)
+	// Connect to the database
+	newDB, err := sql.Open(dbType, DSN)
 	if err != nil {
-		log.Fatal(err)
+		return newDB, err
 	}
 
-	//TODO EMH: Add more error handling and things here
-	pingErr := db.Ping()
-	if pingErr != nil {
-		log.Fatal(pingErr)
+	// Test the connection to the database with a ping
+	err = newDB.Ping()
+	if err != nil {
+		return newDB, err
 	}
-	//fmt.Println("Connected to Database!")
 
-	return db
+	// run query to test connection
+	var test int
+	err = newDB.QueryRow("SELECT 1").Scan(&test)
+	if err != nil {
+		return newDB, err
+	}
+
+	return newDB, nil
 }
 
 //TODO match incoming data with what will actually be submitted by the frontend
