@@ -1,9 +1,13 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
@@ -19,7 +23,7 @@ type SpeedTestResult struct {
 	PacketLoss    int
 }
 
-// var db *sql.DB
+var db *sql.DB
 
 func main() {
 	if os.Getenv("PORT") == "" {
@@ -35,19 +39,19 @@ func main() {
 		DBName: "PAgCASABroadband",
 	}
 	log.Printf("MySQL User: %s", cfg.User)
-	/*
-		// Get a database handle.
-		var err error
-		db, err = sql.Open("mysql", cfg.FormatDSN())
-		if err != nil {
-			log.Fatal(err)
-		}
 
-		pingErr := db.Ping()
-		if pingErr != nil {
-			log.Fatal(pingErr)
-		}
-		fmt.Println("Connected to Database!")*/
+	// Get a database handle.
+	var err error
+	db, err = sql.Open("mysql", cfg.FormatDSN())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pingErr := db.Ping()
+	if pingErr != nil {
+		log.Fatal(pingErr)
+	}
+	fmt.Println("Connected to Database!")
 
 	app := createApp()
 
@@ -118,6 +122,49 @@ func submitSpeedTest(c *fiber.Ctx) error {
 		return c.SendStatus(400)
 	}
 
+	insertSpeedTestResultToDB(r)
+
 	c.Response().AppendBodyString("OK")
 	return c.SendStatus(200)
+}
+
+func insertSpeedTestResultToDB(r SpeedTestResult) {
+	result, err := db.Exec(`INSERT INTO SpeedTests (
+		id,
+	 	phoneID,
+	 	testID,
+	 	downloadSpeed,
+	 	uploadSpeed,
+	 	latency,
+	 	jitter,
+	 	packetLoss,
+		testStartTime,
+		testDuration
+	 ) VALUES (
+		?,
+	 	?,
+	 	?,
+	 	?,
+	 	?,
+	 	?,
+	 	?,
+	 	?,
+		?,
+		?
+	 )`,
+		rand.Int()%200,
+		r.PhoneID,
+		r.TestID,
+		r.DownloadSpeed,
+		r.UploadSpeed,
+		r.Latency,
+		r.Jitter,
+		r.PacketLoss,
+		time.Now(),
+		time.Since(time.Now()),
+	)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Println(result)
 }
