@@ -18,16 +18,21 @@ const String HOMEPAGE_IMAGE_URL = 'https://images.pexels.com/photos/53504/grass-
 
 //Results
 const COLUMN_TITLES_RESULTS = ['Date', 'Download', 'Upload', 'Jitter', 'Latency', 'Packet Loss', 'Total Test Duration'];
+const String SERVER_RESULT_REQUEST_URL = '/api/v0/getSpeedTestResults/';
 
 //jitter, packet loss, latency
 const int UDP_PACKETS_TO_SEND_JITTER = 200;
 const int UDP_PACKET_SIZE  = 160;
 const int ACK_RECEIVE_WAIT_TIME = 2;
 const int ACCEPTED_RESPONSE_WINDOW = 5;
+const int SERVER_PORT = 80;
+const int RECIEVER_PORT = 65001;
+const int SENDER_PORT = 65000;
 const String DATA = 'oaiwejoiawejfoiajwoief';
 
 
-
+//download and upload
+const String SERVER_TEST_UPLOAD_URL = '/api/v0/submitSpeedTest';
 const String FILE_PATH1 = '/downloads/file1';
 const String FILE_PATH2 = '/downloads/file2';
 const String FILE_PATH3 = '/downloads/file3';

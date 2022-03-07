@@ -39,6 +39,7 @@ dependencies:
   device_info: ^2.0.3
   settings_ui: ^2.0.2
   web_socket_channel:
+  udp: ^5.0.1
 
 dev_dependencies:
   flutter_test:
