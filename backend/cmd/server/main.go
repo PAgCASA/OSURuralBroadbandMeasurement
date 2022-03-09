@@ -29,12 +29,16 @@ func main() {
 		os.Setenv("PORT", "8080")
 	}
 
+	if os.Getenv("DBHOST") == "" {
+		os.Setenv("DBHOST", "localhost")
+	}
+
 	// Capture connection properties.
 	cfg := mysql.Config{
 		User:   os.Getenv("DBUSER"),
 		Passwd: os.Getenv("DBPASS"),
 		Net:    "tcp",
-		Addr:   "127.0.0.1:3306",
+		Addr:   os.Getenv("DBHOST") + ":3306",
 		DBName: "PAgCASABroadband",
 	}
 	log.Printf("MySQL User: %s", cfg.User)
@@ -46,6 +50,12 @@ func main() {
 		//if connected then start server
 		if err == nil {
 			db = dbConnection //actually assign the db connection
+			break
+		}
+
+		// if not in production, then consider us to have connected
+		if os.Getenv("ENV") != "production" {
+			log.Println("Not in production so faking connection to DB")
 			break
 		}
 
