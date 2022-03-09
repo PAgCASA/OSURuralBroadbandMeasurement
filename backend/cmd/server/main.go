@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
 	"log"
 	"math/rand"
 	"os"
@@ -20,6 +21,13 @@ type SpeedTestResult struct {
 	Latency       int
 	Jitter        int
 	PacketLoss    int
+	TestStartTime time.Time
+}
+
+type PastResults struct {
+	PhoneID     string
+	LastUpdated time.Time
+	Results     []SpeedTestResult // needs to be lastest first
 }
 
 var db *sql.DB
@@ -88,6 +96,8 @@ func createApp() *fiber.App {
 	api := app.Group("/api/v0")
 
 	api.Post("/submitSpeedTest", submitSpeedTest)
+
+	api.Get("/getSpeedTestResults/:id", getSpeedTestResults)
 
 	return app
 }
@@ -170,6 +180,30 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
+func getSpeedTestResults(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if id == "" {
+		c.Response().AppendBodyString("Invalid ID")
+		return c.SendStatus(400)
+	}
+
+	r := getSpeedTestResultsFromDB(id)
+	if r == nil {
+		c.Response().AppendBodyString("No results found")
+		return c.SendStatus(404)
+	}
+
+	json, err := json.Marshal(r)
+	if err != nil {
+		c.Response().AppendBodyString("Error marshalling results")
+		return c.SendStatus(500)
+	}
+
+	c.Response().SetBody(json)
+	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+	return c.SendStatus(200)
+}
+
 func insertSpeedTestResultToDB(r SpeedTestResult) {
 	if db == nil {
 		log.Fatal("DB not connected")
@@ -219,4 +253,53 @@ func insertSpeedTestResultToDB(r SpeedTestResult) {
 	if rows != 1 {
 		log.Fatal("Rows not inserted properly")
 	}
+}
+
+func getSpeedTestResultsFromDB(id string) *PastResults {
+	if db == nil {
+		log.Fatal("DB not connected")
+	}
+
+	var pr PastResults
+
+	result, err := db.Query(`SELECT
+		phoneID,
+		testID,
+		downloadSpeed,
+		uploadSpeed,
+		latency,
+		jitter,
+		packetLoss,
+		testStartTime
+			FROM SpeedTests WHERE phoneID = ?
+			ORDER BY testStartTime DESC`, id)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	defer result.Close()
+
+	for result.Next() {
+		var r SpeedTestResult
+		err := result.Scan(
+			&r.PhoneID,
+			&r.TestID,
+			&r.DownloadSpeed,
+			&r.UploadSpeed,
+			&r.Latency,
+			&r.Jitter,
+			&r.PacketLoss,
+			&r.TestStartTime,
+		)
+		if err != nil {
+			log.Println(err)
+			return nil
+		}
+		pr.Results = append(pr.Results, r)
+	}
+
+	pr.LastUpdated = time.Now()
+	pr.PhoneID = id
+
+	return &pr
 }
