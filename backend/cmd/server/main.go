@@ -6,7 +6,6 @@ import (
 	"log"
 	"math/rand"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/go-sql-driver/mysql"
@@ -16,8 +15,8 @@ import (
 type SpeedTestResult struct {
 	PhoneID       string
 	TestID        string
-	DownloadSpeed int
-	UploadSpeed   int
+	DownloadSpeed float64
+	UploadSpeed   float64
 	Latency       int
 	Jitter        int
 	PacketLoss    int
@@ -130,16 +129,16 @@ func connectToDB(dbType string, DSN string) (*sql.DB, error) {
 // where speed tests are submitted
 func submitSpeedTest(c *fiber.Ctx) error {
 	type SpeedTestResultOriginal struct {
-		AndroidID     string `json:"androidID"`
-		IphoneXSID    string `json:"iphoneXSID"`
-		IphoneID      string `json:"iphoneID"`
-		PhoneID       string `json:"phoneID"`
-		TestID        string `json:"testID"`
-		DownloadSpeed string `json:"downloadSpeed"`
-		UploadSpeed   string `json:"uploadSpeed"`
-		Latency       string `json:"latency"`
-		Jitter        string `json:"jitter"`
-		PacketLoss    string `json:"packetLoss"`
+		AndroidID     string  `json:"androidID"`
+		IphoneXSID    string  `json:"iphoneXSID"`
+		IphoneID      string  `json:"iphoneID"`
+		PhoneID       string  `json:"phoneID"`
+		TestID        string  `json:"testID"`
+		DownloadSpeed float64 `json:"downloadSpeed"`
+		UploadSpeed   float64 `json:"uploadSpeed"`
+		Latency       int     `json:"latency"`
+		Jitter        int     `json:"jitter"`
+		PacketLoss    int     `json:"packetLoss"`
 	}
 
 	o := new(SpeedTestResultOriginal)
@@ -147,19 +146,14 @@ func submitSpeedTest(c *fiber.Ctx) error {
 		return err
 	}
 	var r SpeedTestResult
-	do, _ := strconv.Atoi(o.DownloadSpeed)
-	up, _ := strconv.Atoi(o.UploadSpeed)
-	la, _ := strconv.Atoi(o.Latency)
-	ji, _ := strconv.Atoi(o.Jitter)
-	pa, _ := strconv.Atoi(o.PacketLoss)
 
 	r.PhoneID = o.AndroidID + o.IphoneXSID + o.IphoneID + o.PhoneID
 	r.TestID = o.TestID
-	r.DownloadSpeed = do
-	r.UploadSpeed = up
-	r.Latency = la
-	r.Jitter = ji
-	r.PacketLoss = pa
+	r.DownloadSpeed = o.DownloadSpeed
+	r.UploadSpeed = o.UploadSpeed
+	r.Latency = o.Latency
+	r.Jitter = o.Jitter
+	r.PacketLoss = o.PacketLoss
 
 	if r.DownloadSpeed < 1 {
 		c.Response().AppendBodyString("Invalid value for downloadSpeed")

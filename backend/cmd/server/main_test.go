@@ -29,11 +29,11 @@ func TestSubmitSpeedTestAndroid(t *testing.T) {
 		bytes.NewBuffer([]byte(`{
 			"androidID": "android-25621ofk8and221h",
 			"testID": "23js984jl9",
-			"downloadSpeed": "1424736",
-			"uploadSpeed": "85744",
-			"latency": "31",
-			"jitter": "6",
-			"packetLoss": "001"
+			"downloadSpeed": 14.24736,
+			"uploadSpeed": 85.744,
+			"latency": 31,
+			"jitter": 6,
+			"packetLoss": 1
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -63,11 +63,11 @@ func TestSubmitSpeedTestIOSXSID(t *testing.T) {
 		bytes.NewBuffer([]byte(`{
 			"iphoneXSID": "fjs934ks-8k3nslfneiskanqq3",
 			"testID": "jfkd943kd9",
-			"downloadSpeed": "3856667",
-			"uploadSpeed": "8294441",
-			"latency": "16",
-			"jitter": "4",
-			"packetLoss": "000"
+			"downloadSpeed": 14.24736,
+			"uploadSpeed": 85.744,
+			"latency": 31,
+			"jitter": 6,
+			"packetLoss": 1
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -97,11 +97,11 @@ func TestSubmitSpeedTestIOSX(t *testing.T) {
 		bytes.NewBuffer([]byte(`{
 			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 			"testID": "92kd84ndk1",
-			"downloadSpeed": "293859483712",
-			"uploadSpeed": "210937465527",
-			"latency": "3",
-			"jitter": "1",
-			"packetLoss": "000"
+			"downloadSpeed": 14.24736,
+			"uploadSpeed": 85.744,
+			"latency": 31,
+			"jitter": 6,
+			"packetLoss": 1
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -131,11 +131,11 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 		bytes.NewBuffer([]byte(`{
 			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 			"testID": "92kd84ndk1",
-			"downloadSpeed": "asdg25234",
-			"uploadSpeed": "210937465527",
-			"latency": "3",
-			"jitter": "1",
-			"packetLoss": "000"
+			"downloadSpeed": -14.24736,
+			"uploadSpeed": 85.744,
+			"latency": 31,
+			"jitter": 6,
+			"packetLoss": 1
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -154,11 +154,11 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 		bytes.NewBuffer([]byte(`{
 			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 			"testID": "92kd84ndk1",
-			"downloadSpeed": "5",
-			"uploadSpeed": "asdg3",
-			"latency": "3",
-			"jitter": "1",
-			"packetLoss": "000"
+			"downloadSpeed": 14.24736,
+			"uploadSpeed": -85.744,
+			"latency": 31,
+			"jitter": 6,
+			"packetLoss": 1
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -176,11 +176,11 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 		bytes.NewBuffer([]byte(`{
 				"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 				"testID": "92kd84ndk1",
-				"downloadSpeed": "5",
-				"uploadSpeed": "456",
-				"latency": "3",
-				"jitter": "1",
-				"packetLoss": "101"
+				"downloadSpeed": 14.24736,
+				"uploadSpeed": 85.744,
+				"latency": 31,
+				"jitter": 6,
+				"packetLoss": 101
 			}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -210,11 +210,11 @@ func TestSpeedTestDatabaseSubmition(t *testing.T) {
 		bytes.NewBuffer([]byte(`{
 			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 			"testID": "92kd84ndk1",
-			"downloadSpeed": "5",
-			"uploadSpeed": "456",
-			"latency": "3",
-			"jitter": "1",
-			"packetLoss": "000"
+			"downloadSpeed": 5,
+			"uploadSpeed": 456,
+			"latency": 3,
+			"jitter": 1,
+			"packetLoss": 0
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
