@@ -41,6 +41,7 @@ func main() {
 		Addr:                 os.Getenv("DBHOST") + ":3306",
 		DBName:               "PAgCASABroadband",
 		AllowNativePasswords: true,
+		ParseTime:            true,
 	}
 	log.Printf("MySQL User: %s", cfg.User)
 

@@ -5,9 +5,9 @@
   vars:
     swap_file_size_mb: 512
     swap_file_path: /var/swapfile
+    # backend_server_port: 80
   roles:
     - common
     - swap
     - database_server
     - backend_server
-
