@@ -10,5 +10,7 @@ platforms:
     privileged: true  # TODO figure out how to work around this, it shouldn't be needed for testing
 provisioner:
   name: ansible
+  options:
+    "ask-vault-pass": true
 verifier:
   name: ansible

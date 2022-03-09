@@ -48,6 +48,6 @@
   mysql_user:
     user: "pagcasa-backend"
     host: "%"
-    password: "{{backend_user_database_password | mandatory}}"
-    priv: "*.*:ALL,GRANT" #TODO this needs to change to something more secure
+    password: "{{ backend_user_database_password | mandatory }}"
+    priv: "*.*:ALL,GRANT"  # TODO this needs to change to something more secure
     update_password: "on_create"

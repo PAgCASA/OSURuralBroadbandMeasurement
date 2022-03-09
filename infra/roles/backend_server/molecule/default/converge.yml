@@ -1,7 +1,11 @@
 ---
 - name: Converge
   hosts: all
+  vars:
+    env_var: "testing"  # this tells the application to skip the DB setup
   tasks:
+    - name: Include group_vars
+      include_vars: "../../../../group_vars/database-creds.enc"
     - name: "Include backend_server"
       include_role:
         name: "backend_server"

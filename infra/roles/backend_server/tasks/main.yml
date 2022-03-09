@@ -48,6 +48,24 @@
   notify:
     - restart server
 
+- name: Create /var/www/services/backend
+  file:
+    path: /usr/lib/systemd/system/PAgCASA-server.service.d/
+    state: directory
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Add DB creds
+  template:
+    src: env.conf
+    dest: /usr/lib/systemd/system/PAgCASA-server.service.d/envConfig.conf
+    owner: root
+    group: root
+    mode: 0600
+  notify:
+    - restart server
+
 # make sure that we actually have an executable to run before we try to start the service
 - name: Flush handlers
   meta: flush_handlers
