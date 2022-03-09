@@ -1,5 +1,5 @@
 - name: build server
-  command: go build -v -o /var/www/services/backend/server backend/cmd/server/main.go
+  command: go build -v -o /usr/local/bin/pagcasa-server backend/cmd/server/main.go
   args:
     chdir: /usr/local/OSURuralBroadbandMeasurement/repo
   notify:
@@ -12,3 +12,10 @@
     state: restarted
     enabled: true
     daemon_reload: true
+
+- name: permissions server
+  file:
+    path: /usr/local/bin/pagcasa-server
+    owner: backend-server
+    group: backend-server
+    mode: "755"

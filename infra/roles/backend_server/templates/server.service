@@ -10,7 +10,7 @@ Type=exec
 Restart=always
 User=backend-server
 WorkingDirectory=/var/www/services/backend
-ExecStart=/var/www/services/backend/server
+ExecStart=/usr/local/bin/pagcasa-server
 
 [Install]
 WantedBy=multi-user.target

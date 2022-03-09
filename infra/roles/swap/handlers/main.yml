@@ -1,0 +1,4 @@
+- name: Make swap file
+  command: "sudo mkswap {{ swap_file_path }}"
+  tags:
+    - swap.file.mkswap

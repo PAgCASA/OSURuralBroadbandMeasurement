@@ -1,0 +1,13 @@
+---
+- hosts: backend_server
+  vars_files:
+    - "./group_vars/database-creds.enc"
+  vars:
+    swap_file_size_mb: 512
+    swap_file_path: /var/swapfile
+  roles:
+    - common
+    - swap
+    - database_server
+    - backend_server
+

@@ -1,4 +1,9 @@
 ---
+- name: Install pip
+  yum:
+    name: python-pip
+    state: present
+
 - name: Make sure pymysql is present
   pip:
     name: pymysql
