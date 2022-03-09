@@ -35,11 +35,12 @@ func main() {
 
 	// Capture connection properties.
 	cfg := mysql.Config{
-		User:   os.Getenv("DBUSER"),
-		Passwd: os.Getenv("DBPASS"),
-		Net:    "tcp",
-		Addr:   os.Getenv("DBHOST") + ":3306",
-		DBName: "PAgCASABroadband",
+		User:                 os.Getenv("DBUSER"),
+		Passwd:               os.Getenv("DBPASS"),
+		Net:                  "tcp",
+		Addr:                 os.Getenv("DBHOST") + ":3306",
+		DBName:               "PAgCASABroadband",
+		AllowNativePasswords: true,
 	}
 	log.Printf("MySQL User: %s", cfg.User)
 

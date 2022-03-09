@@ -1,0 +1,58 @@
+---
+- name: Install pip
+  yum:
+    name: python-pip
+    state: present
+
+- name: Make sure pymysql is present
+  pip:
+    name: pymysql
+    state: present
+
+- name: Install MySQL server from yum
+  yum:
+    name:
+      - mysql-server
+    state: present
+
+- name: Start the MySQL service
+  systemd:
+    name: mysqld
+    state: started
+    enabled: true
+
+- name: remove unsecure password mechanism
+  file:
+    path: /etc/my.cnf.d/mysql-default-authentication-plugin.cnf
+    state: absent
+
+- name: ensure that the root password is present
+  mysql_user:
+    name: 'root'
+    host_all: true
+    password: '{{ mysql_root_password | mandatory }}'
+    state: present
+
+- name: Copy my.cnf file with root password credentials
+  template: src=templates/root.my.cnf dest=/root/.my.cnf owner=root mode=0400
+
+- name: ensure that root can only login from localhost
+  community.mysql.mysql_query:
+    query:
+      - DELETE
+        FROM mysql.user
+        WHERE USER='root'
+          AND HOST NOT IN ('localhost',
+                          '127.0.0.1',
+                          '::1');
+
+- name: Remove the test database
+  mysql_db: name=test state=absent
+
+- name: Create backend server user for mysql
+  mysql_user:
+    user: "pagcasa-backend"
+    host: "%"
+    password: "{{ backend_user_database_password | mandatory }}"
+    priv: "*.*:ALL,GRANT"  # TODO this needs to change to something more secure
+    update_password: "on_create"

@@ -32,10 +32,11 @@
 - name: make sure server exists
   command: "echo 'server file does not exist'"
   args:
-    creates: /var/www/services/backend/server
+    creates: /usr/local/bin/pagcasa-server
   notify:
     - build server
     - restart server
+    - permissions server
 
 # install systemd service
 - name: Install systemd service
@@ -45,6 +46,24 @@
     owner: root
     group: root
     mode: 0644
+  notify:
+    - restart server
+
+- name: Create enviromental config folder
+  file:
+    path: /usr/lib/systemd/system/PAgCASA-server.service.d/
+    state: directory
+    owner: root
+    group: root
+    mode: 0600
+
+- name: Add DB creds
+  template:
+    src: env.conf
+    dest: /usr/lib/systemd/system/PAgCASA-server.service.d/envConfig.conf
+    owner: root
+    group: root
+    mode: 0600
   notify:
     - restart server
 

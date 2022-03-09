@@ -9,21 +9,25 @@
   tags: check
 
 # create node_exporter user
-- name: Create node_exporter user
-  user:
-    name: node_exporter
-    state: present
-    groups:
-      - node_exporter
-
-  # download latest prometheus node_exporter binary as node_exporter
-- name: Download node_exporter binary
-  fetch:
-    src: https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
-    dest: /tmp/node_exporter.tar.gz
-
+# - name: Create node_exporter user
+#  user:
+#    name: node_exporter
+#    state: present
+#    groups:
+#      - node_exporter
+#
+#  # download latest prometheus node_exporter binary as node_exporter
+# - name: Download node_exporter binary
+#  fetch:
+#    src: https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+#    dest: /tmp/node_exporter.tar.gz
+#
 # extract node_exporter binary
-- name: Extract node_exporter binary
-  unarchive:
-    src: /tmp/node_exporter.tar.gz
-    dest: /usr/local/node_exporter
+# - name: Extract node_exporter binary
+#  unarchive:
+#    src: /tmp/node_exporter.tar.gz
+#    dest: /usr/local/node_exporter
+- name: Put SELinux in permissive mode, logging actions that would be blocked.
+  ansible.posix.selinux:
+    policy: targeted
+    state: permissive
