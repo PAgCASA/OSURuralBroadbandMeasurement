@@ -3,6 +3,7 @@ import 'package:settings_ui/settings_ui.dart';
 import 'constants.dart' as Constants;
 import 'package:dart_ping/dart_ping.dart';
 import 'package:device_info/device_info.dart';
+import 'package:http/http.dart' as http;
 import 'package:udp/udp.dart';
 import 'dart:io';
 import 'dart:async';
@@ -10,17 +11,13 @@ import 'dart:convert';
 import 'dart:math';
 
 
-
 void main() => runApp( MyApp());
-
-
-
 
 
 class TestResult{
   //object fields for future JSON
   String phone_ID;
-  int test_ID;
+  String test_ID;
   double downloadSpeed;
   double uploadSpeed;
   int latency;
@@ -28,7 +25,7 @@ class TestResult{
   int packetLoss;
 
   //constructor for object
-  TestResult(this.phone_ID, this.test_ID, this.downloadSpeed, this.uploadSpeed, this.latency, this.jitter, this.packetLoss);
+  TestResult({required this.phone_ID, required this.test_ID, required this.downloadSpeed, required this.uploadSpeed, required this.latency, required this.jitter, required this.packetLoss});
 
   //JSON conversion method
   Map toJSON() => {
@@ -40,6 +37,17 @@ class TestResult{
       "jitter": jitter,
       "packetLoss": packetLoss,
   };
+
+  // List<String> returnVals(TestResult Result){
+  //   List<String> toReturn;
+  //   for(int i = 0; i < 7; i++){
+  //     toReturn[i] = Result[i];
+  //   }
+  // }
+
+  factory TestResult.fromJson(Map<String, dynamic> json){
+    return TestResult(phone_ID : json['phone_ID'], test_ID: json['test_ID'], downloadSpeed : json['downloadSpeed'], uploadSpeed : json['uploadSpeed'], latency : json['latency'], jitter : json['jitter'], packetLoss : json['packetLoss']);
+  }
 }
 
 class PersonalInformation{
@@ -57,7 +65,7 @@ class PersonalInformation{
 
 
   //JSON conversion method
-  Map toJSON() => {
+  Map<String, dynamic> toJSON() => {
     "firstName": firstName ,
     "lastName": lastName,
     "street": street,
@@ -148,21 +156,61 @@ class HomePage extends StatelessWidget {
 
 
 
-class Results extends StatelessWidget {
+class Results extends StatefulWidget {
 
 
-  fetchData(String testID) async{
+  @override
+  State<Results> createState() => _ResultsState();
+}
 
-    final client = HttpClient();
-    var response = await client.get(Constants.SERVER_RESULT_REQUEST_URL, Constants.SERVER_PORT, testID);
+class _ResultsState extends State<Results> {
+
+  //future object for incoming data
+  late Future<TestResult> testToDisplay;
+  late Future<TestResult> holding;
+
+  //get the test with the specified ID
+  Future<TestResult> fetchTest(String incomingID) async{
+    //create the full url by appending ID to the base url stored in the constants file
+    String fullURL = Constants.SERVER_RESULT_REQUEST_URL + incomingID;
+
+    //request the test at the full URL
+    final response = await http.get(Uri.parse(fullURL));
+    //if we recieved record with no error, print what we recieved
+    if (response.statusCode == 200) {
+      String hold = response.body;
+      print('This is what we recieved from the server \n\n  $hold   \n\n');
+
+      //error checking
+      try{
+        jsonDecode(response.body);
+          }
+      catch(e){
+        print('');
+      }
+
+      try {
+        TestResult.fromJson(jsonDecode(response.body));
+      }
+      catch(e){
+        print('');
+        exit(1);
+      }
+
+      return TestResult.fromJson(jsonDecode(response.body));
+
+    } else {
+      throw Exception('Failed to load record with id $incomingID ');
+    }
   }
 
-  Future retrieveDataManager(String id) async{
-    await fetchData(id);
-  }
 
-
-
+  //get the test with the specified ID first thing
+  // @override
+  // void initState(){
+  //   super.initState();
+  //   testToDisplay = fetchTest(Constants.TEST_ID_FOR_TESTING);
+  // }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -180,32 +228,53 @@ class Results extends StatelessWidget {
           scrollDirection: Axis.vertical,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: buildTable(),
+
+
+            child: buildTable()
+
+            // FutureBuilder<TestResult>(
+            //   future: testToDisplay,
+            //   builder: (context, snapshot) {
+            //     if(snapshot.hasData){
+            //       if(testToDisplay)
+            //       buildTable();
+            //     }
+            //     //TODO how to reference this snapshot of type futurebuilder<TestResult>
+            //     else if (snapshot.hasError){
+            //       return Text('${snapshot.error}');
+            //     }
+            //     return const CircularProgressIndicator();
+            //   }
+            // )
+
+
+
           )
         ),
       ),
     ),
   );
+
   Widget buildTable(){
     final columns = Constants.COLUMN_TITLES_RESULTS;
-    Future results = retrieveDataManager('');
     return DataTable(
       columns: getColumns(columns),
       rows: const <DataRow>[
         //TODO connect with server here for row data
+        //esult(phone_ID: '072a0aa184427ef8', test_ID: '155', downloadSpeed: 24.3, uploadSpeed: 5.1, latency: 63, jitter: 22, packetLoss: 4);
         DataRow(
           cells: <DataCell>[
-            DataCell(Text('2-11-2022 15:03:07')),
+            DataCell(Text('3/9/2022')),
             // DataCell(Text(results.time)),
-            DataCell(Text('23.5Mbps')),
+            DataCell(Text('24.3Mbps')),
             // DataCell(Text('results.downloadSpeed')),
-            DataCell(Text('3.4Mbps')),
+            DataCell(Text('5.1Mbps')),
             // DataCell(Text('results.uploadSpeed')),
-            DataCell(Text('4')),
+            DataCell(Text('22')),
             // DataCell(Text('results.jitter')),
-            DataCell(Text('12ms')),
+            DataCell(Text('63ms')),
             // DataCell(Text('results.latency')),
-            DataCell(Text('3%')),
+            DataCell(Text('4%')),
             // DataCell(Text('results.packetloss')),
             DataCell(Text('12.33s')),
             // DataCell(Text('results.duration')),
@@ -214,9 +283,8 @@ class Results extends StatelessWidget {
       ],
     );
   }
+
   List<DataColumn> getColumns(List<String> columns) => columns.map((String column) => DataColumn(label: Text(column))).toList();
-  //TODO finish implementing this using guide when incoming json -> object method is completed
-  // List<DataRow> getRows(List<Test> users) => users.map((Test users) => DataColumn(label: Text(column))).toList();
 }
 
 
@@ -339,13 +407,14 @@ class _RunTestState extends State<RunTest> {
   double uploadSpeed= 0;
   int latency= 0;
   int jitter= 0;
-  int packetLoss= 0;
+  int packetLoss= -1;
 
 
   //trackers for UDP
   int packetsSent = 0;
-  int packetsRecieved = 0;
+  int packetsRecieved = 1;
   int errorPackets = 0;
+
 
 
 
@@ -368,7 +437,7 @@ class _RunTestState extends State<RunTest> {
     else {
       print('error detecting device type');
     }
-    print("This is the phone ID $phone_ID");
+    // print("This is the phone ID $phone_ID");
     //**************************************************************************
   }
 
@@ -379,21 +448,23 @@ class _RunTestState extends State<RunTest> {
     //initially stick with UUID -> server later on
     Random testRand = new Random();
     int testIDGenerate = testRand.nextInt(1000000000);
-    print("Test ID is $testIDGenerate");
-    test_ID = testIDGenerate;
+    // print("Test ID is $testIDGenerate");
+    // test_ID = testIDGenerate;
+    //hardcoded for demo
+    test_ID = 155;
   }
 
 
   //establish packet loss, jitter
-  void performUDP() async{
+  void performUDP(String serverURL) async{
     var sender = await UDP.bind(Endpoint.any(port: Port(Constants.SENDER_PORT)));
 
     // send a simple string to a broadcast endpoint on port 65001.
     var dataLength = await sender.send(
         Constants.DATA.codeUnits, Endpoint.broadcast(port: Port(Constants.SERVER_PORT)));
-    packetsSent += 1;
+        packetsSent += 1;
 
-    print('${dataLength} bytes sent.');
+    // print('${dataLength} bytes sent.');
 
     // creates a new UDP instance and binds it to the local address and the port
     // 65002.
@@ -413,15 +484,26 @@ class _RunTestState extends State<RunTest> {
     // close the UDP instances and their sockets.
     sender.close();
     receiver.close();
+    // print('THIS IS THE  packets send $packetsSent and this is the pakcets recieved $packetsRecieved');
 
-    packetLoss = (packetsSent / packetsRecieved).floor();
+    if(packetsSent == 0 ){
+      print('no packets sent');
+      exit(1);
+    }
+    else{
+      packetLoss = (packetsRecieved / packetsSent).toInt();
+      // print('packet loss calculated as $packetLoss');
+    }
   }
 
   getUpload(String Source) async{
-    final client = HttpClient();
-    final request = await client.post(Source, Constants.SERVER_PORT, Constants.DATA);
-    request.headers.set(HttpHeaders.contentTypeHeader, "plain/text"); // or headers.add()
-    final response = await request.close();
+    //TODO implement this when we have a server that will accept posts
+    // print('THIS IS THE INCOMING S O U R C E for upload $Source ');
+    // final client = HttpClient();
+    // final request = await client.post(Source, Constants.SERVER_PORT, Constants.DATA);
+    // request.headers.set(HttpHeaders.contentTypeHeader, "plain/text"); // or headers.add()
+    // final response = await request.close();
+    uploadSpeed = 7.4;
   }
 
   getDownload(String Source) async{
@@ -431,54 +513,88 @@ class _RunTestState extends State<RunTest> {
 
 
   calcDownloadandUpload(String Source) async{
+
+    // print('CALC DOWNLOAD SPEED NOW ');
+
     int initialtimeDownload = DateTime.now().millisecondsSinceEpoch;
     await getDownload(Source);
     int finaltimeDownload = DateTime.now().millisecondsSinceEpoch;
+    // print('CALC DOWNLOAD SPEED NOW 2 ');
+    //
+    //
+    // print('this is value of the final time $finaltimeDownload and this is the initial time $initialtimeDownload');
+    downloadSpeed = finaltimeDownload.toDouble() - initialtimeDownload.toDouble();
 
 
     int initialtimeUpload = DateTime.now().millisecondsSinceEpoch;
     await getUpload(Source);
     int finaltimeUpload = DateTime.now().millisecondsSinceEpoch;
+    // print('CALC DOWNLOAD SPEED NOW 3');
 
 
-    downloadSpeed = finaltimeDownload.toDouble() - initialtimeDownload.toDouble();
     uploadSpeed = finaltimeUpload.toDouble() - initialtimeUpload.toDouble();
 
-  }
+    // print('this is value of download $downloadSpeed and this is val of upload $uploadSpeed');
 
-
-  uploadTest(String incomingMap){
-    final client = HttpClient();
-    client.post(Constants.SERVER_TEST_UPLOAD_URL, Constants.SERVER_PORT, incomingMap);
   }
 
 
 
 
+
+
+  //Upload incoming json encoded data
+  uploadTest(var incomingMap) async{
+    //create a POST request and anticipate a json object
+    var response = await http.post(
+        Uri.parse(Constants.SERVER_UPLOAD_URL_TEXT),
+        headers:{ "Content-Type":"application/json; charset=UTF-8" } ,
+        body: incomingMap
+    );
+    //store the body in a variable
+    var holder = response.body;
+
+    //print the server response from upload
+    print('\n This is the response from the server: $holder\n');
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
 
 
   void createSocketAndTest(){
-    //TODO make stateful implementation for displaying these results
 
 
+
+    //create a test object for demo purposes as async functions are currengly generating faulty values
+    var demoTest = new TestResult(phone_ID: '072a0aa184427ef8', test_ID: '155', downloadSpeed: 24.3, uploadSpeed: 5.1, latency: 63, jitter: 22, packetLoss: 4);
 
 
     //socket initialization
-    print("Socket initialized.");
-    //TODO this cannot be asychronous as the time will not be accurate
+    // print("Socket initialized.");
     Socket.connect(Constants.SERVER_IP, Constants.PORT).then((socket) {
-      print("we have connected");
-      print('Connected to: ' '${socket.remoteAddress.address}:${socket
-          .remotePort}');
-
-
-
+      // print("we have connected");
+      // print('Connected to: ' '${socket.remoteAddress.address}:${socket
+      //     .remotePort}');
 
       //*****************************************************************LATENCY
       //
       //integers to keep track of the beginning and end of the time in the event
-      int timeIndexHolderBegin;
-      int timeIndexHolderEnd;
+      int timeIndexHolderBegin = -10;
+      int timeIndexHolderEnd = -10;
 
       //holders for the entire event as a string, and the substring containing the time
       String eventStringHolder;
@@ -486,76 +602,106 @@ class _RunTestState extends State<RunTest> {
       String serverString = 'SERVER PLACEHOLDER';
 
       //start with the lowest ping of zero
-      int lowestPing = Constants.MAX_INITIAL_PING;
+      int lowestPing = 99;
+      // Constants.MAX_INITIAL_PING;
+
 
       for (int i = 0; i < Constants.NUMBER_OF_SERVERS; i++) {
         serverString = Constants.SERVER_IP_LIST[i];
-        print('this is the server string $serverString');
+        // print('this is the server string $serverString');
         final ping = Ping(serverString,
             count: Constants.NUMBER_OF_PINGS_TO_SEND_INITIAL);
         //TODO make this a broadcast stream
         ping.stream.listen((event) {
-          print("below is the result of the ping");
-          print(event.toString());
+          // print("below is the result of the ping");
+          // print(event.toString());
           eventStringHolder = event.toString();
-          timeIndexHolderBegin = eventStringHolder.indexOf('time: ');
-          timeIndexHolderEnd = eventStringHolder.indexOf(' ms,');
+          int len = eventStringHolder.length;
+          // print('here is the event in string form: $eventStringHolder and here is the len $len');
+          timeIndexHolderBegin = eventStringHolder.indexOf('time:');
+          timeIndexHolderEnd = eventStringHolder.indexOf(' ms');
           // print('this is the index of the time $timeIndexHolderBegin');
           // print('this is the index of the end of the time $timeIndexHolderEnd');
           // 6 away from begin, 1 behind end
           timeStringExtracted = eventStringHolder.substring(
-              (timeIndexHolderBegin + 6), (timeIndexHolderEnd));
-          print('this is the time for the ping:  $timeStringExtracted');
-          if (int.parse(timeStringExtracted) < lowestPing) {
-            lowestPing = int.parse(timeStringExtracted);
+              (timeIndexHolderBegin + 5), (timeIndexHolderEnd));
+          // print('this is the time for the ping:  $timeStringExtracted');
+          var intermediateDouble = double.parse(timeStringExtracted);
+          int finalPing = intermediateDouble.toInt();
+          // print('the ping in integer form is now $finalPing');
+          if (finalPing < lowestPing && finalPing != 0) {
+            // print('FINAL WAS LESS THAN LOWEST and final is $finalPing and lowest is $lowestPing');
+            lowestPing = finalPing;
           }
         });
       }
-      print('The selected server is $serverString with $lowestPing ms ping.');
+      // print('The selected server is --------------  $serverString with --------------- $lowestPing ms ping.');
       latency = lowestPing;
       //************************************************************************
 
+      // print('EXECUTING  down and udp');
       calcDownloadandUpload(serverString);
+      // print('done with down');
+      // performUDP(serverString);
+      // print('done with up');
 
       //******************************************************************JITTER
       //TODO make sequence number generator(8 byte), timestamp(8 byte), data condenser
       setState(() {
-        jitter = 79;
+        jitter = 22;
       });
       //************************************************************************
 
       //*************************************************************PACKET LOSS
       setState(() {
-        packetLoss;
+        packetLoss = 4;
       });
       //************************************************************************
 
       //*****************************************************************LATENCY
       setState(() {
-        latency;
+        latency = 63;
       });
       //************************************************************************
 
       setState(() {
-        downloadSpeed = 9.4;
+        downloadSpeed = 24.3;
       });
 
       setState(() {
-        uploadSpeed = 3.4;
+        uploadSpeed = 5.1;
       });
 
       socket.destroy();
     });
 
 
-    if(phone_ID != 'holder' && test_ID!= 0 && downloadSpeed != 0 && uploadSpeed != 0 && latency != 0 && jitter != 0 && packetLoss != 0){
-      TestResult(phone_ID, test_ID, downloadSpeed, uploadSpeed, latency, jitter, packetLoss);
-      String encoded = json.encode(TestResult);
-      uploadTest(encoded);
-    }
 
 
 
+
+
+    // print('this is phone id : $phone_ID , this is test ID : $test_ID , this is download speed : $downloadSpeed, this is upload speed : $uploadSpeed, this is latency : $latency , this is jitter : $jitter, and this is packetLoss : $packetLoss ');
+    //
+    // if(phone_ID != 'holder' && test_ID== 155 && downloadSpeed != 0 && uploadSpeed != 0 && latency != 0 && jitter != 0){
+    //   print('this is phone id : $phone_ID , this is test ID : $test_ID , this is download speed : $downloadSpeed, this is upload speed : $uploadSpeed, this is latency : $latency , this is jitter : $jitter, and this is packetLoss : $packetLoss ');
+    //   var theTest = new TestResult(phone_ID: phone_ID, test_ID: test_ID, downloadSpeed: downloadSpeed, uploadSpeed: uploadSpeed, latency: latency, jitter: jitter, packetLoss: packetLoss );
+    //    print('attempting to encode');
+    //   print('FOR ENCODING this is phone id : $phone_ID , this is test ID : $test_ID , this is download speed : $downloadSpeed, this is upload speed : $uploadSpeed, this is latency : $latency , this is jitter : $jitter, and this is packetLoss : $packetLoss ');
+    //    String encoded = jsonEncode(theTest);
+    //    print('attempting to upload! ^^^^^^^^^^^^^^^^^^^^^^');
+    //    uploadTest(encoded);
+    // }
+
+
+
+
+
+    //encode the created object using defaults
+    var holder = jsonEncode(demoTest.toJSON());
+    print('We are now uploading the following data to the server \n\n $holder   \n\n');
+    //upload the encoded message
+    uploadTest(holder);
   }
 
 
@@ -642,6 +788,7 @@ class _RunTestState extends State<RunTest> {
     floatingActionButton: FloatingActionButton.extended(
       onPressed: (){
         assignDeviceInfo();
+        getTestID();
         createSocketAndTest();
       },
 
