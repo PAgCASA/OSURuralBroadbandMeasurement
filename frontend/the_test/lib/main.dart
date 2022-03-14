@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:the_test/utils.dart' as utils;
 import 'constants.dart' as Constants;
 import 'package:dart_ping/dart_ping.dart';
 import 'package:device_info/device_info.dart';
@@ -46,7 +47,7 @@ class TestResult{
   // }
 
   factory TestResult.fromJson(Map<String, dynamic> json){
-    return TestResult(phone_ID : json['phone_ID'], test_ID: json['test_ID'], downloadSpeed : json['downloadSpeed'], uploadSpeed : json['uploadSpeed'], latency : json['latency'], jitter : json['jitter'], packetLoss : json['packetLoss']);
+    return TestResult(phone_ID : json['PhoneID'], test_ID: json['TestID'], downloadSpeed : json['DownloadSpeed'] + 0.0, uploadSpeed : json['UploadSpeed'] + 0.0, latency : json['Latency'] as int, jitter : json['Jitter'] as int, packetLoss : json['PacketLoss'] as int);
   }
 }
 
@@ -166,39 +167,35 @@ class Results extends StatefulWidget {
 class _ResultsState extends State<Results> {
 
   //future object for incoming data
-  late Future<TestResult> testToDisplay;
-  late Future<TestResult> holding;
+  late Future<List<TestResult>> testsToDisplay;
 
   //get the test with the specified ID
-  Future<TestResult> fetchTest(String incomingID) async{
+  Future<List<TestResult>> fetchTests(Future<String> incomingID) async{
     //create the full url by appending ID to the base url stored in the constants file
-    String fullURL = Constants.SERVER_RESULT_REQUEST_URL + incomingID;
+    String fullURL = Constants.SERVER_RESULT_REQUEST_URL + await incomingID;
 
     //request the test at the full URL
     final response = await http.get(Uri.parse(fullURL));
     //if we recieved record with no error, print what we recieved
     if (response.statusCode == 200) {
-      String hold = response.body;
-      print('This is what we recieved from the server \n\n  $hold   \n\n');
+      String body = response.body;
+      print('This is what we received from the server \n\n  $body   \n\n');
 
-      //error checking
-      try{
-        jsonDecode(response.body);
-          }
-      catch(e){
-        print('');
+      var json = jsonDecode(response.body);
+      var rows = json['Results'];
+
+      List<TestResult> results = List.empty(growable: true);
+
+      if(rows != null) {
+        // this is a really ugly way of looping through the results array and
+        // turning them into test results
+        for (var i = 0; i < (rows as List).length; i++) {
+          var result = TestResult.fromJson(rows[i] as Map<String, dynamic>);
+          results.insert(i, result);
+        }
       }
 
-      try {
-        TestResult.fromJson(jsonDecode(response.body));
-      }
-      catch(e){
-        print('');
-        exit(1);
-      }
-
-      return TestResult.fromJson(jsonDecode(response.body));
-
+      return results;
     } else {
       throw Exception('Failed to load record with id $incomingID ');
     }
@@ -206,11 +203,11 @@ class _ResultsState extends State<Results> {
 
 
   //get the test with the specified ID first thing
-  // @override
-  // void initState(){
-  //   super.initState();
-  //   testToDisplay = fetchTest(Constants.TEST_ID_FOR_TESTING);
-  // }
+  @override
+  void initState(){
+    super.initState();
+    testsToDisplay = fetchTests(utils.getDeviceID());
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -230,22 +227,20 @@ class _ResultsState extends State<Results> {
             scrollDirection: Axis.horizontal,
 
 
-            child: buildTable()
-
-            // FutureBuilder<TestResult>(
-            //   future: testToDisplay,
-            //   builder: (context, snapshot) {
-            //     if(snapshot.hasData){
-            //       if(testToDisplay)
-            //       buildTable();
-            //     }
-            //     //TODO how to reference this snapshot of type futurebuilder<TestResult>
-            //     else if (snapshot.hasError){
-            //       return Text('${snapshot.error}');
-            //     }
-            //     return const CircularProgressIndicator();
-            //   }
-            // )
+            child: FutureBuilder<List<TestResult>>(
+              future: testsToDisplay,
+              builder: (context, snapshot) {
+                var data = snapshot.data;
+                if(snapshot.hasData && data != null){
+                  return buildTable(data);
+                }
+                //TODO how to reference this snapshot of type futurebuilder<TestResult>
+                else if (snapshot.hasError){
+                  return Text('${snapshot.error}');
+                }
+                return const CircularProgressIndicator();
+              }
+            )
 
 
 
@@ -255,32 +250,21 @@ class _ResultsState extends State<Results> {
     ),
   );
 
-  Widget buildTable(){
-    final columns = Constants.COLUMN_TITLES_RESULTS;
+  Widget buildTable(List<TestResult> results){
+    const columns = Constants.COLUMN_TITLES_RESULTS;
     return DataTable(
       columns: getColumns(columns),
-      rows: const <DataRow>[
-        //TODO connect with server here for row data
-        //esult(phone_ID: '072a0aa184427ef8', test_ID: '155', downloadSpeed: 24.3, uploadSpeed: 5.1, latency: 63, jitter: 22, packetLoss: 4);
-        DataRow(
-          cells: <DataCell>[
-            DataCell(Text('3/9/2022')),
-            // DataCell(Text(results.time)),
-            DataCell(Text('24.3Mbps')),
-            // DataCell(Text('results.downloadSpeed')),
-            DataCell(Text('5.1Mbps')),
-            // DataCell(Text('results.uploadSpeed')),
-            DataCell(Text('22')),
-            // DataCell(Text('results.jitter')),
-            DataCell(Text('63ms')),
-            // DataCell(Text('results.latency')),
-            DataCell(Text('4%')),
-            // DataCell(Text('results.packetloss')),
-            DataCell(Text('12.33s')),
-            // DataCell(Text('results.duration')),
-          ],
-        ),
-      ],
+      rows: results.map((result) => DataRow(
+        cells: <DataCell>[
+          DataCell(Text('TODO DATE')),
+          DataCell(Text(result.downloadSpeed.toString())),
+          DataCell(Text(result.uploadSpeed.toString())),
+          DataCell(Text(result.jitter.toString())),
+          DataCell(Text(result.latency.toString())),
+          DataCell(Text(result.packetLoss.toString())),
+          DataCell(Text("TODO DURATION")),
+        ],
+      ),).toList()
     );
   }
 
@@ -293,102 +277,18 @@ class _ResultsState extends State<Results> {
 
 
 class Settings extends StatefulWidget {
-  // Settings({Key key, this.title}) : super(key: key);
-  // final String title;
+  const Settings({Key? key}) : super(key: key);
+
   @override
   _SettingsState createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
-  bool isSwitched = false;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      // ),
-      // body: SettingsList(
-      //   sections: [
-      //     SettingsSection(
-      //       title: Text('Section 1'),
-      //       tiles: [
-      //         SettingsTile(
-      //           title: Text('Language'),
-      //           leading: Icon(Icons.language),
-      //           onPressed: (BuildContext context) {},
-      //         ),
-      //         SettingsTile.switchTile(
-      //           title: 'Use System Theme',
-      //           leading: Icon(Icons.phone_android),
-      //           initia: isSwitched,
-      //           onToggle: (value) {
-      //             setState(() {
-      //               isSwitched = value;
-      //             });
-      //           },
-      //         ),
-      //       ],
-      //     ),
-      //     SettingsSection(
-      //       titlePadding: EdgeInsets.all(20),
-      //       title: 'Section 2',
-      //       tiles: [
-      //         SettingsTile(
-      //           title: 'Security',
-      //           subtitle: 'Fingerprint',
-      //           leading: Icon(Icons.lock),
-      //           onPressed: (BuildContext context) {},
-      //         ),
-      //         SettingsTile.switchTile(
-      //           title: 'Use fingerprint',
-      //           leading: Icon(Icons.fingerprint),
-      //           switchValue: true,
-      //           onToggle: (value) {},
-      //         ),
-      //       ],
-      //     ),
-      //   ],
-      // ),
-    );
+    return const Text("Nothing");
   }
 }
-// class Settings extends StatelessWidget {
-//   //https://pub.dev/packages/settings_ui
-//
-//   @override
-//   Widget build(BuildContext context) => Scaffold(
-//     appBar: AppBar(
-//       title: const Text('Settings'),
-//       centerTitle: true,
-//       backgroundColor: Colors.green[700],
-//     ),
-//     SettingsList(
-//       sections: [
-//         SettingsSection(
-//           title: Text('Common'),
-//           tiles: <SettingsTile>[
-//             SettingsTile.navigation(
-//               leading: Icon(Icons.language),
-//               title: Text('Language'),
-//               value: Text('English'),
-//             ),
-//             SettingsTile.switchTile(
-//               onToggle: (value) {},
-//               initialValue: true,
-//               leading: Icon(Icons.format_paint),
-//               title: Text('Enable custom theme'),
-//             ),
-//           ],
-//         ),
-//       ],
-//     ),
-//   );
-// }
-
-
-
-
-
 
 
 
@@ -414,45 +314,6 @@ class _RunTestState extends State<RunTest> {
   int packetsSent = 0;
   int packetsRecieved = 1;
   int errorPackets = 0;
-
-
-
-
-
-  Future<void> assignDeviceInfo() async{
-    //**********************************************************PHONE ID SECTION
-    //uses discontinued library https://pub.dev/packages/device_info
-    //TODO look into another device ID finding library as this one is out of date
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      phone_ID = androidInfo.androidId.toString();
-    }
-    //TODO use a different identifier for iphones as there is no build in method for the library
-    else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      phone_ID = iosInfo.identifierForVendor.toString();
-    }
-    else {
-      print('error detecting device type');
-    }
-    // print("This is the phone ID $phone_ID");
-    //**************************************************************************
-  }
-
-
-
-  void getTestID(){
-    //TODO get the test ID via the server
-    //initially stick with UUID -> server later on
-    Random testRand = new Random();
-    int testIDGenerate = testRand.nextInt(1000000000);
-    // print("Test ID is $testIDGenerate");
-    // test_ID = testIDGenerate;
-    //hardcoded for demo
-    test_ID = 155;
-  }
 
 
   //establish packet loss, jitter
@@ -572,15 +433,20 @@ class _RunTestState extends State<RunTest> {
 
 
 
-  
-
-
-  void createSocketAndTest(){
 
 
 
+  void createSocketAndTest() async{
     //create a test object for demo purposes as async functions are currengly generating faulty values
-    var demoTest = new TestResult(phone_ID: '072a0aa184427ef8', test_ID: '155', downloadSpeed: 24.3, uploadSpeed: 5.1, latency: 63, jitter: 22, packetLoss: 4);
+    var demoTest = TestResult(
+        phone_ID: await utils.getDeviceID(),
+        test_ID: '155',
+        downloadSpeed: 24.3,
+        uploadSpeed: 5.1,
+        latency: 63,
+        jitter: 22,
+        packetLoss: 4
+    );
 
 
     //socket initialization
@@ -727,9 +593,8 @@ class _RunTestState extends State<RunTest> {
 
         Center(
           child: DataTable(
-            columns: <DataColumn>[
+            columns: const <DataColumn>[
               DataColumn(
-
                 label: Text(
                   'Metric',
                   style: TextStyle(fontStyle: FontStyle.italic),
@@ -786,15 +651,15 @@ class _RunTestState extends State<RunTest> {
 
 
     floatingActionButton: FloatingActionButton.extended(
-      onPressed: (){
-        assignDeviceInfo();
-        getTestID();
+      onPressed: () async {
+        phone_ID = await utils.getDeviceID();
+        test_ID = utils.getTestID();
         createSocketAndTest();
       },
 
       // onPressed: () => (createSocketAndTest()),
-      label: Text('Begin Test'),
-      icon: Icon(Icons.compass_calibration_sharp),
+      label: const Text('Begin Test'),
+      icon: const Icon(Icons.compass_calibration_sharp),
 
     ),
     floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
