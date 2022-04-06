@@ -11,10 +11,12 @@ const int MAX_INITIAL_PING = 9007199254740991;
 
 
 //Homepage
-
 const String HOMEPAGE_IMAGE_URL = 'https://images.pexels.com/photos/53504/grass-rush-juicy-green-53504.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500';
 
 
+//Image urls
+//https://media0.giphy.com/media/qGVrkvB0rDFcY/giphy.gif?cid=790b7611b4842f11a8e50307e6a08bf507c28b8193e5386f&rid=giphy.gif&ct=g
+//https://media2.giphy.com/media/3og0ILgFOEXIL8Bsn6/giphy.gif?cid=790b76118a41395f76dafb1d468c8320127c688f1260adbb&rid=giphy.gif&ct=g
 
 //Results
 const COLUMN_TITLES_RESULTS = ['Date', 'Download', 'Upload', 'Jitter', 'Latency', 'Packet Loss', 'Total Test Duration'];
