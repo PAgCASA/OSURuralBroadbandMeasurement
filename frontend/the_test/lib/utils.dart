@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:device_info/device_info.dart';
 
 Future<String> getDeviceID() async{
-  //uses discontinued library https://pub.dev/packages/device_info
   //TODO look into another device ID finding library as this one is out of date
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   var phoneID = "";
@@ -26,13 +25,9 @@ Future<String> getDeviceID() async{
   return phoneID;
 }
 
-int getTestID(){
-  //TODO get the test ID via the server
-  //initially stick with UUID -> server later on
+int getTestID(String PhoneID){
+  //TODO do we want to have me send a phone ID and backend
+  //TODO returns a valid test ID to use, or would it be easier to return all the used test Ids and have frontend generate test ID
   Random testRand = Random();
-  int testIDGenerate = testRand.nextInt(1000000000);
-  // print("Test ID is $testIDGenerate");
-  // test_ID = testIDGenerate;
-  //hardcoded for demo
-  return 155;
+  return 0;
 }
