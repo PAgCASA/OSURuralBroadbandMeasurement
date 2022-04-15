@@ -7,15 +7,6 @@ import (
 	"net/http"
 )
 
-func main() {
-	tractId, err := GetTractFromLocation(-76.92744, 38.845985)
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	fmt.Println(tractId)
-}
-
 func GetTractFromLocation(lat float64, lon float64) (string, error) {
 	type GeoResponse struct {
 		Result struct {
@@ -29,7 +20,7 @@ func GetTractFromLocation(lat float64, lon float64) (string, error) {
 
 	geoApi := "https://geocoding.geo.census.gov/geocoder/geographies/coordinates?x=%f&y=%f&benchmark=Public_AR_Census2020&vintage=Census2020_Census2020&layers=10&format=json"
 
-	url := fmt.Sprintf(geoApi, lat, lon)
+	url := fmt.Sprintf(geoApi, lon, lat)
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", err
