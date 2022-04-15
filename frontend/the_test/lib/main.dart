@@ -693,12 +693,12 @@ class NavBarPrimary extends StatefulWidget {
 class _NavBarPrimaryState extends State<NavBarPrimary> {
   int _selectedIndex = 0;
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
-
   // //TODO put these widgets in separate files
+  var buttonList = <Widget>[];
 
-  final buttonList = <Widget>[HomePage(), RunTest(), Results(), Settings()];
+  _NavBarPrimaryState() {
+    buttonList = <Widget>[HomePage(), RunTest(onPressed), Results(), Settings()];
+  }
 
   void onPressed(int index) {
     setState(() {
