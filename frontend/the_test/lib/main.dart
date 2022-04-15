@@ -443,7 +443,7 @@ class _SettingsState extends State<Settings> {
                           InputDecoration(labelText: "Enter your first name"),
                       validator: (value) {
                         if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value!)) {
+                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
                           return "Please enter a valid first name";
                         } else {
                           return null;
@@ -456,7 +456,7 @@ class _SettingsState extends State<Settings> {
                           InputDecoration(labelText: "Enter your last name"),
                       validator: (value) {
                         if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value!)) {
+                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
                           return "Please enter a valid last name";
                         } else {
                           return null;
@@ -469,7 +469,7 @@ class _SettingsState extends State<Settings> {
                           InputDecoration(labelText: "Enter your street name"),
                       validator: (value) {
                         if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value!)) {
+                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
                           return "Please enter a valid street name";
                         } else {
                           return null;
@@ -482,7 +482,7 @@ class _SettingsState extends State<Settings> {
                           InputDecoration(labelText: "Enter your postal code"),
                       validator: (value) {
                         if (value!.isEmpty ||
-                            !RegExp(r'^[0-9]+$').hasMatch(value!)) {
+                            !RegExp(r'^[0-9]+$').hasMatch(value)) {
                           return "Please enter a valid postal code";
                         } else {
                           return null;
@@ -495,7 +495,7 @@ class _SettingsState extends State<Settings> {
                           labelText: "Enter your city or town name"),
                       validator: (value) {
                         if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value!)) {
+                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
                           return "Please enter a valid city or town name";
                         } else {
                           return null;
@@ -508,7 +508,7 @@ class _SettingsState extends State<Settings> {
                           InputDecoration(labelText: "Enter your state"),
                       validator: (value) {
                         if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value!)) {
+                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
                           return "Please enter a valid state name";
                         } else {
                           return null;

@@ -43,6 +43,8 @@ dependencies:
   udp: ^5.0.1
   location_permissions: ^3.0.0
   flutter_form_builder: ^7.1.1
+  ndt_7_dart:
+    git: https://github.com/PAgCASA/ndt7-client-dart.git
 
 
 dev_dependencies:

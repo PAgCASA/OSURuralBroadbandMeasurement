@@ -31,3 +31,7 @@ int getTestID(String PhoneID){
   Random testRand = Random();
   return 0;
 }
+
+double bitsPerSecToMegaBitsPerSec(int bps) {
+  return bps * 8 / 1000 / 1000;
+}

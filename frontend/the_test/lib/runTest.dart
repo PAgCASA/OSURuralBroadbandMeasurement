@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:settings_ui/settings_ui.dart';
 import 'package:the_test/utils.dart' as utils;
 import 'constants.dart' as Constants;
 import 'package:dart_ping/dart_ping.dart';
-import 'package:device_info/device_info.dart';
 import 'package:http/http.dart' as http;
 import 'package:udp/udp.dart';
 import 'dart:io';
-import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
+import 'package:ndt_7_dart/exports.dart' as NDT;
 
 import 'main.dart';
-
-
 
 class RunTest extends StatefulWidget {
   @override
@@ -22,44 +17,45 @@ class RunTest extends StatefulWidget {
 
 class _RunTestState extends State<RunTest> {
   //initialize holder variables for storing results from each of the sections
-  String phone_ID = 'holder';
-  int test_ID = 0;
-  double downloadSpeed = 0;
-  double uploadSpeed = 0;
-  int latency = 0;
-  int jitter = 0;
+  String phone_ID = '';
+  int test_ID = -1;
+  double downloadSpeed = -1;
+  double uploadSpeed = -1;
+  int latency = -1;
+  int jitter = -1;
   int packetLoss = -1;
 
   //trackers for UDP
   int packetsSent = 0;
-  int packetsRecieved = 1;
+  int packetsReceived = 1;
   int errorPackets = 0;
 
   //establish packet loss, jitter
   void performUDP(String serverURL) async {
     var sender =
-    await UDP.bind(Endpoint.any(port: Port(Constants.SENDER_PORT)));
+        await UDP.bind(Endpoint.any(port: const Port(Constants.SENDER_PORT)));
 
     // send a simple string to a broadcast endpoint on port 65001.
     var dataLength = await sender.send(Constants.DATA.codeUnits,
-        Endpoint.broadcast(port: Port(Constants.SERVER_PORT)));
+        Endpoint.broadcast(port: const Port(Constants.SERVER_PORT)));
     packetsSent += 1;
 
     // print('${dataLength} bytes sent.');
 
     // creates a new UDP instance and binds it to the local address and the port
     // 65002.
-    var receiver =
-    await UDP.bind(Endpoint.loopback(port: Port(Constants.RECIEVER_PORT)));
+    var receiver = await UDP
+        .bind(Endpoint.loopback(port: const Port(Constants.RECIEVER_PORT)));
 
     // receiving\listening
     receiver
         .asStream(
-        timeout: Duration(seconds: Constants.ACCEPTED_RESPONSE_WINDOW))
+            timeout:
+                const Duration(seconds: Constants.ACCEPTED_RESPONSE_WINDOW))
         .listen((datagram) {
       var str = String.fromCharCodes(datagram!.data);
       if (str == Constants.DATA) {
-        packetsRecieved += 1;
+        packetsReceived += 1;
       } else {
         errorPackets += 1;
       }
@@ -74,47 +70,9 @@ class _RunTestState extends State<RunTest> {
       print('no packets sent');
       exit(1);
     } else {
-      packetLoss = (packetsRecieved / packetsSent).toInt();
+      packetLoss = (packetsReceived / packetsSent).toInt();
       // print('packet loss calculated as $packetLoss');
     }
-  }
-
-  getUpload(String Source) async {
-    //TODO implement this when we have a server that will accept posts
-    // print('THIS IS THE INCOMING S O U R C E for upload $Source ');
-    // final client = HttpClient();
-    // final request = await client.post(Source, Constants.SERVER_PORT, Constants.DATA);
-    // request.headers.set(HttpHeaders.contentTypeHeader, "plain/text"); // or headers.add()
-    // final response = await request.close();
-    uploadSpeed = 7.4;
-  }
-
-  getDownload(String Source) async {
-    final request = await HttpClient().getUrl(Uri.parse('http://example.com'));
-    final response = await request.close();
-  }
-
-  calcDownloadandUpload(String Source) async {
-    // print('CALC DOWNLOAD SPEED NOW ');
-
-    int initialtimeDownload = DateTime.now().millisecondsSinceEpoch;
-    await getDownload(Source);
-    int finaltimeDownload = DateTime.now().millisecondsSinceEpoch;
-    // print('CALC DOWNLOAD SPEED NOW 2 ');
-    //
-    //
-    // print('this is value of the final time $finaltimeDownload and this is the initial time $initialtimeDownload');
-    downloadSpeed =
-        finaltimeDownload.toDouble() - initialtimeDownload.toDouble();
-
-    int initialtimeUpload = DateTime.now().millisecondsSinceEpoch;
-    await getUpload(Source);
-    int finaltimeUpload = DateTime.now().millisecondsSinceEpoch;
-    // print('CALC DOWNLOAD SPEED NOW 3');
-
-    uploadSpeed = finaltimeUpload.toDouble() - initialtimeUpload.toDouble();
-
-    // print('this is value of download $downloadSpeed and this is val of upload $uploadSpeed');
   }
 
   //Upload incoming json encoded data
@@ -128,45 +86,27 @@ class _RunTestState extends State<RunTest> {
 
     //TODO increase error checking
     //check to ensure the server gave us a response
-    if(holder == null){
-      print("there was a problem connecting with the server.  Please try again");
-    }
-    else if( holder == "200 Error"){
-
-    }
-    else {
+    if (holder == null) {
+      print(
+          "there was a problem connecting with the server.  Please try again");
+    } else if (holder == "200 Error") {
+    } else {
       //print the server response from upload
       print('\n This is the response from the server: $holder\n');
     }
   }
 
-  void DownloadAndUploadSpeed(){
+  void DownloadAndUploadSpeed() {}
 
-  }
-
-
-  void calcLatencyUDPPacketLoss(String desiredServer){
-
-  }
+  void calcLatencyUDPPacketLoss(String desiredServer) {}
 
   void createSocketAndTest() async {
-    //create a test object for demo purposes as async functions are currengly generating faulty values
-    var demoTest = TestResult(
-        phone_ID: await utils.getDeviceID(),
-        test_ID: '155',
-        downloadSpeed: 24.3,
-        uploadSpeed: 5.1,
-        latency: 63,
-        jitter: 22,
-        packetLoss: 4);
-
-
-
-
+    phone_ID = await utils.getDeviceID();
+    test_ID = utils.getTestID(phone_ID);
 
     //socket initialization
     // print("Socket initialized.");
-    Socket.connect(Constants.SERVER_IP, Constants.PORT).then((socket) {
+    await Socket.connect(Constants.SERVER_IP, Constants.PORT).then((socket) {
       // print("we have connected");
       // print('Connected to: ' '${socket.remoteAddress.address}:${socket
       //     .remotePort}');
@@ -184,7 +124,7 @@ class _RunTestState extends State<RunTest> {
       String serverString = 'SERVER PLACEHOLDER';
 
       //start with the lowest ping of zero
-      int lowestPing = 99;
+      int lowestPing = 0;
       // Constants.MAX_INITIAL_PING;
 
       for (int i = 0; i < Constants.NUMBER_OF_SERVERS; i++) {
@@ -217,14 +157,11 @@ class _RunTestState extends State<RunTest> {
         });
       }
       // print('The selected server is --------------  $serverString with --------------- $lowestPing ms ping.');
-      latency = lowestPing;
-      //************************************************************************
+      setState(() {
+        latency = lowestPing;
+      });
 
-      // print('EXECUTING  down and udp');
-      calcDownloadandUpload(serverString);
-      // print('done with down');
-      // performUDP(serverString);
-      // print('done with up');
+      //************************************************************************
 
       //******************************************************************JITTER
       //TODO make sequence number generator(8 byte), timestamp(8 byte), data condenser
@@ -242,135 +179,166 @@ class _RunTestState extends State<RunTest> {
       });
       //************************************************************************
 
-      //*****************************************************************LATENCY
-      setState(() {
-        latency = 63;
-      });
-      //************************************************************************
-
-      setState(() {
-        downloadSpeed = 24.3;
-      });
-
-      setState(() {
-        uploadSpeed = 5.1;
-      });
-
       socket.destroy();
     });
 
+    var downloadUploadTargets = await getTargets();
+    setState(() async {
+      downloadSpeed = await doDownloadTest(downloadUploadTargets);
+      uploadSpeed = await doUploadTest(downloadUploadTargets);
+    });
+
+    //take all the global vars and put them in the object so it can be sent to the server
+    var testResults = TestResult(
+        phone_ID: phone_ID,
+        test_ID: test_ID.toString(),
+        downloadSpeed: downloadSpeed,
+        uploadSpeed: uploadSpeed,
+        latency: latency,
+        jitter: jitter,
+        packetLoss: packetLoss);
     //encode the created object using defaults
-    var holder = jsonEncode(demoTest.toJSON());
-    print(
-        'We are now uploading the following data to the server \n\n $holder   \n\n');
+    var jsonToServer = jsonEncode(testResults.toJSON());
+    print('We are now uploading the following '
+        'data to the server \n\n $jsonToServer\n\n');
     //upload the encoded message
-    // uploadTest(holder);
+    uploadTest(jsonToServer);
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Speed Test Run a Test'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Container(
-      // color: Colors.grey[400],
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/HomepageBackground.jpg"),
-          fit: BoxFit.cover,
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test Run a Test'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
         ),
-      ),
-      child: Column(
-        children: <Widget>[
-          SizedBox(height: 10),
-          Container(
-              decoration: BoxDecoration(
-                  color: Colors.orange,
-                  border: Border.all(color: (Colors.red[800])!, width: 7),
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              padding: EdgeInsets.all(15.0),
-              height: 250.0,
-              width: 350.0,
-              child: Text('The map will go here when we have an api key')),
-          SizedBox(height: 10),
-          Center(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: (Colors.brown[800])!, width: 7),
-                  borderRadius: BorderRadius.all(Radius.circular(10))),
-              padding: EdgeInsets.all(10),
-              child: DataTable(
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text(
-                      'Metric',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Result',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ],
-
-                // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
-                rows: <DataRow>[
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(Text('Download Speed')),
-                      DataCell(Text('$downloadSpeed')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(Text('Upload Speed')),
-                      DataCell(Text('$uploadSpeed')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(Text('Jitter')),
-                      DataCell(Text('$jitter')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(Text('Latency')),
-                      DataCell(Text('$latency')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: <DataCell>[
-                      DataCell(Text('Packet Loss')),
-                      DataCell(Text('$packetLoss')),
-                    ],
-                  ),
-                ],
-              ),
+        body: Container(
+          // color: Colors.grey[400],
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/HomepageBackground.jpg"),
+              fit: BoxFit.cover,
             ),
-          )
-        ],
-      ),
-    ),
-    floatingActionButton: FloatingActionButton.extended(
-      onPressed: () async {
-        phone_ID = await utils.getDeviceID();
-        test_ID = utils.getTestID(phone_ID);
-        createSocketAndTest();
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => LoadingScreen()),
-        );
-      },
-      backgroundColor: Colors.red[500],
-      label: const Text('Begin Test'),
-      icon: const Icon(Icons.compass_calibration_sharp),
-    ),
-    floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-  );
+          ),
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 10),
+              Container(
+                  decoration: BoxDecoration(
+                      color: Colors.orange,
+                      border: Border.all(color: (Colors.red[800])!, width: 7),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
+                  padding: const EdgeInsets.all(15.0),
+                  height: 250.0,
+                  width: 350.0,
+                  child: const Text(
+                      'The map will go here when we have an api key')),
+              const SizedBox(height: 10),
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: (Colors.brown[800])!, width: 7),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
+                  padding: const EdgeInsets.all(10),
+                  child: DataTable(
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          'Metric',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Result',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ],
+
+                    // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
+                    rows: <DataRow>[
+                      DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Download Speed')),
+                          DataCell(Text('$downloadSpeed')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Upload Speed')),
+                          DataCell(Text('$uploadSpeed')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Jitter')),
+                          DataCell(Text('$jitter')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Latency')),
+                          DataCell(Text('$latency')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Packet Loss')),
+                          DataCell(Text('$packetLoss')),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () async {
+            phone_ID = await utils.getDeviceID();
+            test_ID = utils.getTestID(phone_ID);
+            createSocketAndTest();
+
+            /*Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoadingScreen()),
+            );*/
+          },
+          backgroundColor: Colors.red[500],
+          label: const Text('Begin Test'),
+          icon: const Icon(Icons.compass_calibration_sharp),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      );
+
+  Future<List<NDT.Target>> getTargets() async {
+    var locator = NDT.Client.newClient("PAgCASA-Flutter-App");
+    var targets = await locator.nearest("ndt/ndt7");
+
+    return targets;
+  }
+
+  Future<double> doDownloadTest(List<NDT.Target> targets) async {
+    var downloadLocation = targets[0].URLs['ws:///ndt/v7/download'] ?? "";
+    var dc = NDT.DownloadTest(downloadLocation);
+
+    dc.outputStream.forEach((element) {
+      print("download-${element.bps * 8 / 1000 / 1000}mbps-${element.done}");
+    });
+
+    print("Starting download test");
+    var finalStatus = await dc.startTest();
+
+    return utils.bitsPerSecToMegaBitsPerSec(finalStatus.bps);
+  }
+
+  Future<double> doUploadTest(List<NDT.Target> targets) async {
+    //TODO add this once I get it working
+    return 0;
+  }
 }
