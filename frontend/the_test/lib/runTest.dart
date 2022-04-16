@@ -91,13 +91,13 @@ class _RunTestState extends State<RunTest> {
       print('no packets sent');
       exit(1);
     } else {
-      packetLoss = (packetsReceived / packetsSent).toInt();
+      packetLoss = packetsReceived ~/ packetsSent;
       // print('packet loss calculated as $packetLoss');
     }
   }
 
   //Upload incoming json encoded data
-  uploadTest(BuildContext context,var incomingMap) async {
+  uploadTest(BuildContext context, var incomingMap) async {
     //create a POST request and anticipate a json object
     var response = await http.post(Uri.parse(Constants.SERVER_UPLOAD_URL_TEXT),
         headers: {"Content-Type": "application/json; charset=UTF-8"},
@@ -106,20 +106,20 @@ class _RunTestState extends State<RunTest> {
     var holder = response.body;
 
     //TODO increase error checking
-    //check to ensure the server gave us a response
-    if (holder == null) {
-      print(
-          "there was a problem connecting with the server.  Please try again");
-    } else if (holder == "200 Error") {
+    print('This is the response from the server: $holder');
+
+    var snackText = '';
+    if (holder.contains("OK") && response.statusCode == HttpStatus.ok){
+      snackText = "Successfully sent test to server";
     } else {
-      //print the server response from upload
-      print('\n This is the response from the server: $holder\n');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Server response: $holder'),
-        ),
-      );
+      snackText = "Could not submit test, error code: ${response.statusCode}";
     }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackText),
+      ),
+    );
   }
 
   void calcLatencyUDPPacketLoss(String desiredServer) {}
@@ -129,94 +129,21 @@ class _RunTestState extends State<RunTest> {
     test_ID = utils.getTestID(phone_ID);
 
     // start running the test
-    testRunning = true;
-    setState(() {});
-
-    //socket initialization
-    // print("Socket initialized.");
-    await Socket.connect(Constants.SERVER_IP, Constants.PORT).then((socket) {
-      // print("we have connected");
-      // print('Connected to: ' '${socket.remoteAddress.address}:${socket
-      //     .remotePort}');
-
-      //*****************************************************************LATENCY
-      //
-      //integers to keep track of the beginning and end of the time in the event
-      //
-      int timeIndexHolderBegin = -10;
-      int timeIndexHolderEnd = -10;
-
-      //holders for the entire event as a string, and the substring containing the time
-      String eventStringHolder;
-      String timeStringExtracted;
-      String serverString = 'SERVER PLACEHOLDER';
-
-      //start with the lowest ping of zero
-      int lowestPing = 0;
-      // Constants.MAX_INITIAL_PING;
-
-      for (int i = 0; i < Constants.NUMBER_OF_SERVERS; i++) {
-        serverString = Constants.SERVER_IP_LIST[i];
-        // print('this is the server string $serverString');
-        final ping = Ping(serverString,
-            count: Constants.NUMBER_OF_PINGS_TO_SEND_INITIAL);
-        //TODO make this a broadcast stream
-        ping.stream.listen((event) {
-          // print("below is the result of the ping");
-          // print(event.toString());
-          eventStringHolder = event.toString();
-          int len = eventStringHolder.length;
-          // print('here is the event in string form: $eventStringHolder and here is the len $len');
-          timeIndexHolderBegin = eventStringHolder.indexOf('time:');
-          timeIndexHolderEnd = eventStringHolder.indexOf(' ms');
-          // print('this is the index of the time $timeIndexHolderBegin');
-          // print('this is the index of the end of the time $timeIndexHolderEnd');
-          // 6 away from begin, 1 behind end
-          timeStringExtracted = eventStringHolder.substring(
-              (timeIndexHolderBegin + 5), (timeIndexHolderEnd));
-          // print('this is the time for the ping:  $timeStringExtracted');
-          var intermediateDouble = double.parse(timeStringExtracted);
-          int finalPing = intermediateDouble.toInt();
-          // print('the ping in integer form is now $finalPing');
-          if (finalPing < lowestPing && finalPing != 0) {
-            // print('FINAL WAS LESS THAN LOWEST and final is $finalPing and lowest is $lowestPing');
-            lowestPing = finalPing;
-          }
-        });
-      }
-      // print('The selected server is --------------  $serverString with --------------- $lowestPing ms ping.');
-      setState(() {
-        latency = lowestPing;
-      });
-
-      //************************************************************************
-
-      //******************************************************************JITTER
-      //TODO make sequence number generator(8 byte), timestamp(8 byte), data condenser
-      //datetime class
-      //sequence generator incrment by one up to max packets to send
-
-      setState(() {
-        jitter = 22;
-      });
-      //************************************************************************
-
-      //*************************************************************PACKET LOSS
-      setState(() {
-        packetLoss = 4;
-      });
-      //************************************************************************
-
-      socket.destroy();
+    setState(() {
+      testRunning = true;
     });
+
+    //get latency (var is updated within the function so no need to set)
+    await getLatency();
 
     var downloadUploadTargets = await getTargets();
     downloadSpeed = await doDownloadTest(downloadUploadTargets);
     uploadSpeed = await doUploadTest(downloadUploadTargets);
 
     //we are now done running the test so update appropriately
-    testRunning = false;
-    setState(() {});
+    setState(() {
+      testRunning = false;
+    });
 
     //take all the global vars and put them in the object so it can be sent to the server
     var testResults = TestResult(
@@ -236,103 +163,104 @@ class _RunTestState extends State<RunTest> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Speed Test Run a Test'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Container(
-      // color: Colors.grey[400],
-      decoration: const BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/HomepageBackground.jpg"),
-          fit: BoxFit.cover,
+  Widget build(BuildContext context) =>
+      Scaffold(
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test Run a Test'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
         ),
-      ),
-      child: Column(
-        children: <Widget>[
-          const SizedBox(height: 10),
-          testRunning ? getAnimation() : getMap(),
-          const SizedBox(height: 10),
-          Center(
-            child: Container(
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: (Colors.brown[800])!, width: 7),
-                  borderRadius:
-                  const BorderRadius.all(Radius.circular(10))),
-              padding: const EdgeInsets.all(10),
-              child: haveData()
-                  ? DataTable(
-                columns: const <DataColumn>[
-                  DataColumn(
-                    label: Text(
-                      'Metric',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                  DataColumn(
-                    label: Text(
-                      'Result',
-                      style: TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ),
-                ],
-
-                // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
-                rows: <DataRow?>[
-                  downloadSpeed != -1
-                      ? DataRow(
-                    cells: <DataCell>[
-                      const DataCell(Text('Download Speed')),
-                      DataCell(Text('$downloadSpeed')),
-                    ],
-                  )
-                      : null,
-                  uploadSpeed != -1
-                      ? DataRow(
-                    cells: <DataCell>[
-                      const DataCell(Text('Upload Speed')),
-                      DataCell(Text('$uploadSpeed')),
-                    ],
-                  )
-                      : null,
-                  jitter != -1
-                      ? DataRow(
-                    cells: <DataCell>[
-                      const DataCell(Text('Jitter')),
-                      DataCell(Text('$jitter')),
-                    ],
-                  )
-                      : null,
-                  latency != -1
-                      ? DataRow(
-                    cells: <DataCell>[
-                      const DataCell(Text('Latency')),
-                      DataCell(Text('$latency')),
-                    ],
-                  )
-                      : null,
-                  packetLoss != -1
-                      ? DataRow(
-                    cells: <DataCell>[
-                      const DataCell(Text('Packet Loss')),
-                      DataCell(Text('$packetLoss')),
-                    ],
-                  )
-                      : null,
-                ].whereType<DataRow>().toList(),
-              )
-                  : const Text("Results will appear here"),
+        body: Container(
+          // color: Colors.grey[400],
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/HomepageBackground.jpg"),
+              fit: BoxFit.cover,
             ),
-          )
-        ],
-      ),
-    ),
-    floatingActionButton: getActionButton(context, testRunning, haveData()),
-    floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-  );
+          ),
+          child: Column(
+            children: <Widget>[
+              const SizedBox(height: 10),
+              testRunning ? getAnimation() : getMap(),
+              const SizedBox(height: 10),
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(color: (Colors.brown[800])!, width: 7),
+                      borderRadius:
+                      const BorderRadius.all(Radius.circular(10))),
+                  padding: const EdgeInsets.all(10),
+                  child: haveData()
+                      ? DataTable(
+                    columns: const <DataColumn>[
+                      DataColumn(
+                        label: Text(
+                          'Metric',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                      DataColumn(
+                        label: Text(
+                          'Result',
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ],
+
+                    // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
+                    rows: <DataRow?>[
+                      downloadSpeed != -1
+                          ? DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Download Speed')),
+                          DataCell(Text('$downloadSpeed')),
+                        ],
+                      )
+                          : null,
+                      uploadSpeed != -1
+                          ? DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Upload Speed')),
+                          DataCell(Text('$uploadSpeed')),
+                        ],
+                      )
+                          : null,
+                      jitter != -1
+                          ? DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Jitter')),
+                          DataCell(Text('$jitter')),
+                        ],
+                      )
+                          : null,
+                      latency != -1
+                          ? DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Latency')),
+                          DataCell(Text('$latency')),
+                        ],
+                      )
+                          : null,
+                      packetLoss != -1
+                          ? DataRow(
+                        cells: <DataCell>[
+                          const DataCell(Text('Packet Loss')),
+                          DataCell(Text('$packetLoss')),
+                        ],
+                      )
+                          : null,
+                    ].whereType<DataRow>().toList(),
+                  )
+                      : const Text("Results will appear here"),
+                ),
+              )
+            ],
+          ),
+        ),
+        floatingActionButton: getActionButton(context, testRunning, haveData()),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      );
 
   Future<List<NDT.Target>> getTargets() async {
     var locator = NDT.Client.newClient("PAgCASA-Flutter-App");
@@ -347,8 +275,9 @@ class _RunTestState extends State<RunTest> {
 
     dc.outputStream.forEach((element) {
       print("download-${element.bps * 8 / 1000 / 1000}mbps-${element.done}");
-      downloadSpeed = utils.bitsPerSecToMegaBitsPerSec(element.bps);
-      setState(() {});
+      setState(() {
+        downloadSpeed = utils.bitsPerSecToMegaBitsPerSec(element.bps);
+      });
     });
     /*
     print("Starting download test");
@@ -392,7 +321,8 @@ class _RunTestState extends State<RunTest> {
   }
 
   //TODO figure out why this isn't updating properly
-  FloatingActionButton getActionButton(BuildContext context,bool running, bool haveData) {
+  FloatingActionButton getActionButton(BuildContext context, bool running,
+      bool haveData) {
     if (running) {
       return FloatingActionButton.extended(
         onPressed: () {
@@ -425,6 +355,31 @@ class _RunTestState extends State<RunTest> {
         label: const Text('Begin Test'),
         icon: const Icon(Icons.compass_calibration_sharp),
       );
+    }
+  }
+
+  Future getLatency() async {
+    int lowestPing = Constants.MAX_INITIAL_PING;
+
+    for (int i = 0; i < Constants.PING_SERVER_LIST.length; i++) {
+      var serverString = Constants.PING_SERVER_LIST[i];
+      // print('this is the server string $serverString');
+      final ping = Ping(serverString,
+          count: Constants.NUMBER_OF_PINGS_TO_SEND_INITIAL);
+
+      await ping.stream.forEach((element) {
+        var pt = element.response?.time?.inMilliseconds ??
+            Constants.MAX_INITIAL_PING;
+
+        // if it's faster, update UI
+        if (pt < lowestPing) {
+          lowestPing = pt;
+          setState(() {
+            latency = pt;
+          });
+        }
+      });
+
     }
   }
 }
