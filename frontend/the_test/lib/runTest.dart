@@ -15,7 +15,7 @@ import 'main.dart';
 class RunTest extends StatefulWidget {
   final Function tabCallback;
 
-  RunTest(this.tabCallback);
+  RunTest(this.tabCallback, {Key? key}) : super(key: key);
 
   @override
   State<RunTest> createState() => _RunTestState(tabCallback);
@@ -97,7 +97,7 @@ class _RunTestState extends State<RunTest> {
   }
 
   //Upload incoming json encoded data
-  uploadTest(var incomingMap) async {
+  uploadTest(BuildContext context,var incomingMap) async {
     //create a POST request and anticipate a json object
     var response = await http.post(Uri.parse(Constants.SERVER_UPLOAD_URL_TEXT),
         headers: {"Content-Type": "application/json; charset=UTF-8"},
@@ -114,12 +114,17 @@ class _RunTestState extends State<RunTest> {
     } else {
       //print the server response from upload
       print('\n This is the response from the server: $holder\n');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Server response: $holder'),
+        ),
+      );
     }
   }
 
   void calcLatencyUDPPacketLoss(String desiredServer) {}
 
-  void createSocketAndTest() async {
+  void createSocketAndTest(BuildContext context) async {
     phone_ID = await utils.getDeviceID();
     test_ID = utils.getTestID(phone_ID);
 
@@ -227,7 +232,7 @@ class _RunTestState extends State<RunTest> {
     print('We are now uploading the following '
         'data to the server \n\n $jsonToServer\n\n');
     //upload the encoded message
-    uploadTest(jsonToServer);
+    uploadTest(context, jsonToServer);
   }
 
   @override
@@ -325,7 +330,7 @@ class _RunTestState extends State<RunTest> {
         ],
       ),
     ),
-    floatingActionButton: getActionButton(testRunning, haveData()),
+    floatingActionButton: getActionButton(context, testRunning, haveData()),
     floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
   );
 
@@ -387,7 +392,7 @@ class _RunTestState extends State<RunTest> {
   }
 
   //TODO figure out why this isn't updating properly
-  FloatingActionButton getActionButton(bool running, bool haveData) {
+  FloatingActionButton getActionButton(BuildContext context,bool running, bool haveData) {
     if (running) {
       return FloatingActionButton.extended(
         onPressed: () {
@@ -409,7 +414,7 @@ class _RunTestState extends State<RunTest> {
         onPressed: () async {
           phone_ID = await utils.getDeviceID();
           test_ID = utils.getTestID(phone_ID);
-          createSocketAndTest();
+          createSocketAndTest(context);
 
           /*Navigator.push(
               context,
