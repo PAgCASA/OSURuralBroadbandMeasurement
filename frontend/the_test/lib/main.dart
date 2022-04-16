@@ -139,13 +139,22 @@ class TutorialScreen extends StatelessWidget {
           backgroundColor: Colors.lightGreen[700],
         ),
         body: Center(
-          child: new ListView(
+          child: ListView(
               // shrinkWrap: true,
               padding: const EdgeInsets.all(20.0),
               children: [
+                const Center(
+                    child: Text(
+                        '1. You may begin a test by hitting the wifi icon.  \n  2. You can view your results by hitting the clock icon.  \n 3.  You may alter your account information settings by hitting the person icon.')
+                ),
                 Center(
-                    child: new Text(
-                        '1. You may begin a test by hitting the wifi icon.  \n  2. You can view your results by hitting the clock icon.  \n 3.  You may alter your account information settings by hitting the person icon.'))
+                  child: FloatingActionButton.extended(
+                      onPressed: () {
+                        //go back to home, telling it to navigate to test tab
+                        Navigator.pop(context, "test");
+                      },
+                      label: const Text("Go to testing"))
+                )
               ]),
         ),
       );
@@ -215,6 +224,9 @@ class LoadingScreen extends StatelessWidget {
 
 //Homepage, the main page for the app
 class HomePage extends StatelessWidget {
+  final Function changeTab;
+  const HomePage(this.changeTab, {Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
@@ -256,11 +268,16 @@ class HomePage extends StatelessWidget {
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                var response = await Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => TutorialScreen()),
                 );
+
+                // if the user requests to test, then go there
+                if(response == "test") {
+                  changeTab(1);
+                }
               },
               child: Text('Start a Test!'),
               style: ElevatedButton.styleFrom(
@@ -697,7 +714,7 @@ class _NavBarPrimaryState extends State<NavBarPrimary> {
   var buttonList = <Widget>[];
 
   _NavBarPrimaryState() {
-    buttonList = <Widget>[HomePage(), RunTest(onPressed), Results(), Settings()];
+    buttonList = <Widget>[HomePage(onPressed), RunTest(onPressed), Results(), Settings()];
   }
 
   void onPressed(int index) {
