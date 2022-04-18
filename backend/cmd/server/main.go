@@ -80,6 +80,9 @@ func main() {
 
 	app := createApp()
 
+	// start UDP listening
+	go listenAndRecordUDPPackets()
+
 	app.Listen(":" + os.Getenv("PORT")) // listen on port 8080 by default
 }
 
@@ -97,6 +100,8 @@ func createApp() *fiber.App {
 	api.Post("/submitSpeedTest", submitSpeedTest)
 
 	api.Get("/getSpeedTestResults/:id", getSpeedTestResults)
+
+	api.Delete("/udpTest/:id", getUDPPacketsRecieved)
 
 	return app
 }

@@ -8,16 +8,20 @@ require modernc.org/sqlite v1.14.6
 
 require github.com/gofiber/fiber/v2 v2.26.0
 
+require github.com/VictoriaMetrics/fastcache v1.10.0
+
 require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/klauspost/compress v1.14.2 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.33.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
-	golang.org/x/sys v0.0.0-20220204135822-1c1b9b1eba6a // indirect
+	golang.org/x/sys v0.0.0-20220405052023-b1e9470b6e64 // indirect
 )
 
 require (
+	github.com/cespare/xxhash/v2 v2.1.2 // indirect
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/mattn/go-isatty v0.0.12 // indirect
