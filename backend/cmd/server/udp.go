@@ -14,7 +14,7 @@ var udpCache *fastcache.Cache
 
 func listenAndRecordUDPPackets() {
 	//init cache
-	udpCache = fastcache.New(0) // 32MB by default
+	udpCache = fastcache.New(1) // 32MB by default
 
 	ServerAddr, err := net.ResolveUDPAddr("udp", ":8372")
 	if err != nil {
