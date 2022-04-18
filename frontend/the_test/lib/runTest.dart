@@ -15,7 +15,7 @@ import 'main.dart';
 class RunTest extends StatefulWidget {
   final Function tabCallback;
 
-  RunTest(this.tabCallback, {Key? key}) : super(key: key);
+  const RunTest(this.tabCallback, {Key? key}) : super(key: key);
 
   @override
   State<RunTest> createState() => _RunTestState(tabCallback);
@@ -121,8 +121,6 @@ class _RunTestState extends State<RunTest> {
       ),
     );
   }
-
-  void calcLatencyUDPPacketLoss(String desiredServer) {}
 
   void createSocketAndTest(BuildContext context) async {
     phone_ID = await utils.getDeviceID();
@@ -362,6 +360,7 @@ class _RunTestState extends State<RunTest> {
 
   Future getLatency() async {
     int lowestPing = Constants.MAX_INITIAL_PING;
+    List<Future> futuresToResolve = [];
 
     for (int i = 0; i < Constants.PING_SERVER_LIST.length; i++) {
       var serverString = Constants.PING_SERVER_LIST[i];
@@ -369,7 +368,7 @@ class _RunTestState extends State<RunTest> {
       final ping = Ping(serverString,
           count: Constants.NUMBER_OF_PINGS_TO_SEND_INITIAL);
 
-      await ping.stream.forEach((element) {
+      var future = ping.stream.forEach((element) {
         var pt = element.response?.time?.inMilliseconds ??
             Constants.MAX_INITIAL_PING;
 
@@ -382,21 +381,31 @@ class _RunTestState extends State<RunTest> {
         }
       });
 
+      futuresToResolve.add(future);
     }
+
+    await Future.wait(futuresToResolve);
   }
 
   Future getPacketLoss() async {
-    var destination = Endpoint.unicast(InternetAddress('192.168.0.192'), port: const Port(8372));
+    var destination = Endpoint.unicast(InternetAddress(Constants.BACKEND_SERVER), port: const Port(8372));
 
     var sender = await UDP.bind(Endpoint.any(port: const Port(65000)));
 
-    for(int i = 0; i < 10; i++){
-      await sender.send("1234567890123456".codeUnits, destination);
+    //generate 16 char random id
+    var id = utils.getRandomString(16);
+    const packetsToSend = 100;
+
+    for(int i = 0; i < packetsToSend; i++){
+      await sender.send(id.codeUnits, destination);
     }
 
     sender.close();
 
-    var resp = await http.delete(Uri.parse("http://192.168.0.192:8080/api/v0/udpTest/1234567890123456"));
-    print(resp.body);
+    var resp = await http.delete(Uri.parse("http://${Constants.BACKEND_SERVER}:8080/api/v0/udpTest/$id"));
+    var received = int.tryParse(resp.body) ?? 0;
+    setState(() {
+      packetLoss = ((received/packetsToSend) * 100).toInt();
+    });
   }
 }
