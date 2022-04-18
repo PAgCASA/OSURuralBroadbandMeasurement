@@ -1,5 +1,5 @@
 - name: build server
-  command: go build -v -o /usr/local/bin/pagcasa-server backend/cmd/server/main.go
+  command: go build -v -o /usr/local/bin/pagcasa-server backend/cmd/server/main.go backend/cmd/server/udp.go
   args:
     chdir: /usr/local/OSURuralBroadbandMeasurement/repo
   notify:
