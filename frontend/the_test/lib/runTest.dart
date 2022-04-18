@@ -136,6 +136,8 @@ class _RunTestState extends State<RunTest> {
     //get latency (var is updated within the function so no need to set)
     await getLatency();
 
+    await getPacketLoss();
+
     var downloadUploadTargets = await getTargets();
     downloadSpeed = await doDownloadTest(downloadUploadTargets);
     uploadSpeed = await doUploadTest(downloadUploadTargets);
@@ -381,5 +383,20 @@ class _RunTestState extends State<RunTest> {
       });
 
     }
+  }
+
+  Future getPacketLoss() async {
+    var destination = Endpoint.unicast(InternetAddress('192.168.0.192'), port: const Port(8372));
+
+    var sender = await UDP.bind(Endpoint.any(port: const Port(65000)));
+
+    for(int i = 0; i < 10; i++){
+      await sender.send("1234567890123456".codeUnits, destination);
+    }
+
+    sender.close();
+
+    var resp = await http.delete(Uri.parse("http://192.168.0.192:8080/api/v0/udpTest/1234567890123456"));
+    print(resp.body);
   }
 }
