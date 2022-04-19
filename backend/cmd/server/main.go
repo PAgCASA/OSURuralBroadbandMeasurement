@@ -102,6 +102,7 @@ func createApp() *fiber.App {
 	api.Get("/getSpeedTestResults/:id", getSpeedTestResults)
 
 	api.Delete("/udpTest/:id", getUDPPacketsRecieved)
+	api.Get("/udpPacket", getMostRecentPacketSeen)
 
 	api.Post("/submitPersonalInfo", submitPersonalInfo)
 	api.Get("/getPersonalInfo/:id", getPersonalInfo)

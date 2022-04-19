@@ -11,6 +11,7 @@ import (
 )
 
 var udpCache *fastcache.Cache
+var recentPacketID []byte
 
 func listenAndRecordUDPPackets() {
 	//init cache
@@ -51,6 +52,8 @@ func listenAndRecordUDPPackets() {
 			udpCache.Set(udpID, util.IntToByteArray(1))
 		}
 
+		recentPacketID = udpID
+
 		if err != nil {
 			fmt.Println("UDP Error: ", err)
 		}
@@ -70,4 +73,8 @@ func getUDPPacketsRecieved(c *fiber.Ctx) error {
 	} else {
 		return c.SendString("0")
 	}
+}
+
+func getMostRecentPacketSeen(c *fiber.Ctx) error {
+	return c.Send(recentPacketID)
 }
