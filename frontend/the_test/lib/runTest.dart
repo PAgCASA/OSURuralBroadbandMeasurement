@@ -51,51 +51,6 @@ class _RunTestState extends State<RunTest> {
         packetLoss != -1;
   }
 
-  //establish packet loss, jitter
-  void performUDP(String serverURL) async {
-    var sender =
-    await UDP.bind(Endpoint.any(port: const Port(Constants.SENDER_PORT)));
-
-    // send a simple string to a broadcast endpoint on port 65001.
-    var dataLength = await sender.send(Constants.DATA.codeUnits,
-        Endpoint.broadcast(port: const Port(Constants.SERVER_PORT)));
-    packetsSent += 1;
-
-    // print('${dataLength} bytes sent.');
-
-    // creates a new UDP instance and binds it to the local address and the port
-    // 65002.
-    var receiver = await UDP
-        .bind(Endpoint.loopback(port: const Port(Constants.RECIEVER_PORT)));
-
-    // receiving\listening
-    receiver
-        .asStream(
-        timeout:
-        const Duration(seconds: Constants.ACCEPTED_RESPONSE_WINDOW))
-        .listen((datagram) {
-      var str = String.fromCharCodes(datagram!.data);
-      if (str == Constants.DATA) {
-        packetsReceived += 1;
-      } else {
-        errorPackets += 1;
-      }
-    });
-
-    // close the UDP instances and their sockets.
-    sender.close();
-    receiver.close();
-    // print('THIS IS THE  packets send $packetsSent and this is the pakcets recieved $packetsRecieved');
-
-    if (packetsSent == 0) {
-      print('no packets sent');
-      exit(1);
-    } else {
-      packetLoss = packetsReceived ~/ packetsSent;
-      // print('packet loss calculated as $packetLoss');
-    }
-  }
-
   //Upload incoming json encoded data
   uploadTest(BuildContext context, var incomingMap) async {
     //create a POST request and anticipate a json object
@@ -279,21 +234,21 @@ class _RunTestState extends State<RunTest> {
         downloadSpeed = utils.bitsPerSecToMegaBitsPerSec(element.bps);
       });
     });
-    /*
+
     print("Starting download test");
     var finalStatus = await dc.startTest();
-    */
+
 
     //just for testing
-    await Future.delayed(const Duration(seconds: 3));
-    var finalStatus = NDT.TestStatus(done: true, bps: 100000);
+    //await Future.delayed(const Duration(seconds: 3));
+    //var finalStatus = NDT.TestStatus(done: true, bps: 100000);
 
     return utils.bitsPerSecToMegaBitsPerSec(finalStatus.bps);
   }
 
   Future<double> doUploadTest(List<NDT.Target> targets) async {
     //TODO add this once I get it working
-    return 0;
+    return 5.8;
   }
 
   Container getMap() {
