@@ -38,9 +38,9 @@ func listenAndRecordUDPPackets() {
 
 		//TODO change this to FCC value
 		// We expect the UDP packets to be 16 bytes long and serve as a unique ID
-		if n != 16 {
-			continue
-		}
+		//if n != 16 {
+		//	continue
+		//}
 
 		udpID := buf[0:n]
 
