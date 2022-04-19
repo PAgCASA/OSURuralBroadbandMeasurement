@@ -103,6 +103,9 @@ func createApp() *fiber.App {
 
 	api.Delete("/udpTest/:id", getUDPPacketsRecieved)
 
+	api.Post("/submitPersonalInfo", submitPersonalInfo)
+	api.Get("/getPersonalInfo/:id", getPersonalInfo)
+
 	return app
 }
 
@@ -301,4 +304,24 @@ func getSpeedTestResultsFromDB(id string) *PastResults {
 	pr.PhoneID = id
 
 	return &pr
+}
+
+var tempInfo []byte
+
+func submitPersonalInfo(c *fiber.Ctx) error {
+	tempInfo = c.Request().Body()
+
+	c.Response().AppendBodyString("OK")
+	return c.SendStatus(200)
+}
+
+func getPersonalInfo(c *fiber.Ctx) error {
+	if tempInfo == nil {
+		c.Response().AppendBodyString("No info submitted")
+		return c.SendStatus(404)
+	}
+
+	c.Response().AppendBody(tempInfo)
+	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+	return c.SendStatus(200)
 }
