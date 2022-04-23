@@ -5,7 +5,7 @@ const int PORT = 53;
 const int NUMBER_OF_SERVERS = 1;
 const List<String> SERVER_IP_LIST = ['54.218.174.61'];
 const int NUMBER_OF_PINGS_TO_SEND_INITIAL = 1;
-const int NUMBER_OF_PINGS_TO_SEND_JITTER = 100;
+const int NUMBER_OF_PINGS_TO_SEND_JITTER = 1;
 //used the max value for flutter web instead of the 64 version
 const int MAX_INITIAL_PING = 9007199254740991;
 
@@ -33,7 +33,8 @@ const int ACCEPTED_RESPONSE_WINDOW = 5;
 const int SERVER_PORT = 80;
 const int RECIEVER_PORT = 65001;
 const int SENDER_PORT = 65000;
-const String DATA = 'oaiwejoiawejfoiajwoief';
+const int UDP_SEND_PORT = 8372;
+const String DATA = '0BY50D74GeozhLT20gICzl8TEN60mXU2G5wqRWjF2UTMBw55BkJLkQkNX08b6lnO5TO91dGqb30vChbfh4B5G478GI495bLZPx984ye3V445726bvODA2QwVz9Mg0r37508Utcl2fcFvTE9';
 
 
 //download and upload
@@ -41,3 +42,7 @@ const String SERVER_TEST_UPLOAD_URL = '/api/v0/submitSpeedTest';
 const String FILE_PATH1 = '/downloads/file1';
 const String FILE_PATH2 = '/downloads/file2';
 const String FILE_PATH3 = '/downloads/file3';
+
+//personal information
+const String PERSONAL_INFO_UPLOAD_URL = 'http://54.218.174.61:8080/api/v0/submitPersonalInfo';
+const String PERSONAL_INFO_DOWNLOAD_URL = 'http://54.218.174.61:8080/api/v0/getPersonalInfo/eventuallyIDHe';

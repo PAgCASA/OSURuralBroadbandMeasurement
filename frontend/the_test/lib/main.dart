@@ -10,7 +10,9 @@ import 'package:udp/udp.dart';
 import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
+import 'package:image_picker/image_picker.dart';
 import 'dart:math';
+
 
 // import 'package:ndt_7_dart/src/download.dart';
 // import 'package:ndt_7_dart/src/locator.dart';
@@ -18,8 +20,9 @@ import 'dart:math';
 
 void main() => runApp(MyApp());
 
+//Class for test result object which will be sent to the back end
 class TestResult {
-  //object fields for future JSON
+  //object fields
   String phone_ID;
   String test_ID;
   double downloadSpeed;
@@ -49,13 +52,6 @@ class TestResult {
         "packetLoss": packetLoss,
       };
 
-  // List<String> returnVals(TestResult Result){
-  //   List<String> toReturn;
-  //   for(int i = 0; i < 7; i++){
-  //     toReturn[i] = Result[i];
-  //   }
-  // }
-
   factory TestResult.fromJson(Map<String, dynamic> json) {
     return TestResult(
         phone_ID: json['PhoneID'],
@@ -68,6 +64,7 @@ class TestResult {
   }
 }
 
+//Class for test result to be displayed
 class incomingTestResult {
   String date;
   String duration;
@@ -78,6 +75,17 @@ class incomingTestResult {
   int latency;
   int jitter;
   int packetLoss;
+
+  incomingTestResult(
+      {required this.duration,
+      required this.date,
+      required this.phone_ID,
+      required this.test_ID,
+      required this.downloadSpeed,
+      required this.uploadSpeed,
+      required this.latency,
+      required this.jitter,
+      required this.packetLoss});
 
   factory incomingTestResult.fromJson(Map<String, dynamic> json) {
     return incomingTestResult(
@@ -91,26 +99,12 @@ class incomingTestResult {
         jitter: json['Jitter'] as int,
         packetLoss: json['PacketLoss'] as int);
   }
-
-  incomingTestResult(
-      {required this.duration,
-      required this.date,
-      required this.phone_ID,
-      required this.test_ID,
-      required this.downloadSpeed,
-      required this.uploadSpeed,
-      required this.latency,
-      required this.jitter,
-      required this.packetLoss});
-
-// factory fromJSON(dynamic json) => {
-//   incomingTestResult hold;
-//   return incomingTestResult;
-// };
 }
 
+//Class for sending personal information to the backend
+//TODO consider implementing passcode for security
 class PersonalInformation {
-  //object fields for future JSON
+  //object fields
   String firstName;
   String lastName;
   String street;
@@ -119,9 +113,8 @@ class PersonalInformation {
   String state;
   String internetPlan;
 
-  //constructor for object
-  //passcode for protecting data
-  PersonalInformation(this.firstName, this.lastName, this.street, this.postalCode, this.city, this.state, this.internetPlan);
+  PersonalInformation(this.firstName, this.lastName, this.street,
+      this.postalCode, this.city, this.state, this.internetPlan);
 
   //JSON conversion method
   Map<String, dynamic> toJSON() => {
@@ -135,6 +128,8 @@ class PersonalInformation {
       };
 }
 
+//The tutorial screen
+//Accessed when pressing "start a test" on main screen
 class TutorialScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -150,13 +145,36 @@ class TutorialScreen extends StatelessWidget {
               children: [
                 Center(
                     child: new Text(
-                        '1. You may begin a test by hitting the wifi icon.  \n  2. You can view your results by hitting the clock icon.  \n 3.  You may alter your account information settings by hitting the person icon.')
-                )
+                        '1. You may begin a test by hitting the wifi icon.  \n  2. You can view your results by hitting the clock icon.  \n 3.  You may alter your account information settings by hitting the person icon.'))
               ]),
         ),
       );
 }
 
+//About us screen
+//Accessed when hitting "about us" from the main screen
+class AboutScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test Homepage'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Center(
+          child: new ListView(
+              // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                Center(
+                    child: new Text(
+                        'PAgCASA is all about fairness and bringing the internet to those who are disadvantaged because of their location.  By using this application, you will improve the lives of your neighbors and yourself.  \n\n\n\n '))
+              ]),
+        ),
+      );
+}
+
+//The animation going across the screen when a test is implemented
 class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -184,27 +202,6 @@ class LoadingScreen extends StatelessWidget {
       ));
 }
 
-class AboutScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test Homepage'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Center(
-          child: new ListView(
-              // shrinkWrap: true,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                Center(
-                    child: new Text(
-                        'PAgCASA is all about fairness and bringing the internet to those who are disadvantaged because of their location.  By using this application, you will improve the lives of your neighbors and yourself.  \n\n\n\n '))
-              ]),
-        ),
-      );
-}
-
 //TODO pass in the phone ID for all incoming results, parse results by the test duration
 //incoming results array parse through type PastResults struct {
 //     PhoneID string
@@ -216,6 +213,7 @@ class AboutScreen extends StatelessWidget {
 
 //TODO about page and data upload page d
 
+//Homepage, the main page for the app
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -272,6 +270,7 @@ class HomePage extends StatelessWidget {
           ])));
 }
 
+//Page for displaying past results
 class Results extends StatefulWidget {
   @override
   State<Results> createState() => _ResultsState();
@@ -279,10 +278,10 @@ class Results extends StatefulWidget {
 
 class _ResultsState extends State<Results> {
   //future object for incoming data
-  late Future<List<TestResult>> testsToDisplay;
+  late Future<List<incomingTestResult>> testsToDisplay;
 
   //get the test with the specified ID
-  Future<List<TestResult>> fetchTests(Future<String> incomingID) async {
+  Future<List<incomingTestResult>> fetchTests(Future<String> incomingID) async {
     //create the full url by appending ID to the base url stored in the constants file
     String fullURL = Constants.SERVER_RESULT_REQUEST_URL + await incomingID;
 
@@ -296,13 +295,14 @@ class _ResultsState extends State<Results> {
       var json = jsonDecode(response.body);
       var rows = json['Results'];
 
-      List<TestResult> results = List.empty(growable: true);
+      List<incomingTestResult> results = List.empty(growable: true);
 
       if (rows != null) {
         // this is a really ugly way of looping through the results array and
         // turning them into test results
         for (var i = 0; i < (rows as List).length; i++) {
-          var result = TestResult.fromJson(rows[i] as Map<String, dynamic>);
+          var result =
+              incomingTestResult.fromJson(rows[i] as Map<String, dynamic>);
           results.insert(i, result);
         }
       }
@@ -345,7 +345,7 @@ class _ResultsState extends State<Results> {
                   scrollDirection: Axis.vertical,
                   child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: FutureBuilder<List<TestResult>>(
+                      child: FutureBuilder<List<incomingTestResult>>(
                           future: testsToDisplay,
                           builder: (context, snapshot) {
                             var data = snapshot.data;
@@ -361,7 +361,7 @@ class _ResultsState extends State<Results> {
         ),
       );
 
-  Widget buildTable(List<TestResult> results) {
+  Widget buildTable(List<incomingTestResult> results) {
     const columns = Constants.COLUMN_TITLES_RESULTS;
     return DataTable(
         columns: getColumns(columns),
@@ -369,13 +369,13 @@ class _ResultsState extends State<Results> {
             .map(
               (result) => DataRow(
                 cells: <DataCell>[
-                  DataCell(Text('TODO DATE')),
+                  DataCell(Text(result.date.toString())),
                   DataCell(Text(result.downloadSpeed.toString())),
                   DataCell(Text(result.uploadSpeed.toString())),
                   DataCell(Text(result.jitter.toString())),
                   DataCell(Text(result.latency.toString())),
                   DataCell(Text(result.packetLoss.toString())),
-                  DataCell(Text("TODO DURATION")),
+                  DataCell(Text(result.duration.toString())),
                 ],
               ),
             )
@@ -385,6 +385,35 @@ class _ResultsState extends State<Results> {
   List<DataColumn> getColumns(List<String> columns) =>
       columns.map((String column) => DataColumn(label: Text(column))).toList();
 }
+
+
+
+
+class personalInfoFormSubmit extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('PAgCASA: Submit Personal Information'),
+      centerTitle: true,
+      backgroundColor: Colors.lightGreen[700],
+    ),
+    body: Center(
+      child: new ListView(
+        // shrinkWrap: true,
+          padding: const EdgeInsets.all(20.0),
+          children: [
+            Center(
+                child: new Text(
+                    'PAg4 hold \n '))
+          ]),
+    ),
+  );
+}
+
+
+
+
+
 
 class Settings extends StatefulWidget {
   const Settings({Key? key}) : super(key: key);
@@ -402,7 +431,136 @@ class _SettingsState extends State<Settings> {
   String state = '-';
   String internetPlan = '-';
 
-  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  String _firstName = '-';
+  String _lastName = '-';
+  String _street = '-';
+  String _postalCode = '-';
+  String _city = '-';
+  String _state = '-';
+  String _internetPlan = '-';
+
+  //this will store the image in cache
+  File? image = null;
+
+  final formKey = GlobalKey<FormState>();
+
+  //Upload incoming json encoded data
+  uploadPersonalInfo(var incomingMap) async {
+    //create a POST request and anticipate a json object
+    var response =
+        await http.post(Uri.parse(Constants.PERSONAL_INFO_UPLOAD_URL),
+            //    headers: {"Content-Type": "application/json; charset=UTF-8"},
+            body: incomingMap);
+    //store the body in a variable
+    var holder = response.body;
+    print('sending data to server hopefully ');
+
+    //TODO increase error checking
+    //check to ensure the server gave us a response
+    if (holder == null) {
+      print(
+          "there was a problem connecting with the server.  Please try again");
+    } else if (holder == "200 Error") {
+    } else {
+      //print the server response from upload
+      print(
+          '\n This is the response from the server for personal info uploading: $holder\n');
+    }
+  }
+
+  Widget _buildFirstName() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: "Enter your first name"),
+      validator: (value) {
+        if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
+          return "Please enter a valid first name";
+        } else {
+          firstName = value;
+        }
+      },
+    );
+  }
+
+  Widget _buildLastName() {
+    return TextFormField(
+        decoration: InputDecoration(labelText: "Enter your last name"),
+        validator: (value) {
+          if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
+            return "Please enter a valid last name";
+          } else {
+            lastName = value;
+          }
+        });
+  }
+
+  Widget _buildStreetName() {
+    return TextFormField(
+      decoration: InputDecoration(labelText: "Enter your street name"),
+      validator: (value) {
+        if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
+          return "Please enter a valid last name";
+        } else {
+          street = value;
+        }
+      },
+    );
+  }
+
+  Widget _buildPostal() {
+    return TextFormField(
+        decoration: InputDecoration(labelText: "Enter your postal code"),
+        validator: (value) {
+          if (value!.isEmpty || !RegExp(r'^[0-9]+$').hasMatch(value)) {
+            return "Please enter a valid postal code";
+          } else {
+            postalCode = value;
+          }
+        });
+  }
+
+  Widget _buildTown() {
+    return TextFormField(
+        decoration: InputDecoration(labelText: "Enter your city or town name"),
+        validator: (value) {
+          if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
+            return "Please enter a valid city or town name";
+          } else {
+            city = value;
+          }
+        });
+  }
+
+  Widget _buildState() {
+    return TextFormField(
+        decoration: InputDecoration(labelText: "Enter your state"),
+        validator: (value) {
+          if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
+            return "Please enter a valid state name";
+          } else {
+            state = value;
+          }
+        });
+  }
+
+  Future _buildImageGallery() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if(image == null){
+      return null;
+    }
+    final imageHold = File(image.path);
+    this.image = imageHold;
+    return null;
+  }
+
+  Future _buildImageCamera() async{
+    final image = await ImagePicker().pickImage(source: ImageSource.camera);
+    if(image == null){
+      return null;
+    }
+    final imageHold = File(image.path);
+    this.image = imageHold;
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -432,105 +590,86 @@ class _SettingsState extends State<Settings> {
                 child: Container(
                     color: Colors.white,
                     child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 10),
-                    Text(
-                        'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.'),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration:
-                          InputDecoration(labelText: "Enter your first name"),
-                      validator: (value) {
-                        if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
-                          return "Please enter a valid first name";
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration:
-                          InputDecoration(labelText: "Enter your last name"),
-                      validator: (value) {
-                        if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
-                          return "Please enter a valid last name";
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration:
-                          InputDecoration(labelText: "Enter your street name"),
-                      validator: (value) {
-                        if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
-                          return "Please enter a valid street name";
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration:
-                          InputDecoration(labelText: "Enter your postal code"),
-                      validator: (value) {
-                        if (value!.isEmpty ||
-                            !RegExp(r'^[0-9]+$').hasMatch(value)) {
-                          return "Please enter a valid postal code";
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          labelText: "Enter your city or town name"),
-                      validator: (value) {
-                        if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
-                          return "Please enter a valid city or town name";
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                    SizedBox(height: 10),
-                    TextFormField(
-                      decoration:
-                          InputDecoration(labelText: "Enter your state"),
-                      validator: (value) {
-                        if (value!.isEmpty ||
-                            !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
-                          return "Please enter a valid state name";
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(height: 10),
+                        Text(
+                            'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.'),
+                        SizedBox(height: 10),
+                        _buildFirstName(),
+                        SizedBox(height: 10),
+                        _buildLastName(),
+                        SizedBox(height: 10),
+                        _buildStreetName(),
+                        SizedBox(height: 10),
+                        _buildPostal(),
+                        SizedBox(height: 10),
+                        _buildTown(),
+                        SizedBox(height: 10),
+                        _buildState(),
+                        // Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                            child: Text('gallery'),
+                            onPressed: () {
+                              _buildImageGallery();
+                              if(image != null){
+                                List<int> imageBytes = image!.readAsBytesSync();
+                                String base64Image = base64.encode(imageBytes);
+                                internetPlan = base64Image;
+                              }
+                              else{
+                                print('Something is wrong with the image');
+                              }
 
-                    // Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                        onPressed: () {
-                          if (formKey.currentState!.validate()) {
-                            new PersonalInformation(firstName, lastName, street,
-                                postalCode, city, state, internetPlan);
-                            //TODO send this to the server
-                          }
-                        },
-                        child: Text('Submit!'))
-                  ],
-                )))),
+                            }),
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                            child: Text('camera'),
+                            onPressed: () {
+                              _buildImageCamera();
+                              if(image != null){
+                                List<int> imageBytes = image!.readAsBytesSync();
+                                String base64Image = base64.encode(imageBytes);
+                                internetPlan = base64Image;
+                              }
+                              else{
+                                print('Something is wrong with the image from the camera');
+                              }
+                            }),
+                        SizedBox(height: 10),
+                        ElevatedButton(
+                            onPressed: () {
+                              final isValid = formKey.currentState?.validate();
+                              if (formKey.currentState!.validate()) {
+                                PersonalInformation person =
+                                    new PersonalInformation(
+                                        firstName,
+                                        lastName,
+                                        street,
+                                        postalCode,
+                                        city,
+                                        state,
+                                        internetPlan);
+                                //
+                                print('sending data to method ');
+                                print('this is the image $image ');
+                                // uploadPersonalInfo(person.toJSON());
+                              }
+                            },
+                            child: Text('Submit!'))
+                      ],
+                    )))
+        ),
       ));
 }
+
+
+
+
+
+
+
 
 
 class MyApp extends StatelessWidget {

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math';
-
 import 'package:device_info/device_info.dart';
 
 Future<String> getDeviceID() async{

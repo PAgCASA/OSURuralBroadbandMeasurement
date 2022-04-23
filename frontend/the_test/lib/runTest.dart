@@ -7,7 +7,6 @@ import 'package:udp/udp.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:ndt_7_dart/exports.dart' as NDT;
-
 import 'main.dart';
 
 class RunTest extends StatefulWidget {
@@ -30,50 +29,71 @@ class _RunTestState extends State<RunTest> {
   int packetsReceived = 1;
   int errorPackets = 0;
 
-  //establish packet loss, jitter
-  void performUDP(String serverURL) async {
-    var sender =
-        await UDP.bind(Endpoint.any(port: const Port(Constants.SENDER_PORT)));
 
-    // send a simple string to a broadcast endpoint on port 65001.
-    var dataLength = await sender.send(Constants.DATA.codeUnits,
-        Endpoint.broadcast(port: const Port(Constants.SERVER_PORT)));
-    packetsSent += 1;
 
-    // print('${dataLength} bytes sent.');
 
-    // creates a new UDP instance and binds it to the local address and the port
-    // 65002.
-    var receiver = await UDP
-        .bind(Endpoint.loopback(port: const Port(Constants.RECIEVER_PORT)));
+  //send udp packets to server
+  void sendUDP(String incomingServer) async {
+    String timeHold;
+    String sequenceHold;
+    String fullPacketData;
+    InternetAddress serverSendAddress = new InternetAddress(incomingServer);
 
-    // receiving\listening
-    receiver
-        .asStream(
-            timeout:
-                const Duration(seconds: Constants.ACCEPTED_RESPONSE_WINDOW))
-        .listen((datagram) {
-      var str = String.fromCharCodes(datagram!.data);
-      if (str == Constants.DATA) {
-        packetsReceived += 1;
-      } else {
-        errorPackets += 1;
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 65002).then((RawDatagramSocket socket){
+      // print('Sending from ${socket.address.address}:${socket.port}');
+      int port = Constants.UDP_SEND_PORT;
+
+
+    for(int i = 0; i < Constants.UDP_PACKETS_TO_SEND_JITTER; i++){
+      //take the current time in miliseconds 13 bytes
+      timeHold = DateTime.now().millisecondsSinceEpoch.toString();
+      //take the packet sequence designator
+      sequenceHold = i.toString();
+      //if there is only one digit, prepend 2 zeroes
+      if(i < 10){
+        sequenceHold = '00' + sequenceHold;
       }
+      //if there are two digits, prepend one zero
+      else if (i < 100 && i > 9){
+        sequenceHold = '0' + sequenceHold;
+      }
+      //there are enough numbers to maintain packet size, 3 byte designator
+
+      //combine the components of the packet data
+      fullPacketData = sequenceHold + timeHold + Constants.DATA;
+      print('\n this is the full packet $fullPacketData \n  and this is the time in ms $timeHold \n');
+
+      socket.send(fullPacketData.codeUnits,
+          serverSendAddress, port);
+
+      sleep(const Duration(seconds: 1));
+    }
     });
 
-    // close the UDP instances and their sockets.
-    sender.close();
-    receiver.close();
-    // print('THIS IS THE  packets send $packetsSent and this is the pakcets recieved $packetsRecieved');
+    //13 bits for datetime
+    //3 for sequence (0-199)
+    //8 for header
+    //136 for data
 
-    if (packetsSent == 0) {
-      print('no packets sent');
-      exit(1);
-    } else {
-      packetLoss = (packetsReceived / packetsSent).toInt();
-      // print('packet loss calculated as $packetLoss');
-    }
+
+
+    // if (packetsSent == 0) {
+    //   print('no packets sent');
+    // } else {
+    //   packetLoss = (packetsReceived / packetsSent).toInt();
+    //   // print('packet loss calculated as $packetLoss');
+    // }
   }
+
+  int recievePacketLoss(){
+    return 0;
+  }
+
+  int recieveJitter(){
+    return 0;
+  }
+
+
 
   //Upload incoming json encoded data
   uploadTest(var incomingMap) async {
@@ -99,6 +119,10 @@ class _RunTestState extends State<RunTest> {
   void DownloadAndUploadSpeed() {}
 
   void calcLatencyUDPPacketLoss(String desiredServer) {}
+
+  int selectLowestLatencyServer(){
+    return 0;
+  }
 
   void createSocketAndTest() async {
     phone_ID = await utils.getDeviceID();
@@ -302,7 +326,8 @@ class _RunTestState extends State<RunTest> {
           onPressed: () async {
             phone_ID = await utils.getDeviceID();
             test_ID = utils.getTestID(phone_ID);
-            createSocketAndTest();
+            // createSocketAndTest();
+            sendUDP(Constants.SERVER_IP_LIST[0]);
 
             /*Navigator.push(
               context,
