@@ -247,8 +247,20 @@ class _RunTestState extends State<RunTest> {
   }
 
   Future<double> doUploadTest(List<NDT.Target> targets) async {
-    //TODO add this once I get it working
-    return 5.8;
+    var uploadLocation = targets[0].URLs['ws:///ndt/v7/upload'] ?? "";
+    var uc = NDT.UploadTest(uploadLocation);
+
+    uc.outputStream.forEach((element) {
+      print("upload-${element.bps * 8 / 1000 / 1000}mbps-${element.done}");
+      setState(() {
+        uploadSpeed = utils.bitsPerSecToMegaBitsPerSec(element.bps);
+      });
+    });
+
+    print("Starting upload test");
+    var finalStatus = await uc.startTest();
+
+    return utils.bitsPerSecToMegaBitsPerSec(finalStatus.bps);
   }
 
   Container getMap() {
