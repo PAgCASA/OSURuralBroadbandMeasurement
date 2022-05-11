@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:settings_ui/settings_ui.dart';
 import 'package:the_test/runTest.dart';
 import 'package:the_test/utils.dart' as utils;
 import 'constants.dart' as Constants;
@@ -11,8 +10,10 @@ import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'dart:math';
 
+//flip x y axis on chart
 
 // import 'package:ndt_7_dart/src/download.dart';
 // import 'package:ndt_7_dart/src/locator.dart';
@@ -67,7 +68,6 @@ class TestResult {
 //Class for test result to be displayed
 class incomingTestResult {
   String date;
-  String duration;
   String phone_ID;
   String test_ID;
   double downloadSpeed;
@@ -76,28 +76,28 @@ class incomingTestResult {
   int jitter;
   int packetLoss;
 
-  incomingTestResult(
-      {required this.duration,
-      required this.date,
-      required this.phone_ID,
-      required this.test_ID,
-      required this.downloadSpeed,
-      required this.uploadSpeed,
-      required this.latency,
-      required this.jitter,
-      required this.packetLoss});
+  incomingTestResult({
+    required this.phone_ID,
+    required this.test_ID,
+    required this.downloadSpeed,
+    required this.uploadSpeed,
+    required this.latency,
+    required this.jitter,
+    required this.packetLoss,
+    required this.date,
+  });
 
   factory incomingTestResult.fromJson(Map<String, dynamic> json) {
     return incomingTestResult(
-        date: json['Date'],
-        duration: json['Duration'],
-        phone_ID: json['PhoneID'],
-        test_ID: json['TestID'],
-        downloadSpeed: json['DownloadSpeed'] + 0.0,
-        uploadSpeed: json['UploadSpeed'] + 0.0,
-        latency: json['Latency'] as int,
-        jitter: json['Jitter'] as int,
-        packetLoss: json['PacketLoss'] as int);
+      phone_ID: json['PhoneID'],
+      test_ID: json['TestID'],
+      downloadSpeed: json['DownloadSpeed'] + 0.0,
+      uploadSpeed: json['UploadSpeed'] + 0.0,
+      latency: json['Latency'] as int,
+      jitter: json['Jitter'] as int,
+      packetLoss: json['PacketLoss'] as int,
+      date: json['TestStartTime'],
+    );
   }
 }
 
@@ -130,7 +130,7 @@ class PersonalInformation {
 
 //The tutorial screen
 //Accessed when pressing "start a test" on main screen
-class TutorialScreen extends StatelessWidget {
+class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -139,13 +139,41 @@ class TutorialScreen extends StatelessWidget {
           backgroundColor: Colors.lightGreen[700],
         ),
         body: Center(
-          child: new ListView(
+          child: ListView(
               // shrinkWrap: true,
               padding: const EdgeInsets.all(20.0),
               children: [
                 Center(
-                    child: new Text(
-                        '1. You may begin a test by hitting the wifi icon.  \n  2. You can view your results by hitting the clock icon.  \n 3.  You may alter your account information settings by hitting the person icon.'))
+                    child: Container(
+                  height: 600,
+                  width: 650,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/HomepageBackground.jpg"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Center(
+                      child: Text(
+                    "The Precision Ag Connectivity & Accuracy Stakeholder Alliance (PAgCASA) is a not-for-profit education foundation whose mission is to design, field test, and deploy technical and policy tools needed to ensure accurate broadband mapping and deployment across America to ignite smart agriculture and rural prosperity. \n\nConsistent with the Broadband DATA Act of 2020 and the recent findings of the FCC's Precision Ag Task Force, PAgCASA aims to drive transparent broadband mapping methodology specific to rural America by establishing a standards-based, open source toolkit for collecting accurate, granular, crowdsourced, and citizen-centric data. \n\nAccurate broadband maps are essential to inform wise infrastructure investments and effective broadband deployment for communities still left behind. ",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  )),
+                )),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      MaterialPageRoute(builder: (context) => AboutScreen()),
+                    );
+                  },
+                  child: Text("Go Back"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[500],
+                  ),
+                )
               ]),
         ),
       );
@@ -153,7 +181,7 @@ class TutorialScreen extends StatelessWidget {
 
 //About us screen
 //Accessed when hitting "about us" from the main screen
-class AboutScreen extends StatelessWidget {
+class TutorialScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -162,44 +190,271 @@ class AboutScreen extends StatelessWidget {
           backgroundColor: Colors.lightGreen[700],
         ),
         body: Center(
-          child: new ListView(
+          child: ListView(
               // shrinkWrap: true,
               padding: const EdgeInsets.all(20.0),
               children: [
                 Center(
-                    child: new Text(
-                        'PAgCASA is all about fairness and bringing the internet to those who are disadvantaged because of their location.  By using this application, you will improve the lives of your neighbors and yourself.  \n\n\n\n '))
+                    child: Container(
+                  height: 600,
+                  width: 650,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/HomepageBackground.jpg"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Center(
+                      child: Text(
+                    "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  )),
+                )),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      MaterialPageRoute(builder: (context) => AboutScreen()),
+                    );
+                  },
+                  child: Text("Start Testing!"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[500],
+                  ),
+                )
               ]),
         ),
       );
 }
 
-//The animation going across the screen when a test is implemented
-class LoadingScreen extends StatelessWidget {
+class MobileConnectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Center(
+          child: ListView(
+              // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                Center(
+                    child: Container(
+                  height: 600,
+                  width: 650,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/HomepageBackground.jpg"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Center(
+                      child: Text(
+                    "It appears that you are connected to a mobile network.  Please turn off your mobile data and connect to your wireless network to proceed.",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  )),
+                )),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      MaterialPageRoute(builder: (context) => MobileConnectionScreen()),
+                    );
+                  },
+                  child: Text("Go back"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[500],
+                  ),
+                )
+              ]),
+        ),
+      );
+}
+
+class NoConnectionScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Center(
+          child: ListView(
+              // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                Center(
+                    child: Container(
+                  height: 600,
+                  width: 650,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/HomepageBackground.jpg"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Center(
+                      child: Text(
+                    "It appears that you do not have network connectivity..  Please turn off your mobile data and connect to your wireless network to proceed.",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  )),
+                )),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      MaterialPageRoute(builder: (context) => NoConnectionScreen()),
+                    );
+                  },
+                  child: Text("Go back"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[500],
+                  ),
+                )
+              ]),
+        ),
+      );
+}
+
+
+
+class dataUploadScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      title: const Text('PAgCASA: Speed Test Homepage'),
+      centerTitle: true,
+      backgroundColor: Colors.lightGreen[700],
+    ),
+    body: Center(
+      child: ListView(
+        // shrinkWrap: true,
+          padding: const EdgeInsets.all(20.0),
+          children: [
+            Center(
+                child: Container(
+                  height: 600,
+                  width: 650,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/HomepageBackground.jpg"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  child: Center(
+                      child: Text(
+                        "Thank you for uploading your personal data!",
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      )),
+                )),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(
+                  context,
+                  MaterialPageRoute(builder: (context) => dataUploadScreen()),
+                );
+              },
+              child: Text("Go back"),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.green[500],
+              ),
+            )
+          ]),
+    ),
+  );
+}
+
+// class CountDownPage extends StatefulWidget {
+//   CountDownPage({Key ?key}) : super(key: key);
+//
+//   @override
+//   _CountDownPageState createState() => _CountDownPageState();
+// }
+//
+// class _CountDownPageState extends State<CountDownPage> {
+//   int endTime = DateTime.now().millisecondsSinceEpoch + 1000 * 3;
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("count down"),
+//       ),
+//       body: Center(
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Padding(
+//                 padding: const EdgeInsets.all(8.0),
+//                 child: CountdownTimer(
+//                     endTime: endTime,
+//                     widgetBuilder: (_, CurrentRemainingTime time) {
+//                       if (time == null) {
+//                         WidgetsBinding.instance?.addPostFrameCallback((_) {
+//                           Navigator.of(context).pop();
+//                         });
+//                         return Container();
+//                       } else {
+//                         return Text(
+//                             '${(time.hours == null) ? "00" : time.hours}:${(time.min == null) ? "00" : time.min}:${(time.sec == null) ? "00" : time.sec}');
+//                       }
+//                     })),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+//The animation going across the screen when a test is implemented
+class LoadingScreen extends StatefulWidget {
+  @override
+  State<LoadingScreen> createState() => _LoadingScreenState();
+}
+
+class _LoadingScreenState extends State<LoadingScreen> {
+  int timerValid = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
       appBar: AppBar(
         title: const Text('PAgCASA: Running a test!'),
         centerTitle: true,
         backgroundColor: Colors.lightGreen[700],
       ),
-      body: Center(
-        child: Container(
+      body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/HomepageBackground.jpg"),
               fit: BoxFit.cover,
             ),
           ),
-          child: Container(
-            // color: Colors.grey[400],
-            decoration: BoxDecoration(
-                image: DecorationImage(
-              image: AssetImage("assets/hillfarmer.gif"),
-            )),
-          ),
-        ),
-      ));
+          child: Column(children: <Widget>[
+            Container(
+                child: Text("Please wait while we run your test!",
+                    style:
+                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
+            SizedBox(height: 10),
+            Center(child: Image.asset("assets/hillfarmer.gif")),
+          ])),
+    );
+  }
 }
 
 //TODO pass in the phone ID for all incoming results, parse results by the test duration
@@ -238,7 +493,7 @@ class HomePage extends StatelessWidget {
                     borderRadius: BorderRadius.all(Radius.circular(10))),
                 margin: const EdgeInsets.all(10.0),
                 // color: Colors.grey[600],
-                width: 320.0,
+                width: 319.0,
                 height: 515.0,
                 child: Image(
                   image: AssetImage('assets/HomepageImage.jpg'),
@@ -252,7 +507,7 @@ class HomePage extends StatelessWidget {
               },
               child: Text('About Us'),
               style: ElevatedButton.styleFrom(
-                primary: Colors.blue[500],
+                primary: Colors.green[500],
               ),
             ),
             ElevatedButton(
@@ -290,11 +545,11 @@ class _ResultsState extends State<Results> {
     //if we recieved record with no error, print what we recieved
     if (response.statusCode == 200) {
       String body = response.body;
-      print('This is what we received from the server \n\n  $body   \n\n');
+      // print('This is what we received from the server \n\n  $body   \n\n');
 
       var json = jsonDecode(response.body);
       var rows = json['Results'];
-
+      // print('\n\n\n\n this is the incoming rows $rows \n\n\n\n\n\n');
       List<incomingTestResult> results = List.empty(growable: true);
 
       if (rows != null) {
@@ -304,6 +559,7 @@ class _ResultsState extends State<Results> {
           var result =
               incomingTestResult.fromJson(rows[i] as Map<String, dynamic>);
           results.insert(i, result);
+          // print("$results");
         }
       }
 
@@ -327,7 +583,6 @@ class _ResultsState extends State<Results> {
           centerTitle: true,
           backgroundColor: Colors.lightGreen[700],
         ),
-        // body: buildTable()
         body: Container(
           // color: Colors.grey[400],
           decoration: BoxDecoration(
@@ -365,7 +620,11 @@ class _ResultsState extends State<Results> {
     const columns = Constants.COLUMN_TITLES_RESULTS;
     return DataTable(
         columns: getColumns(columns),
-        rows: results
+        rows:
+            // DataRow(cells:[
+            // ['Date', 'Download', 'Upload', 'Jitter', 'Latency', 'Packet Loss', 'Total Test Duration'];
+            // ]),
+        results
             .map(
               (result) => DataRow(
                 cells: <DataCell>[
@@ -375,7 +634,6 @@ class _ResultsState extends State<Results> {
                   DataCell(Text(result.jitter.toString())),
                   DataCell(Text(result.latency.toString())),
                   DataCell(Text(result.packetLoss.toString())),
-                  DataCell(Text(result.duration.toString())),
                 ],
               ),
             )
@@ -389,26 +647,26 @@ class _ResultsState extends State<Results> {
 
 
 
+
+
+
 class personalInfoFormSubmit extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Submit Personal Information'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Center(
-      child: new ListView(
-        // shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: [
-            Center(
-                child: new Text(
-                    'PAg4 hold \n '))
-          ]),
-    ),
-  );
+        appBar: AppBar(
+          title: const Text('PAgCASA: Submit Personal Information'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Center(
+          child: new ListView(
+              // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: [Center(child: new Text('PAg4 hold \n '))]),
+        ),
+      );
 }
+
 
 
 
@@ -431,14 +689,6 @@ class _SettingsState extends State<Settings> {
   String state = '-';
   String internetPlan = '-';
 
-  String _firstName = '-';
-  String _lastName = '-';
-  String _street = '-';
-  String _postalCode = '-';
-  String _city = '-';
-  String _state = '-';
-  String _internetPlan = '-';
-
   //this will store the image in cache
   File? image = null;
 
@@ -453,7 +703,7 @@ class _SettingsState extends State<Settings> {
             body: incomingMap);
     //store the body in a variable
     var holder = response.body;
-    print('sending data to server hopefully ');
+    print('sending data to server ');
 
     //TODO increase error checking
     //check to ensure the server gave us a response
@@ -470,7 +720,8 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildFirstName() {
     return TextFormField(
-      decoration: InputDecoration(labelText: "Enter your first name"),
+      decoration: InputDecoration(labelText: "Enter your first name"
+      ),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
           return "Please enter a valid first name";
@@ -532,7 +783,8 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildState() {
     return TextFormField(
-        decoration: InputDecoration(labelText: "Enter your state"),
+
+        decoration: InputDecoration(labelText: "Enter your state" ),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid state name";
@@ -542,9 +794,9 @@ class _SettingsState extends State<Settings> {
         });
   }
 
-  Future _buildImageGallery() async{
+  Future _buildImageGallery() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if(image == null){
+    if (image == null) {
       return null;
     }
     final imageHold = File(image.path);
@@ -552,9 +804,9 @@ class _SettingsState extends State<Settings> {
     return null;
   }
 
-  Future _buildImageCamera() async{
+  Future _buildImageCamera() async {
     final image = await ImagePicker().pickImage(source: ImageSource.camera);
-    if(image == null){
+    if (image == null) {
       return null;
     }
     final imageHold = File(image.path);
@@ -565,112 +817,112 @@ class _SettingsState extends State<Settings> {
   @override
   Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
-        title: const Text('PAgCASA: Profile Settings'),
+        title: const Text('PAgCASA: Upload Profile Information'),
         centerTitle: true,
         backgroundColor: Colors.lightGreen[700],
       ),
-      body: Container(
-        height: 750,
-        width: 450,
-        // color: Colors.grey[400],
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/HomepageBackground.jpg"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Container(
-            height: 60,
-            width: 40,
-            // decoration: BoxDecoration(
-            //   color: Colors.white
-            // ),
-            child: Form(
-                key: formKey,
-                child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 10),
-                        Text(
-                            'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.'),
-                        SizedBox(height: 10),
-                        _buildFirstName(),
-                        SizedBox(height: 10),
-                        _buildLastName(),
-                        SizedBox(height: 10),
-                        _buildStreetName(),
-                        SizedBox(height: 10),
-                        _buildPostal(),
-                        SizedBox(height: 10),
-                        _buildTown(),
-                        SizedBox(height: 10),
-                        _buildState(),
-                        // Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
-                        SizedBox(height: 10),
-                        ElevatedButton(
-                            child: Text('gallery'),
-                            onPressed: () {
-                              _buildImageGallery();
-                              if(image != null){
-                                List<int> imageBytes = image!.readAsBytesSync();
-                                String base64Image = base64.encode(imageBytes);
-                                internetPlan = base64Image;
-                              }
-                              else{
-                                print('Something is wrong with the image');
-                              }
-
-                            }),
-                        SizedBox(height: 10),
-                        ElevatedButton(
-                            child: Text('camera'),
-                            onPressed: () {
-                              _buildImageCamera();
-                              if(image != null){
-                                List<int> imageBytes = image!.readAsBytesSync();
-                                String base64Image = base64.encode(imageBytes);
-                                internetPlan = base64Image;
-                              }
-                              else{
-                                print('Something is wrong with the image from the camera');
-                              }
-                            }),
-                        SizedBox(height: 10),
-                        ElevatedButton(
-                            onPressed: () {
-                              final isValid = formKey.currentState?.validate();
-                              if (formKey.currentState!.validate()) {
-                                PersonalInformation person =
-                                    new PersonalInformation(
-                                        firstName,
-                                        lastName,
-                                        street,
-                                        postalCode,
-                                        city,
-                                        state,
-                                        internetPlan);
-                                //
-                                print('sending data to method ');
-                                print('this is the image $image ');
-                                // uploadPersonalInfo(person.toJSON());
-                              }
-                            },
-                            child: Text('Submit!'))
-                      ],
-                    )))
-        ),
-      ));
+       body:Form(
+                  key: formKey,
+                  child: Container(
+                      color: Colors.yellow[200],
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(height: 10),
+                          Text(
+                              'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
+                          SizedBox(height: 10),
+                          _buildFirstName(),
+                          SizedBox(height: 10),
+                          _buildLastName(),
+                          SizedBox(height: 10),
+                          _buildStreetName(),
+                          SizedBox(height: 10),
+                          _buildPostal(),
+                          SizedBox(height: 10),
+                          _buildTown(),
+                          SizedBox(height: 10),
+                          _buildState(),
+// Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
+                          SizedBox(height: 10),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.red,
+                                shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              child: Text('Upload an image of your internet bill from Gallery'),
+                              onPressed: () {
+                                _buildImageGallery();
+                                if (image != null) {
+                                  List<int> imageBytes =
+                                      image!.readAsBytesSync();
+                                  String base64Image =
+                                      base64.encode(imageBytes);
+                                  internetPlan = base64Image;
+                                } else {
+                                  print('Something is wrong with the image');
+                                }
+                              }),
+                          SizedBox(height: 10),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.red,
+                                shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              child: Text('Upload an image of your internet bill from Camera'),
+                              onPressed: () {
+                                _buildImageCamera();
+                                if (image != null) {
+                                  List<int> imageBytes =
+                                      image!.readAsBytesSync();
+                                  String base64Image =
+                                      base64.encode(imageBytes);
+                                  internetPlan = base64Image;
+                                } else {
+                                  print(
+                                      'Something is wrong with the image from the camera');
+                                }
+                              }),
+                          SizedBox(height: 10),
+                          ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.green,
+                                shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                final isValid =
+                                    formKey.currentState?.validate();
+                                if (formKey.currentState!.validate()) {
+                                  PersonalInformation person =
+                                       PersonalInformation(
+                                          firstName,
+                                          lastName,
+                                          street,
+                                          postalCode,
+                                          city,
+                                          state,
+                                          internetPlan);
+//
+                                  print('sending data to method ');
+                                  print('this is the image $image ');
+                                  uploadPersonalInfo(person.toJSON());
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: (context) => dataUploadScreen()),
+                                  );
+                                }
+                              },
+                              child: Text('Submit!'))
+                        ],
+                      ))));
 }
-
-
-
-
-
-
-
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -693,8 +945,6 @@ class NavBarPrimary extends StatefulWidget {
 class _NavBarPrimaryState extends State<NavBarPrimary> {
   int _selectedIndex = 0;
 
-  static const TextStyle optionStyle =
-      TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
 
   // //TODO put these widgets in separate files
 

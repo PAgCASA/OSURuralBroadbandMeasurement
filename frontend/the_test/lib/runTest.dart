@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:the_test/utils.dart' as utils;
 import 'constants.dart' as Constants;
@@ -8,6 +10,8 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:ndt_7_dart/exports.dart' as NDT;
 import 'main.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class RunTest extends StatefulWidget {
   @override
@@ -66,7 +70,7 @@ class _RunTestState extends State<RunTest> {
       socket.send(fullPacketData.codeUnits,
           serverSendAddress, port);
 
-      sleep(const Duration(seconds: 1));
+
     }
     });
 
@@ -125,8 +129,8 @@ class _RunTestState extends State<RunTest> {
   }
 
   void createSocketAndTest() async {
-    phone_ID = await utils.getDeviceID();
-    test_ID = utils.getTestID(phone_ID);
+    // phone_ID = await utils.getDeviceID();
+    // test_ID = utils.getTestID(phone_ID);
 
     //socket initialization
     // print("Socket initialized.");
@@ -228,6 +232,69 @@ class _RunTestState extends State<RunTest> {
     //upload the encoded message
     uploadTest(jsonToServer);
   }
+  static const position = CameraPosition(target: LatLng(37.444444, -122.431297),zoom: 11.5);
+
+
+  void startTimer() {
+    print('timer started');
+    int _start = Constants.ACCEPTED_RESPONSE_WINDOW;
+    const oneUnit = const Duration(seconds: 1);
+    Timer _timer = new Timer.periodic(
+      oneUnit,
+          (Timer timer) {
+        if (_start == 0) {
+
+          Navigator.pop(
+            context,
+            MaterialPageRoute(builder: (context) => LoadingScreen()),
+          );
+
+          //this will crash the app but bring us back to the proper previous location
+          // Navigator.of(context, rootNavigator: true).pop();
+
+          //this method won't crash the app but it will remove the bottom bar
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(builder: (context) => RunTest()),
+          // );
+          //get it to stop infinitely pushing
+          _start--;
+        }
+        else{
+          _start--;
+        }
+      },
+    );
+  }
+
+
+  ConnectivityResult? connectivityResult;
+
+
+
+  //See if phone is connected to cellular data, wifi, or neither
+  Future<int> checkConnectivityState() async {
+    int validConnection = 0;
+    final ConnectivityResult result = await Connectivity().checkConnectivity();
+
+    if (result == ConnectivityResult.wifi) {
+      validConnection = 1;
+      print('Connected to a Wi-Fi network');
+    } else if (result == ConnectivityResult.mobile) {
+      validConnection = 2;
+      print('Connected to a mobile network');
+    } else {
+      validConnection = 3;
+      print('Not connected to any network');
+    }
+    setState(() {
+      connectivityResult = result;
+    });
+    return validConnection;
+  }
+
+
+
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -256,8 +323,14 @@ class _RunTestState extends State<RunTest> {
                   padding: const EdgeInsets.all(15.0),
                   height: 250.0,
                   width: 350.0,
-                  child: const Text(
-                      'The map will go here when we have an api key')),
+                  child: GoogleMap(
+                    initialCameraPosition: position,
+                    myLocationButtonEnabled: false,
+
+                  )
+              ),
+
+
               const SizedBox(height: 10),
               Center(
                 child: Container(
@@ -324,15 +397,42 @@ class _RunTestState extends State<RunTest> {
         ),
         floatingActionButton: FloatingActionButton.extended(
           onPressed: () async {
-            phone_ID = await utils.getDeviceID();
-            test_ID = utils.getTestID(phone_ID);
-            // createSocketAndTest();
-            sendUDP(Constants.SERVER_IP_LIST[0]);
+            var connectionCode = 0;
 
-            /*Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoadingScreen()),
-            );*/
+            connectionCode = await checkConnectivityState();
+
+            // if we are connected to wifi, proceed normally
+            if(connectionCode == 1){
+              phone_ID = await utils.getDeviceID();
+              test_ID = utils.getTestID(phone_ID);
+              // createSocketAndTest();
+              // sendUDP(Constants.SERVER_IP_LIST[0]);
+
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => LoadingScreen()),
+              );
+              startTimer();
+            }
+
+            //if we are connected to mobile data, the user will have to turn it off to proceed
+            else if(connectionCode == 2){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => MobileConnectionScreen()),
+              );
+            }
+            //if we don't have a connection, they will need to connect to a network
+            else if(connectionCode == 3){
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NoConnectionScreen()),
+              );
+            }
+            else{
+              print("something went wrong with the connectivity method, here is the value of the connection $connectionCode");
+            }
+
           },
           backgroundColor: Colors.red[500],
           label: const Text('Begin Test'),
