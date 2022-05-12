@@ -619,16 +619,14 @@ class _ResultsState extends State<Results> {
   Widget buildTable(List<incomingTestResult> results) {
     const columns = Constants.COLUMN_TITLES_RESULTS;
     return DataTable(
+        columnSpacing: 10,
         columns: getColumns(columns),
         rows:
-            // DataRow(cells:[
-            // ['Date', 'Download', 'Upload', 'Jitter', 'Latency', 'Packet Loss', 'Total Test Duration'];
-            // ]),
         results
             .map(
               (result) => DataRow(
                 cells: <DataCell>[
-                  DataCell(Text(result.date.toString())),
+                  DataCell(Text(getDateFormat(result.date))),
                   DataCell(Text(result.downloadSpeed.toString())),
                   DataCell(Text(result.uploadSpeed.toString())),
                   DataCell(Text(result.jitter.toString())),
@@ -642,6 +640,12 @@ class _ResultsState extends State<Results> {
 
   List<DataColumn> getColumns(List<String> columns) =>
       columns.map((String column) => DataColumn(label: Text(column))).toList();
+  String getDateFormat(String data) {
+    var date = DateTime.parse(data).toLocal();
+    return "${date.day}-${date.month}-${date.year-2000} ${date.hour}:"
+        "${date.minute.toString().length == 1 ?
+            "0"+ date.minute.toString() : date.minute.toString()}";
+  }
 }
 
 
