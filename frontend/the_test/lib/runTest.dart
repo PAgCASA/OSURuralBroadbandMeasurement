@@ -34,9 +34,6 @@ class _RunTestState extends State<RunTest> {
   int packetsReceived = 1;
   int errorPackets = 0;
 
-
-
-
   //send udp packets to server
   void sendUDP(String incomingServer) async {
     String timeHold;
@@ -44,43 +41,39 @@ class _RunTestState extends State<RunTest> {
     String fullPacketData;
     InternetAddress serverSendAddress = new InternetAddress(incomingServer);
 
-    RawDatagramSocket.bind(InternetAddress.anyIPv4, 65002).then((RawDatagramSocket socket){
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 65002)
+        .then((RawDatagramSocket socket) {
       // print('Sending from ${socket.address.address}:${socket.port}');
       int port = Constants.UDP_SEND_PORT;
 
+      for (int i = 0; i < Constants.UDP_PACKETS_TO_SEND_JITTER; i++) {
+        //take the current time in miliseconds 13 bytes
+        timeHold = DateTime.now().millisecondsSinceEpoch.toString();
+        //take the packet sequence designator
+        sequenceHold = i.toString();
+        //if there is only one digit, prepend 2 zeroes
+        if (i < 10) {
+          sequenceHold = '00' + sequenceHold;
+        }
+        //if there are two digits, prepend one zero
+        else if (i < 100 && i > 9) {
+          sequenceHold = '0' + sequenceHold;
+        }
+        //there are enough numbers to maintain packet size, 3 byte designator
 
-    for(int i = 0; i < Constants.UDP_PACKETS_TO_SEND_JITTER; i++){
-      //take the current time in miliseconds 13 bytes
-      timeHold = DateTime.now().millisecondsSinceEpoch.toString();
-      //take the packet sequence designator
-      sequenceHold = i.toString();
-      //if there is only one digit, prepend 2 zeroes
-      if(i < 10){
-        sequenceHold = '00' + sequenceHold;
+        //combine the components of the packet data
+        fullPacketData = sequenceHold + timeHold + Constants.DATA;
+        print(
+            '\n this is the full packet $fullPacketData \n  and this is the time in ms $timeHold \n');
+
+        socket.send(fullPacketData.codeUnits, serverSendAddress, port);
       }
-      //if there are two digits, prepend one zero
-      else if (i < 100 && i > 9){
-        sequenceHold = '0' + sequenceHold;
-      }
-      //there are enough numbers to maintain packet size, 3 byte designator
-
-      //combine the components of the packet data
-      fullPacketData = sequenceHold + timeHold + Constants.DATA;
-      print('\n this is the full packet $fullPacketData \n  and this is the time in ms $timeHold \n');
-
-      socket.send(fullPacketData.codeUnits,
-          serverSendAddress, port);
-
-
-    }
     });
 
     //13 bits for datetime
     //3 for sequence (0-199)
     //8 for header
     //136 for data
-
-
 
     // if (packetsSent == 0) {
     //   print('no packets sent');
@@ -90,15 +83,13 @@ class _RunTestState extends State<RunTest> {
     // }
   }
 
-  int recievePacketLoss(){
+  int recievePacketLoss() {
     return 0;
   }
 
-  int recieveJitter(){
+  int recieveJitter() {
     return 0;
   }
-
-
 
   //Upload incoming json encoded data
   uploadTest(var incomingMap) async {
@@ -125,7 +116,7 @@ class _RunTestState extends State<RunTest> {
 
   void calcLatencyUDPPacketLoss(String desiredServer) {}
 
-  int selectLowestLatencyServer(){
+  int selectLowestLatencyServer() {
     return 0;
   }
 
@@ -233,8 +224,9 @@ class _RunTestState extends State<RunTest> {
     //upload the encoded message
     uploadTest(jsonToServer);
   }
-  static const position = CameraPosition(target: LatLng(37.444444, -122.431297),zoom: 11.5);
 
+  static const position =
+      CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
 
   void startTimer() {
     print('timer started');
@@ -242,9 +234,8 @@ class _RunTestState extends State<RunTest> {
     const oneUnit = const Duration(seconds: 1);
     Timer _timer = new Timer.periodic(
       oneUnit,
-          (Timer timer) {
+      (Timer timer) {
         if (_start == 0) {
-
           Navigator.pop(
             context,
             MaterialPageRoute(builder: (context) => LoadingScreen()),
@@ -260,18 +251,14 @@ class _RunTestState extends State<RunTest> {
           // );
           //get it to stop infinitely pushing
           _start--;
-        }
-        else{
+        } else {
           _start--;
         }
       },
     );
   }
 
-
   ConnectivityResult? connectivityResult;
-
-
 
   //See if phone is connected to cellular data, wifi, or neither
   Future<int> checkConnectivityState() async {
@@ -293,9 +280,6 @@ class _RunTestState extends State<RunTest> {
     });
     return validConnection;
   }
-
-
-
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -327,11 +311,7 @@ class _RunTestState extends State<RunTest> {
                   child: GoogleMap(
                     initialCameraPosition: position,
                     myLocationButtonEnabled: false,
-
-                  )
-              ),
-
-
+                  )),
               const SizedBox(height: 10),
               Center(
                 child: Container(
@@ -403,7 +383,7 @@ class _RunTestState extends State<RunTest> {
             connectionCode = await checkConnectivityState();
 
             // if we are connected to wifi, proceed normally
-            if(connectionCode == 1){
+            if (connectionCode == 1) {
               phone_ID = await utils.getDeviceID();
               test_ID = utils.getTestID(phone_ID);
               // createSocketAndTest();
@@ -417,23 +397,23 @@ class _RunTestState extends State<RunTest> {
             }
 
             //if we are connected to mobile data, the user will have to turn it off to proceed
-            else if(connectionCode == 2){
+            else if (connectionCode == 2) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => MobileConnectionScreen()),
+                MaterialPageRoute(
+                    builder: (context) => MobileConnectionScreen()),
               );
             }
             //if we don't have a connection, they will need to connect to a network
-            else if(connectionCode == 3){
+            else if (connectionCode == 3) {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => NoConnectionScreen()),
               );
+            } else {
+              print(
+                  "something went wrong with the connectivity method, here is the value of the connection $connectionCode");
             }
-            else{
-              print("something went wrong with the connectivity method, here is the value of the connection $connectionCode");
-            }
-
           },
           backgroundColor: Colors.red[500],
           label: const Text('Begin Test'),

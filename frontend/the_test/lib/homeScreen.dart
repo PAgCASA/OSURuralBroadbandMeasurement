@@ -1,4 +1,3 @@
-
 //Homepage, the main page for the app
 import 'package:flutter/material.dart';
 
@@ -13,7 +12,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Colors.lightGreen[700],
       ),
       body: Container(
-        // color: Colors.grey[400],
+          // color: Colors.grey[400],
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/HomepageBackground.jpg"),

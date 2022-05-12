@@ -149,8 +149,6 @@ class _LoadingScreenState extends State<LoadingScreen> {
   }
 }
 
-
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -171,7 +169,6 @@ class NavBarPrimary extends StatefulWidget {
 
 class _NavBarPrimaryState extends State<NavBarPrimary> {
   int _selectedIndex = 0;
-
 
   // //TODO put these widgets in separate files
 

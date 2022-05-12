@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:io';
 
@@ -12,18 +11,18 @@ import 'constants.dart' as Constants;
 class personalInfoFormSubmit extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Submit Personal Information'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Center(
-      child: new ListView(
-        // shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: [Center(child: new Text('PAg4 hold \n '))]),
-    ),
-  );
+        appBar: AppBar(
+          title: const Text('PAgCASA: Submit Personal Information'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Center(
+          child: new ListView(
+              // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: [Center(child: new Text('PAg4 hold \n '))]),
+        ),
+      );
 }
 
 class Settings extends StatefulWidget {
@@ -51,9 +50,9 @@ class _SettingsState extends State<Settings> {
   uploadPersonalInfo(var incomingMap) async {
     //create a POST request and anticipate a json object
     var response =
-    await http.post(Uri.parse(Constants.PERSONAL_INFO_UPLOAD_URL),
-        //    headers: {"Content-Type": "application/json; charset=UTF-8"},
-        body: incomingMap);
+        await http.post(Uri.parse(Constants.PERSONAL_INFO_UPLOAD_URL),
+            //    headers: {"Content-Type": "application/json; charset=UTF-8"},
+            body: incomingMap);
     //store the body in a variable
     var holder = response.body;
     print('sending data to server ');
@@ -73,8 +72,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildFirstName() {
     return TextFormField(
-      decoration: InputDecoration(labelText: "Enter your first name"
-      ),
+      decoration: InputDecoration(labelText: "Enter your first name"),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
           return "Please enter a valid first name";
@@ -136,8 +134,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildState() {
     return TextFormField(
-
-        decoration: InputDecoration(labelText: "Enter your state" ),
+        decoration: InputDecoration(labelText: "Enter your state"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid state name";
@@ -174,128 +171,126 @@ class _SettingsState extends State<Settings> {
         centerTitle: true,
         backgroundColor: Colors.lightGreen[700],
       ),
-      body: ListView(
-        addAutomaticKeepAlives: true,
-      children: [
+      body: ListView(addAutomaticKeepAlives: true, children: [
         Form(
-          key: formKey,
-          child: Container(
-              color: Colors.yellow[200],
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(height: 10),
-                  Text(
-                    'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-                  SizedBox(height: 10),
-                  _buildFirstName(),
-                  SizedBox(height: 10),
-                  _buildLastName(),
-                  SizedBox(height: 10),
-                  _buildStreetName(),
-                  SizedBox(height: 10),
-                  _buildPostal(),
-                  SizedBox(height: 10),
-                  _buildTown(),
-                  SizedBox(height: 10),
-                  _buildState(),
+            key: formKey,
+            child: Container(
+                color: Colors.yellow[200],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    SizedBox(height: 10),
+                    Text(
+                      'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    ),
+                    SizedBox(height: 10),
+                    _buildFirstName(),
+                    SizedBox(height: 10),
+                    _buildLastName(),
+                    SizedBox(height: 10),
+                    _buildStreetName(),
+                    SizedBox(height: 10),
+                    _buildPostal(),
+                    SizedBox(height: 10),
+                    _buildTown(),
+                    SizedBox(height: 10),
+                    _buildState(),
 // Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(20.0),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0),
+                          ),
                         ),
-                      ),
-                      child: Text('Upload an image of your internet bill from Gallery'),
-                      onPressed: () {
-                        _buildImageGallery();
-                        if (image != null) {
-                          List<int> imageBytes =
-                          image!.readAsBytesSync();
-                          String base64Image =
-                          base64.encode(imageBytes);
-                          internetPlan = base64Image;
-                        } else {
-                          print('Something is wrong with the image');
-                        }
-                      }),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.red,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(20.0),
+                        child: Text(
+                            'Upload an image of your internet bill from Gallery'),
+                        onPressed: () {
+                          _buildImageGallery();
+                          if (image != null) {
+                            List<int> imageBytes = image!.readAsBytesSync();
+                            String base64Image = base64.encode(imageBytes);
+                            internetPlan = base64Image;
+                          } else {
+                            print('Something is wrong with the image');
+                          }
+                        }),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0),
+                          ),
                         ),
-                      ),
-                      child: Text('Upload an image of your internet bill from Camera'),
-                      onPressed: () {
-                        _buildImageCamera();
-                        if (image != null) {
-                          List<int> imageBytes =
-                          image!.readAsBytesSync();
-                          String base64Image =
-                          base64.encode(imageBytes);
-                          internetPlan = base64Image;
-                        } else {
-                          print(
-                              'Something is wrong with the image from the camera');
-                        }
-                      }),
-                  SizedBox(height: 10),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.green,
-                        shape: new RoundedRectangleBorder(
-                          borderRadius: new BorderRadius.circular(20.0),
+                        child: Text(
+                            'Upload an image of your internet bill from Camera'),
+                        onPressed: () {
+                          _buildImageCamera();
+                          if (image != null) {
+                            List<int> imageBytes = image!.readAsBytesSync();
+                            String base64Image = base64.encode(imageBytes);
+                            internetPlan = base64Image;
+                          } else {
+                            print(
+                                'Something is wrong with the image from the camera');
+                          }
+                        }),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0),
+                          ),
                         ),
-                      ),
-                      onPressed: () {
-                        final isValid =
-                        formKey.currentState?.validate();
-                        if (formKey.currentState!.validate()) {
-                          PersonalInformation person =
-                          PersonalInformation(
-                              firstName,
-                              lastName,
-                              street,
-                              postalCode,
-                              city,
-                              state,
-                              internetPlan);
+                        onPressed: () {
+                          final isValid = formKey.currentState?.validate();
+                          if (formKey.currentState!.validate()) {
+                            PersonalInformation person = PersonalInformation(
+                                firstName,
+                                lastName,
+                                street,
+                                postalCode,
+                                city,
+                                state,
+                                internetPlan);
 //
-                          print('sending data to method ');
-                          print('this is the image $image ');
-                          uploadPersonalInfo(person.toJSON());
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => dataUploadScreen()),
-                          );
-                        }
-                      },
-                      child: Text('Submit!'))
-                ],
-              )))])
-      );
+                            print('sending data to method ');
+                            print('this is the image $image ');
+                            uploadPersonalInfo(person.toJSON());
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => dataUploadScreen()),
+                            );
+                          }
+                        },
+                        child: Text('Submit!'))
+                  ],
+                )))
+      ]));
 }
 
 class dataUploadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Speed Test Homepage'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Center(
-      child: ListView(
-        // shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: [
-            Center(
-                child: Container(
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test Homepage'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Center(
+          child: ListView(
+              // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                Center(
+                    child: Container(
                   height: 600,
                   width: 650,
                   decoration: BoxDecoration(
@@ -306,26 +301,27 @@ class dataUploadScreen extends StatelessWidget {
                   ),
                   child: Center(
                       child: Text(
-                        "Thank you for uploading your personal data!",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      )),
+                    "Thank you for uploading your personal data!",
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  )),
                 )),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  MaterialPageRoute(builder: (context) => dataUploadScreen()),
-                );
-              },
-              child: Text("Go back"),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.green[500],
-              ),
-            )
-          ]),
-    ),
-  );
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => dataUploadScreen()),
+                    );
+                  },
+                  child: Text("Go back"),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[500],
+                  ),
+                )
+              ]),
+        ),
+      );
 }

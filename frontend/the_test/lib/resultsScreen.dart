@@ -1,4 +1,3 @@
-
 //Page for displaying past results
 import 'dart:convert';
 
@@ -40,7 +39,7 @@ class _ResultsState extends State<Results> {
         // turning them into test results
         for (var i = 0; i < (rows as List).length; i++) {
           var result =
-          incomingTestResult.fromJson(rows[i] as Map<String, dynamic>);
+              incomingTestResult.fromJson(rows[i] as Map<String, dynamic>);
           results.insert(i, result);
           // print("$results");
         }
@@ -61,72 +60,71 @@ class _ResultsState extends State<Results> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Speed Test Results'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Container(
-      // color: Colors.grey[400],
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("assets/HomepageBackground.jpg"),
-          fit: BoxFit.cover,
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test Results'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
         ),
-      ),
+        body: Container(
+          // color: Colors.grey[400],
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/HomepageBackground.jpg"),
+              fit: BoxFit.cover,
+            ),
+          ),
 
-      child: Center(
-        child: Container(
-          color: Colors.white,
-          height: 500,
-          child: SingleChildScrollView(
-              scrollDirection: Axis.vertical,
+          child: Center(
+            child: Container(
+              color: Colors.white,
+              height: 500,
               child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: FutureBuilder<List<incomingTestResult>>(
-                      future: testsToDisplay,
-                      builder: (context, snapshot) {
-                        var data = snapshot.data;
-                        if (snapshot.hasData && data != null) {
-                          return buildTable(data);
-                        } else if (snapshot.hasError) {
-                          return Text('${snapshot.error}');
-                        }
-                        return const CircularProgressIndicator();
-                      }))),
+                  scrollDirection: Axis.vertical,
+                  child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: FutureBuilder<List<incomingTestResult>>(
+                          future: testsToDisplay,
+                          builder: (context, snapshot) {
+                            var data = snapshot.data;
+                            if (snapshot.hasData && data != null) {
+                              return buildTable(data);
+                            } else if (snapshot.hasError) {
+                              return Text('${snapshot.error}');
+                            }
+                            return const CircularProgressIndicator();
+                          }))),
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   Widget buildTable(List<incomingTestResult> results) {
     const columns = COLUMN_TITLES_RESULTS;
     return DataTable(
         columnSpacing: 10,
         columns: getColumns(columns),
-        rows:
-        results
+        rows: results
             .map(
               (result) => DataRow(
-            cells: <DataCell>[
-              DataCell(Text(getDateFormat(result.date))),
-              DataCell(Text(result.downloadSpeed.toString())),
-              DataCell(Text(result.uploadSpeed.toString())),
-              DataCell(Text(result.jitter.toString())),
-              DataCell(Text(result.latency.toString())),
-              DataCell(Text(result.packetLoss.toString())),
-            ],
-          ),
-        )
+                cells: <DataCell>[
+                  DataCell(Text(getDateFormat(result.date))),
+                  DataCell(Text(result.downloadSpeed.toString())),
+                  DataCell(Text(result.uploadSpeed.toString())),
+                  DataCell(Text(result.jitter.toString())),
+                  DataCell(Text(result.latency.toString())),
+                  DataCell(Text(result.packetLoss.toString())),
+                ],
+              ),
+            )
             .toList());
   }
 
   List<DataColumn> getColumns(List<String> columns) =>
       columns.map((String column) => DataColumn(label: Text(column))).toList();
+
   String getDateFormat(String data) {
     var date = DateTime.parse(data).toLocal();
-    return "${date.day}-${date.month}-${date.year-2000} ${date.hour}:"
-        "${date.minute.toString().length == 1 ?
-    "0"+ date.minute.toString() : date.minute.toString()}";
+    return "${date.day}-${date.month}-${date.year - 2000} ${date.hour}:"
+        "${date.minute.toString().length == 1 ? "0" + date.minute.toString() : date.minute.toString()}";
   }
 }
