@@ -169,7 +169,7 @@ class _RunTestState extends State<RunTest> {
                           ? DataRow(
                         cells: <DataCell>[
                           const DataCell(Text('Download Speed')),
-                          DataCell(Text('$downloadSpeed')),
+                          DataCell(Text(downloadSpeed.toStringAsFixed(2))),
                         ],
                       )
                           : null,
@@ -177,7 +177,7 @@ class _RunTestState extends State<RunTest> {
                           ? DataRow(
                         cells: <DataCell>[
                           const DataCell(Text('Upload Speed')),
-                          DataCell(Text('$uploadSpeed')),
+                          DataCell(Text(uploadSpeed.toStringAsFixed(2))),
                         ],
                       )
                           : null,
