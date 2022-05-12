@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:the_test/utils.dart' as utils;
+import 'connectionScreens.dart';
 import 'constants.dart' as Constants;
 import 'package:dart_ping/dart_ping.dart';
 import 'package:http/http.dart' as http;
