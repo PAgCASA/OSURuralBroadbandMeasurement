@@ -174,7 +174,10 @@ class _SettingsState extends State<Settings> {
         centerTitle: true,
         backgroundColor: Colors.lightGreen[700],
       ),
-      body:Form(
+      body: ListView(
+        addAutomaticKeepAlives: true,
+      children: [
+        Form(
           key: formKey,
           child: Container(
               color: Colors.yellow[200],
@@ -274,7 +277,8 @@ class _SettingsState extends State<Settings> {
                       },
                       child: Text('Submit!'))
                 ],
-              ))));
+              )))])
+      );
 }
 
 class dataUploadScreen extends StatelessWidget {
