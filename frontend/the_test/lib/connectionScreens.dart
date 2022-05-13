@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MobileConnectionScreen extends StatelessWidget {
+  const MobileConnectionScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -17,19 +19,19 @@ class MobileConnectionScreen extends StatelessWidget {
                     child: Container(
                   height: 600,
                   width: 650,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/HomepageBackground.jpg"),
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                       child: Text(
                     "It appears that you are connected to a mobile network.  Please turn off your mobile data and connect to your wireless network to proceed.",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   )),
                 )),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
@@ -37,10 +39,10 @@ class MobileConnectionScreen extends StatelessWidget {
                     Navigator.pop(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => MobileConnectionScreen()),
+                          builder: (context) => const MobileConnectionScreen()),
                     );
                   },
-                  child: Text("Go back"),
+                  child: const Text("Go back"),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.green[500],
                   ),
@@ -51,6 +53,8 @@ class MobileConnectionScreen extends StatelessWidget {
 }
 
 class NoConnectionScreen extends StatelessWidget {
+  const NoConnectionScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -67,19 +71,19 @@ class NoConnectionScreen extends StatelessWidget {
                     child: Container(
                   height: 600,
                   width: 650,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/HomepageBackground.jpg"),
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                       child: Text(
                     "It appears that you do not have network connectivity..  Please turn off your mobile data and connect to your wireless network to proceed.",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   )),
                 )),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
@@ -87,10 +91,10 @@ class NoConnectionScreen extends StatelessWidget {
                     Navigator.pop(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => NoConnectionScreen()),
+                          builder: (context) => const NoConnectionScreen()),
                     );
                   },
-                  child: Text("Go back"),
+                  child: const Text("Go back"),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.green[500],
                   ),

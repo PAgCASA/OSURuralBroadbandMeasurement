@@ -9,6 +9,8 @@ import 'constants.dart';
 import 'main.dart';
 
 class Results extends StatefulWidget {
+  const Results({Key? key}) : super(key: key);
+
   @override
   State<Results> createState() => _ResultsState();
 }
@@ -67,7 +69,7 @@ class _ResultsState extends State<Results> {
         ),
         body: Container(
           // color: Colors.grey[400],
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/HomepageBackground.jpg"),
               fit: BoxFit.cover,

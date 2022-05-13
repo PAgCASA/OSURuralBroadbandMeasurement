@@ -6,7 +6,6 @@ import 'connectionScreens.dart';
 import 'constants.dart' as Constants;
 import 'package:dart_ping/dart_ping.dart';
 import 'package:http/http.dart' as http;
-import 'package:udp/udp.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:ndt_7_dart/exports.dart' as NDT;
@@ -15,6 +14,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class RunTest extends StatefulWidget {
+  const RunTest({Key? key}) : super(key: key);
+
   @override
   State<RunTest> createState() => _RunTestState();
 }
@@ -39,7 +40,7 @@ class _RunTestState extends State<RunTest> {
     String timeHold;
     String sequenceHold;
     String fullPacketData;
-    InternetAddress serverSendAddress = new InternetAddress(incomingServer);
+    InternetAddress serverSendAddress = InternetAddress(incomingServer);
 
     RawDatagramSocket.bind(InternetAddress.anyIPv4, 65002)
         .then((RawDatagramSocket socket) {
@@ -101,15 +102,9 @@ class _RunTestState extends State<RunTest> {
     var holder = response.body;
 
     //TODO increase error checking
-    //check to ensure the server gave us a response
-    if (holder == null) {
-      print(
-          "there was a problem connecting with the server.  Please try again");
-    } else if (holder == "200 Error") {
-    } else {
       //print the server response from upload
       print('\n This is the response from the server: $holder\n');
-    }
+
   }
 
   void DownloadAndUploadSpeed() {}
@@ -231,8 +226,8 @@ class _RunTestState extends State<RunTest> {
   void startTimer() {
     print('timer started');
     int _start = Constants.ACCEPTED_RESPONSE_WINDOW;
-    const oneUnit = const Duration(seconds: 1);
-    Timer _timer = new Timer.periodic(
+    const oneUnit = Duration(seconds: 1);
+    Timer _timer = Timer.periodic(
       oneUnit,
       (Timer timer) {
         if (_start == 0) {
@@ -308,7 +303,7 @@ class _RunTestState extends State<RunTest> {
                   padding: const EdgeInsets.all(15.0),
                   height: 250.0,
                   width: 350.0,
-                  child: GoogleMap(
+                  child: const GoogleMap(
                     initialCameraPosition: position,
                     myLocationButtonEnabled: false,
                   )),
@@ -401,14 +396,14 @@ class _RunTestState extends State<RunTest> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MobileConnectionScreen()),
+                    builder: (context) => const MobileConnectionScreen()),
               );
             }
             //if we don't have a connection, they will need to connect to a network
             else if (connectionCode == 3) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NoConnectionScreen()),
+                MaterialPageRoute(builder: (context) => const NoConnectionScreen()),
               );
             } else {
               print(

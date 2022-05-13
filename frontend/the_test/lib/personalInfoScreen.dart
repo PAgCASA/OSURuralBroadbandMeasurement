@@ -9,6 +9,8 @@ import 'main.dart';
 import 'constants.dart' as Constants;
 
 class personalInfoFormSubmit extends StatelessWidget {
+  const personalInfoFormSubmit({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -17,10 +19,10 @@ class personalInfoFormSubmit extends StatelessWidget {
           backgroundColor: Colors.lightGreen[700],
         ),
         body: Center(
-          child: new ListView(
+          child: ListView(
               // shrinkWrap: true,
               padding: const EdgeInsets.all(20.0),
-              children: [Center(child: new Text('PAg4 hold \n '))]),
+              children: [Center(child: Text('PAg4 hold \n '))]),
         ),
       );
 }
@@ -42,7 +44,7 @@ class _SettingsState extends State<Settings> {
   String internetPlan = '-';
 
   //this will store the image in cache
-  File? image = null;
+  File? image;
 
   final formKey = GlobalKey<FormState>();
 
@@ -72,7 +74,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildFirstName() {
     return TextFormField(
-      decoration: InputDecoration(labelText: "Enter your first name"),
+      decoration: const InputDecoration(labelText: "Enter your first name"),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
           return "Please enter a valid first name";
@@ -85,7 +87,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildLastName() {
     return TextFormField(
-        decoration: InputDecoration(labelText: "Enter your last name"),
+        decoration: const InputDecoration(labelText: "Enter your last name"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid last name";
@@ -97,7 +99,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildStreetName() {
     return TextFormField(
-      decoration: InputDecoration(labelText: "Enter your street name"),
+      decoration: const InputDecoration(labelText: "Enter your street name"),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
           return "Please enter a valid last name";
@@ -110,7 +112,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildPostal() {
     return TextFormField(
-        decoration: InputDecoration(labelText: "Enter your postal code"),
+        decoration: const InputDecoration(labelText: "Enter your postal code"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[0-9]+$').hasMatch(value)) {
             return "Please enter a valid postal code";
@@ -122,7 +124,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildTown() {
     return TextFormField(
-        decoration: InputDecoration(labelText: "Enter your city or town name"),
+        decoration: const InputDecoration(labelText: "Enter your city or town name"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid city or town name";
@@ -134,7 +136,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildState() {
     return TextFormField(
-        decoration: InputDecoration(labelText: "Enter your state"),
+        decoration: const InputDecoration(labelText: "Enter your state"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid state name";
@@ -180,34 +182,34 @@ class _SettingsState extends State<Settings> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    SizedBox(height: 10),
-                    Text(
+                    const SizedBox(height: 10),
+                    const Text(
                       'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
                       style:
                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildFirstName(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildLastName(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildStreetName(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildPostal(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildTown(),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     _buildState(),
 // Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Colors.red,
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(20.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                             'Upload an image of your internet bill from Gallery'),
                         onPressed: () {
                           _buildImageGallery();
@@ -219,15 +221,15 @@ class _SettingsState extends State<Settings> {
                             print('Something is wrong with the image');
                           }
                         }),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Colors.red,
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(20.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
-                        child: Text(
+                        child: const Text(
                             'Upload an image of your internet bill from Camera'),
                         onPressed: () {
                           _buildImageCamera();
@@ -240,12 +242,12 @@ class _SettingsState extends State<Settings> {
                                 'Something is wrong with the image from the camera');
                           }
                         }),
-                    SizedBox(height: 10),
+                    const SizedBox(height: 10),
                     ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           primary: Colors.green,
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(20.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
                           ),
                         ),
                         onPressed: () {
@@ -270,13 +272,15 @@ class _SettingsState extends State<Settings> {
                             );
                           }
                         },
-                        child: Text('Submit!'))
+                        child: const Text('Submit!'))
                   ],
                 )))
       ]));
 }
 
 class dataUploadScreen extends StatelessWidget {
+  const dataUploadScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: AppBar(
@@ -293,19 +297,19 @@ class dataUploadScreen extends StatelessWidget {
                     child: Container(
                   height: 600,
                   width: 650,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage("assets/HomepageBackground.jpg"),
                       fit: BoxFit.cover,
                     ),
                   ),
-                  child: Center(
+                  child: const Center(
                       child: Text(
                     "Thank you for uploading your personal data!",
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   )),
                 )),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
                 ElevatedButton(
@@ -313,10 +317,10 @@ class dataUploadScreen extends StatelessWidget {
                     Navigator.pop(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => dataUploadScreen()),
+                          builder: (context) => const dataUploadScreen()),
                     );
                   },
-                  child: Text("Go back"),
+                  child: const Text("Go back"),
                   style: ElevatedButton.styleFrom(
                     primary: Colors.green[500],
                   ),

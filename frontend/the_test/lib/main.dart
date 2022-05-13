@@ -4,7 +4,7 @@ import 'package:the_test/resultsScreen.dart';
 import 'package:the_test/runTest.dart';
 import 'homeScreen.dart';
 
-void main() => runApp(MyApp());
+void main() => runApp(const MyApp());
 
 //Class for test result object which will be sent to the back end
 class TestResult {
@@ -131,18 +131,17 @@ class _LoadingScreenState extends State<LoadingScreen> {
         backgroundColor: Colors.lightGreen[700],
       ),
       body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/HomepageBackground.jpg"),
               fit: BoxFit.cover,
             ),
           ),
           child: Column(children: <Widget>[
-            Container(
-                child: Text("Please wait while we run your test!",
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
-            SizedBox(height: 10),
+            const Text("Please wait while we run your test!",
+                style:
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
             Center(child: Image.asset("assets/hillfarmer.gif")),
           ])),
     );
@@ -172,7 +171,7 @@ class _NavBarPrimaryState extends State<NavBarPrimary> {
 
   // //TODO put these widgets in separate files
 
-  final buttonList = <Widget>[HomePage(), RunTest(), Results(), Settings()];
+  final buttonList = <Widget>[const HomePage(), const RunTest(), const Results(), const Settings()];
 
   void onPressed(int index) {
     setState(() {
