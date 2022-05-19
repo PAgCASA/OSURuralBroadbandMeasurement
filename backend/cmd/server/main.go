@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/util"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 )
@@ -106,6 +107,8 @@ func createApp() *fiber.App {
 
 	api.Post("/submitPersonalInfo", submitPersonalInfo)
 	api.Get("/getPersonalInfo/:id", getPersonalInfo)
+
+	api.Get("/frontend/summary/:id", getFrontendSummary)
 
 	return app
 }
@@ -323,6 +326,36 @@ func getPersonalInfo(c *fiber.Ctx) error {
 	}
 
 	c.Response().AppendBody(tempInfo)
+	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+	return c.SendStatus(200)
+}
+
+func getFrontendSummary(c *fiber.Ctx) error {
+	type Summary struct {
+		Upload     float64 `json:"upload"`
+		Download   float64 `json:"download"`
+		Jitter     float64 `json:"jitter"`
+		Latency    float64 `json:"latency"`
+		PacketLoss float64 `json:"packetLoss"`
+	}
+
+	var s Summary
+	id := c.Params("id")
+	rand.Seed(int64(util.HashString(id)))
+
+	s.Download = rand.Float64() * 180
+	s.Upload = rand.Float64() * 20
+	s.Jitter = rand.Float64() * 4
+	s.Latency = rand.Float64() * 40
+	s.PacketLoss = rand.Float64() * 5
+
+	json, err := json.Marshal(s)
+	if err != nil {
+		c.Response().AppendBodyString("Error marshalling results")
+		return c.SendStatus(500)
+	}
+
+	c.Response().SetBody(json)
 	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return c.SendStatus(200)
 }
