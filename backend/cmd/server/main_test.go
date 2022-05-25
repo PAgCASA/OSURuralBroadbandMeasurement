@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/database"
@@ -281,7 +282,10 @@ func setUpTestTables(t *testing.T) {
 		fmt.Printf("Err reading file: %v", err)
 	}
 
-	_, err = db.Exec(string(content))
+	contentStr := string(content)
+	contentStr = strings.ReplaceAll(contentStr, "AUTO_INCREMENT", "AUTOINCREMENT") //make sure our schema works in sqlite
+
+	_, err = db.Exec(contentStr)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}

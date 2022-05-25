@@ -3,7 +3,6 @@ package database
 import (
 	"database/sql"
 	"log"
-	"math/rand"
 	"time"
 
 	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/types"
@@ -15,7 +14,6 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 	}
 
 	result, err := db.Exec(`INSERT INTO SpeedTests (
-		id,
 	 	phoneID,
 	 	testID,
 	 	downloadSpeed,
@@ -26,7 +24,6 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 		testStartTime,
 		testDuration
 	 ) VALUES (
-		?,
 	 	?,
 	 	?,
 	 	?,
@@ -37,7 +34,6 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 		?,
 		?
 	 )`,
-		rand.Int()%200, //TODO better way to generate id
 		r.PhoneID,
 		r.TestID,
 		r.DownloadSpeed,
