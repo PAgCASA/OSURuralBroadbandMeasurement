@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:the_test/utils.dart' as utils;
+import 'package:udp/udp.dart';
 import 'connectionScreens.dart';
 import 'constants.dart' as Constants;
 import 'package:dart_ping/dart_ping.dart';
@@ -13,11 +14,16 @@ import 'main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+const position =
+    CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
+
 class RunTest extends StatefulWidget {
-  const RunTest({Key? key}) : super(key: key);
+  final Function tabCallback;
+
+  const RunTest(this.tabCallback, {Key? key}) : super(key: key);
 
   @override
-  State<RunTest> createState() => _RunTestState();
+  State<RunTest> createState() => _RunTestState(tabCallback);
 }
 
 class _RunTestState extends State<RunTest> {
@@ -30,70 +36,28 @@ class _RunTestState extends State<RunTest> {
   int jitter = -1;
   int packetLoss = -1;
 
+  bool testRunning = false;
+
   //trackers for UDP
   int packetsSent = 0;
   int packetsReceived = 1;
   int errorPackets = 0;
 
-  //send udp packets to server
-  void sendUDP(String incomingServer) async {
-    String timeHold;
-    String sequenceHold;
-    String fullPacketData;
-    InternetAddress serverSendAddress = InternetAddress(incomingServer);
+  //function to call if we want to switch tabs
+  Function tabCallback;
 
-    RawDatagramSocket.bind(InternetAddress.anyIPv4, 65002)
-        .then((RawDatagramSocket socket) {
-      // print('Sending from ${socket.address.address}:${socket.port}');
-      int port = Constants.UDP_SEND_PORT;
+  _RunTestState(this.tabCallback);
 
-      for (int i = 0; i < Constants.UDP_PACKETS_TO_SEND_JITTER; i++) {
-        //take the current time in miliseconds 13 bytes
-        timeHold = DateTime.now().millisecondsSinceEpoch.toString();
-        //take the packet sequence designator
-        sequenceHold = i.toString();
-        //if there is only one digit, prepend 2 zeroes
-        if (i < 10) {
-          sequenceHold = '00' + sequenceHold;
-        }
-        //if there are two digits, prepend one zero
-        else if (i < 100 && i > 9) {
-          sequenceHold = '0' + sequenceHold;
-        }
-        //there are enough numbers to maintain packet size, 3 byte designator
-
-        //combine the components of the packet data
-        fullPacketData = sequenceHold + timeHold + Constants.DATA;
-        print(
-            '\n this is the full packet $fullPacketData \n  and this is the time in ms $timeHold \n');
-
-        socket.send(fullPacketData.codeUnits, serverSendAddress, port);
-      }
-    });
-
-    //13 bits for datetime
-    //3 for sequence (0-199)
-    //8 for header
-    //136 for data
-
-    // if (packetsSent == 0) {
-    //   print('no packets sent');
-    // } else {
-    //   packetLoss = (packetsReceived / packetsSent).toInt();
-    //   // print('packet loss calculated as $packetLoss');
-    // }
-  }
-
-  int recievePacketLoss() {
-    return 0;
-  }
-
-  int recieveJitter() {
-    return 0;
+  bool haveData() {
+    return downloadSpeed != -1 ||
+        uploadSpeed != -1 ||
+        latency != -1 ||
+        jitter != -1 ||
+        packetLoss != -1;
   }
 
   //Upload incoming json encoded data
-  uploadTest(var incomingMap) async {
+  uploadTest(BuildContext context, var incomingMap) async {
     //create a POST request and anticipate a json object
     var response = await http.post(Uri.parse(Constants.SERVER_UPLOAD_URL_TEXT),
         headers: {"Content-Type": "application/json; charset=UTF-8"},
@@ -102,105 +66,43 @@ class _RunTestState extends State<RunTest> {
     var holder = response.body;
 
     //TODO increase error checking
-      //print the server response from upload
-      print('\n This is the response from the server: $holder\n');
+    print('This is the response from the server: $holder');
 
+    var snackText = '';
+    if (holder.contains("OK") && response.statusCode == HttpStatus.ok) {
+      snackText = "Successfully sent test to server";
+    } else {
+      snackText = "Could not submit test, error code: ${response.statusCode}";
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(snackText),
+      ),
+    );
   }
 
-  void DownloadAndUploadSpeed() {}
+  void createSocketAndTest(BuildContext context) async {
+    phone_ID = await utils.getDeviceID();
+    test_ID = utils.getTestID(phone_ID);
 
-  void calcLatencyUDPPacketLoss(String desiredServer) {}
-
-  int selectLowestLatencyServer() {
-    return 0;
-  }
-
-  void createSocketAndTest() async {
-    // phone_ID = await utils.getDeviceID();
-    // test_ID = utils.getTestID(phone_ID);
-
-    //socket initialization
-    // print("Socket initialized.");
-    await Socket.connect(Constants.SERVER_IP, Constants.PORT).then((socket) {
-      // print("we have connected");
-      // print('Connected to: ' '${socket.remoteAddress.address}:${socket
-      //     .remotePort}');
-
-      //*****************************************************************LATENCY
-      //
-      //integers to keep track of the beginning and end of the time in the event
-      //
-      int timeIndexHolderBegin = -10;
-      int timeIndexHolderEnd = -10;
-
-      //holders for the entire event as a string, and the substring containing the time
-      String eventStringHolder;
-      String timeStringExtracted;
-      String serverString = 'SERVER PLACEHOLDER';
-
-      //start with the lowest ping of zero
-      int lowestPing = 0;
-      // Constants.MAX_INITIAL_PING;
-
-      for (int i = 0; i < Constants.NUMBER_OF_SERVERS; i++) {
-        serverString = Constants.SERVER_IP_LIST[i];
-        // print('this is the server string $serverString');
-        final ping = Ping(serverString,
-            count: Constants.NUMBER_OF_PINGS_TO_SEND_INITIAL);
-        //TODO make this a broadcast stream
-        ping.stream.listen((event) {
-          // print("below is the result of the ping");
-          // print(event.toString());
-          eventStringHolder = event.toString();
-          int len = eventStringHolder.length;
-          // print('here is the event in string form: $eventStringHolder and here is the len $len');
-          timeIndexHolderBegin = eventStringHolder.indexOf('time:');
-          timeIndexHolderEnd = eventStringHolder.indexOf(' ms');
-          // print('this is the index of the time $timeIndexHolderBegin');
-          // print('this is the index of the end of the time $timeIndexHolderEnd');
-          // 6 away from begin, 1 behind end
-          timeStringExtracted = eventStringHolder.substring(
-              (timeIndexHolderBegin + 5), (timeIndexHolderEnd));
-          // print('this is the time for the ping:  $timeStringExtracted');
-          var intermediateDouble = double.parse(timeStringExtracted);
-          int finalPing = intermediateDouble.toInt();
-          // print('the ping in integer form is now $finalPing');
-          if (finalPing < lowestPing && finalPing != 0) {
-            // print('FINAL WAS LESS THAN LOWEST and final is $finalPing and lowest is $lowestPing');
-            lowestPing = finalPing;
-          }
-        });
-      }
-      // print('The selected server is --------------  $serverString with --------------- $lowestPing ms ping.');
-      setState(() {
-        latency = lowestPing;
-      });
-
-      //************************************************************************
-
-      //******************************************************************JITTER
-      //TODO make sequence number generator(8 byte), timestamp(8 byte), data condenser
-      //datetime class
-      //sequence generator incrment by one up to max packets to send
-
-      setState(() {
-        jitter = 22;
-      });
-      //************************************************************************
-
-      //*************************************************************PACKET LOSS
-      setState(() {
-        packetLoss = 4;
-      });
-      //************************************************************************
-
-      socket.destroy();
+    // start running the test
+    setState(() {
+      testRunning = true;
     });
 
+    //get latency (var is updated within the function so no need to set)
+    await getLatency();
+
+    await getPacketLoss();
+
     var downloadUploadTargets = await getTargets();
-    setState(() async {
-      downloadSpeed = await doDownloadTest(downloadUploadTargets);
-      uploadSpeed = await doUploadTest(downloadUploadTargets);
+    downloadSpeed = await doDownloadTest(downloadUploadTargets);
+    uploadSpeed = await doUploadTest(downloadUploadTargets);
+
+    //we are now done running the test so update appropriately
+    setState(() {
+      testRunning = false;
     });
 
     //take all the global vars and put them in the object so it can be sent to the server
@@ -217,63 +119,7 @@ class _RunTestState extends State<RunTest> {
     print('We are now uploading the following '
         'data to the server \n\n $jsonToServer\n\n');
     //upload the encoded message
-    uploadTest(jsonToServer);
-  }
-
-  static const position =
-      CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
-
-  void startTimer() {
-    print('timer started');
-    int _start = Constants.ACCEPTED_RESPONSE_WINDOW;
-    const oneUnit = Duration(seconds: 1);
-    Timer _timer = Timer.periodic(
-      oneUnit,
-      (Timer timer) {
-        if (_start == 0) {
-          Navigator.pop(
-            context,
-            MaterialPageRoute(builder: (context) => LoadingScreen()),
-          );
-
-          //this will crash the app but bring us back to the proper previous location
-          // Navigator.of(context, rootNavigator: true).pop();
-
-          //this method won't crash the app but it will remove the bottom bar
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => RunTest()),
-          // );
-          //get it to stop infinitely pushing
-          _start--;
-        } else {
-          _start--;
-        }
-      },
-    );
-  }
-
-  ConnectivityResult? connectivityResult;
-
-  //See if phone is connected to cellular data, wifi, or neither
-  Future<int> checkConnectivityState() async {
-    int validConnection = 0;
-    final ConnectivityResult result = await Connectivity().checkConnectivity();
-
-    if (result == ConnectivityResult.wifi) {
-      validConnection = 1;
-      print('Connected to a Wi-Fi network');
-    } else if (result == ConnectivityResult.mobile) {
-      validConnection = 2;
-      print('Connected to a mobile network');
-    } else {
-      validConnection = 3;
-      print('Not connected to any network');
-    }
-    setState(() {
-      connectivityResult = result;
-    });
-    return validConnection;
+    uploadTest(context, jsonToServer);
   }
 
   @override
@@ -294,19 +140,7 @@ class _RunTestState extends State<RunTest> {
           child: Column(
             children: <Widget>[
               const SizedBox(height: 10),
-              Container(
-                  decoration: BoxDecoration(
-                      color: Colors.orange,
-                      border: Border.all(color: (Colors.red[800])!, width: 7),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10))),
-                  padding: const EdgeInsets.all(15.0),
-                  height: 250.0,
-                  width: 350.0,
-                  child: const GoogleMap(
-                    initialCameraPosition: position,
-                    myLocationButtonEnabled: false,
-                  )),
+              testRunning ? getAnimation() : getMap(),
               const SizedBox(height: 10),
               Center(
                 child: Container(
@@ -316,104 +150,76 @@ class _RunTestState extends State<RunTest> {
                       borderRadius:
                           const BorderRadius.all(Radius.circular(10))),
                   padding: const EdgeInsets.all(10),
-                  child: DataTable(
-                    columns: const <DataColumn>[
-                      DataColumn(
-                        label: Text(
-                          'Metric',
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ),
-                      DataColumn(
-                        label: Text(
-                          'Result',
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ),
-                    ],
+                  child: haveData()
+                      ? DataTable(
+                          columns: const <DataColumn>[
+                            DataColumn(
+                              label: Text(
+                                'Metric',
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                            DataColumn(
+                              label: Text(
+                                'Result',
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+                            ),
+                          ],
 
-                    // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
-                    rows: <DataRow>[
-                      DataRow(
-                        cells: <DataCell>[
-                          const DataCell(Text('Download Speed')),
-                          DataCell(Text('$downloadSpeed')),
-                        ],
-                      ),
-                      DataRow(
-                        cells: <DataCell>[
-                          const DataCell(Text('Upload Speed')),
-                          DataCell(Text('$uploadSpeed')),
-                        ],
-                      ),
-                      DataRow(
-                        cells: <DataCell>[
-                          const DataCell(Text('Jitter')),
-                          DataCell(Text('$jitter')),
-                        ],
-                      ),
-                      DataRow(
-                        cells: <DataCell>[
-                          const DataCell(Text('Latency')),
-                          DataCell(Text('$latency')),
-                        ],
-                      ),
-                      DataRow(
-                        cells: <DataCell>[
-                          const DataCell(Text('Packet Loss')),
-                          DataCell(Text('$packetLoss')),
-                        ],
-                      ),
-                    ],
-                  ),
+                          // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
+                          rows: <DataRow?>[
+                            downloadSpeed != -1
+                                ? DataRow(
+                                    cells: <DataCell>[
+                                      const DataCell(Text('Download Speed')),
+                                      DataCell(Text(
+                                          downloadSpeed.toStringAsFixed(2))),
+                                    ],
+                                  )
+                                : null,
+                            uploadSpeed != -1
+                                ? DataRow(
+                                    cells: <DataCell>[
+                                      const DataCell(Text('Upload Speed')),
+                                      DataCell(
+                                          Text(uploadSpeed.toStringAsFixed(2))),
+                                    ],
+                                  )
+                                : null,
+                            jitter != -1
+                                ? DataRow(
+                                    cells: <DataCell>[
+                                      const DataCell(Text('Jitter')),
+                                      DataCell(Text('$jitter')),
+                                    ],
+                                  )
+                                : null,
+                            latency != -1
+                                ? DataRow(
+                                    cells: <DataCell>[
+                                      const DataCell(Text('Latency')),
+                                      DataCell(Text('$latency')),
+                                    ],
+                                  )
+                                : null,
+                            packetLoss != -1
+                                ? DataRow(
+                                    cells: <DataCell>[
+                                      const DataCell(Text('Packet Loss')),
+                                      DataCell(Text('$packetLoss')),
+                                    ],
+                                  )
+                                : null,
+                          ].whereType<DataRow>().toList(),
+                        )
+                      : const Text("Results will appear here"),
                 ),
               )
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton.extended(
-          onPressed: () async {
-            var connectionCode = 0;
-
-            connectionCode = await checkConnectivityState();
-
-            // if we are connected to wifi, proceed normally
-            if (connectionCode == 1) {
-              phone_ID = await utils.getDeviceID();
-              test_ID = utils.getTestID(phone_ID);
-              // createSocketAndTest();
-              // sendUDP(Constants.SERVER_IP_LIST[0]);
-
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => LoadingScreen()),
-              );
-              startTimer();
-            }
-
-            //if we are connected to mobile data, the user will have to turn it off to proceed
-            else if (connectionCode == 2) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const MobileConnectionScreen()),
-              );
-            }
-            //if we don't have a connection, they will need to connect to a network
-            else if (connectionCode == 3) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const NoConnectionScreen()),
-              );
-            } else {
-              print(
-                  "something went wrong with the connectivity method, here is the value of the connection $connectionCode");
-            }
-          },
-          backgroundColor: Colors.red[500],
-          label: const Text('Begin Test'),
-          icon: const Icon(Icons.compass_calibration_sharp),
-        ),
+        floatingActionButton: getActionButton(context, testRunning, haveData()),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       );
 
@@ -430,6 +236,9 @@ class _RunTestState extends State<RunTest> {
 
     dc.outputStream.forEach((element) {
       print("download-${element.bps * 8 / 1000 / 1000}mbps-${element.done}");
+      setState(() {
+        downloadSpeed = utils.bitsPerSecToMegaBitsPerSec(element.bps);
+      });
     });
 
     print("Starting download test");
@@ -444,11 +253,180 @@ class _RunTestState extends State<RunTest> {
 
     uc.outputStream.forEach((element) {
       print("upload-${element.bps * 8 / 1000 / 1000}mbps-${element.done}");
+      setState(() {
+        uploadSpeed = utils.bitsPerSecToMegaBitsPerSec(element.bps);
+      });
     });
 
     print("Starting upload test");
     var finalStatus = await uc.startTest();
 
     return utils.bitsPerSecToMegaBitsPerSec(finalStatus.bps);
+  }
+
+  Container getMap() {
+    return Container(
+        decoration: BoxDecoration(
+            color: Colors.orange,
+            border: Border.all(color: (Colors.red[800])!, width: 7),
+            borderRadius: const BorderRadius.all(Radius.circular(10))),
+        padding: const EdgeInsets.all(15.0),
+        height: 250.0,
+        width: 350.0,
+        child: const GoogleMap(
+          initialCameraPosition: position,
+          myLocationButtonEnabled: false,
+        ));
+  }
+
+  Container getAnimation() {
+    return Container(
+      height: 250.0,
+      width: 350.0,
+      // color: Colors.grey[400],
+      decoration: const BoxDecoration(
+          image: DecorationImage(
+        image: AssetImage("assets/hillfarmer.gif"),
+      )),
+    );
+  }
+
+  FloatingActionButton getActionButton(
+      BuildContext context, bool running, bool haveData) {
+    if (running) {
+      return FloatingActionButton.extended(
+        onPressed: () {
+          //TODO actually cancel test
+          print("TESTING");
+        },
+        label: const Text("Cancel Test"),
+        icon: const Icon(Icons.cancel),
+      );
+    } else if (haveData) {
+      return FloatingActionButton.extended(
+          onPressed: () {
+            print("Switching to results page");
+            tabCallback(2); //switch to results page
+          },
+          label: const Text("See all results"));
+    } else {
+      return FloatingActionButton.extended(
+        onPressed: () async {
+          phone_ID = await utils.getDeviceID();
+          test_ID = utils.getTestID(phone_ID);
+          createSocketAndTest(context);
+
+          /*Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => LoadingScreen()),
+            );*/
+        },
+        backgroundColor: Colors.red[500],
+        label: const Text('Begin Test'),
+        icon: const Icon(Icons.compass_calibration_sharp),
+      );
+    }
+  }
+
+  Future getLatency() async {
+    int lowestPing = Constants.MAX_INITIAL_PING;
+    List<Future> futuresToResolve = [];
+
+    for (int i = 0; i < Constants.PING_SERVER_LIST.length; i++) {
+      var serverString = Constants.PING_SERVER_LIST[i];
+      // print('this is the server string $serverString');
+      final ping =
+          Ping(serverString, count: Constants.NUMBER_OF_PINGS_TO_SEND_INITIAL);
+
+      var future = ping.stream.forEach((element) {
+        var pt = element.response?.time?.inMilliseconds ??
+            Constants.MAX_INITIAL_PING;
+
+        // if it's faster, update UI
+        if (pt < lowestPing) {
+          lowestPing = pt;
+          setState(() {
+            latency = pt;
+          });
+        }
+      });
+
+      futuresToResolve.add(future);
+    }
+
+    await Future.wait(futuresToResolve);
+  }
+
+  Future getPacketLoss() async {
+    var destination = Endpoint.unicast(
+        InternetAddress(Constants.BACKEND_SERVER),
+        port: const Port(8372));
+
+    var sender = await UDP.bind(Endpoint.any(port: const Port(65000)));
+
+    //generate 16 char random id
+    var id = utils.getRandomString(16);
+    const packetsToSend = 100;
+
+    for (int i = 0; i < packetsToSend; i++) {
+      await sender.send(id.codeUnits, destination);
+    }
+
+    sender.close();
+
+    var resp = await http.delete(Uri.parse(
+        "http://${Constants.BACKEND_SERVER}:8080/api/v0/udpTest/$id"));
+    var received = int.tryParse(resp.body) ?? 0;
+    setState(() {
+      packetLoss = ((received / packetsToSend) * 100).toInt();
+    });
+  }
+
+  //See if phone is connected to cellular data, wifi, or neither
+  Future<int> checkConnectivityState() async {
+    int validConnection = 0;
+    final ConnectivityResult result = await Connectivity().checkConnectivity();
+
+    if (result == ConnectivityResult.wifi) {
+      validConnection = 1;
+      print('Connected to a Wi-Fi network');
+    } else if (result == ConnectivityResult.mobile) {
+      validConnection = 2;
+      print('Connected to a mobile network');
+    } else {
+      validConnection = 3;
+      print('Not connected to any network');
+    }
+
+    return validConnection;
+  }
+
+  Future<bool> goodConnectionToStartTest() async {
+    var connectionCode = await checkConnectivityState();
+
+    // if we are connected to wifi, proceed normally
+    if (connectionCode == 1) {
+      return true;
+    }
+
+    //if we are connected to mobile data, the user will have to turn it off to proceed
+    else if (connectionCode == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const MobileConnectionScreen()),
+      );
+    }
+    //if we don't have a connection, they will need to connect to a network
+    else if (connectionCode == 3) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const NoConnectionScreen()),
+      );
+    } else {
+      print(
+          "something went wrong with the connectivity method, here is the value of the connection $connectionCode");
+    }
+
+    return false;
   }
 }

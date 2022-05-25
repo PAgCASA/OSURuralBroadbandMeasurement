@@ -169,9 +169,11 @@ class NavBarPrimary extends StatefulWidget {
 class _NavBarPrimaryState extends State<NavBarPrimary> {
   int _selectedIndex = 0;
 
-  // //TODO put these widgets in separate files
+  var buttonList = <Widget>[];
 
-  final buttonList = <Widget>[const HomePage(), const RunTest(), const Results(), const Settings()];
+  _NavBarPrimaryState() {
+    buttonList = <Widget>[const HomePage(), RunTest(onPressed), const Results(), const Settings()];
+  }
 
   void onPressed(int index) {
     setState(() {

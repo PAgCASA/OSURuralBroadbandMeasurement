@@ -315,7 +315,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "11ef16a07fc1635aaaefb25e896e448a6ce6511a"
+      resolved-ref: "518df54b8aac574f3dce4b21b34bfbe4fa3e723d"
       url: "https://github.com/PAgCASA/ndt7-client-dart.git"
     source: git
     version: "1.0.0"
