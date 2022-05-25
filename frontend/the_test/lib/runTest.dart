@@ -224,7 +224,7 @@ class _RunTestState extends State<RunTest> {
                               ? DataRow(
                                   cells: <DataCell>[
                                     const DataCell(Text('Packet Loss')),
-                                    DataCell(Text('$packetLoss')),
+                                    DataCell(Text('$packetLoss%')),
                                   ],
                                 )
                               : null,
