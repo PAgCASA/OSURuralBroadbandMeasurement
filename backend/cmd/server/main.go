@@ -8,27 +8,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/database"
+	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/types"
 	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/util"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 )
-
-type SpeedTestResult struct {
-	PhoneID       string
-	TestID        string
-	DownloadSpeed float64
-	UploadSpeed   float64
-	Latency       int
-	Jitter        int
-	PacketLoss    int
-	TestStartTime time.Time
-}
-
-type PastResults struct {
-	PhoneID     string
-	LastUpdated time.Time
-	Results     []SpeedTestResult // needs to be lastest first
-}
 
 var db *sql.DB
 
@@ -56,7 +41,7 @@ func main() {
 	// connect
 	const maxConnectionAttempts = 10
 	for i := 0; i < maxConnectionAttempts; i++ {
-		dbConnection, err := connectToDB("mysql", cfg.FormatDSN())
+		dbConnection, err := database.ConnectToDB("mysql", cfg.FormatDSN())
 		//if connected then start server
 		if err == nil {
 			db = dbConnection //actually assign the db connection
@@ -113,30 +98,6 @@ func createApp() *fiber.App {
 	return app
 }
 
-func connectToDB(dbType string, DSN string) (*sql.DB, error) {
-	var err error
-	// Connect to the database
-	newDB, err := sql.Open(dbType, DSN)
-	if err != nil {
-		return newDB, err
-	}
-
-	// Test the connection to the database with a ping
-	err = newDB.Ping()
-	if err != nil {
-		return newDB, err
-	}
-
-	// run query to test connection
-	var test int
-	err = newDB.QueryRow("SELECT 1").Scan(&test)
-	if err != nil {
-		return newDB, err
-	}
-
-	return newDB, nil
-}
-
 //TODO match incoming data with what will actually be submitted by the frontend
 // where speed tests are submitted
 func submitSpeedTest(c *fiber.Ctx) error {
@@ -157,7 +118,7 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	if err := c.BodyParser(o); err != nil {
 		return err
 	}
-	var r SpeedTestResult
+	var r types.SpeedTestResult
 
 	r.PhoneID = o.AndroidID + o.IphoneXSID + o.IphoneID + o.PhoneID
 	r.TestID = o.TestID
@@ -188,7 +149,7 @@ func submitSpeedTest(c *fiber.Ctx) error {
 		return c.SendStatus(400)
 	}
 
-	insertSpeedTestResultToDB(r)
+	database.InsertSpeedTestResultToDB(db, r)
 
 	c.Response().AppendBodyString("OK")
 	return c.SendStatus(200)
@@ -201,7 +162,7 @@ func getSpeedTestResults(c *fiber.Ctx) error {
 		return c.SendStatus(400)
 	}
 
-	r := getSpeedTestResultsFromDB(id)
+	r := database.GetSpeedTestResultsFromDB(db, id)
 	if r == nil {
 		c.Response().AppendBodyString("No results found")
 		return c.SendStatus(404)
@@ -216,106 +177,6 @@ func getSpeedTestResults(c *fiber.Ctx) error {
 	c.Response().SetBody(json)
 	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return c.SendStatus(200)
-}
-
-func insertSpeedTestResultToDB(r SpeedTestResult) {
-	if db == nil {
-		log.Fatal("DB not connected")
-	}
-
-	result, err := db.Exec(`INSERT INTO SpeedTests (
-		id,
-	 	phoneID,
-	 	testID,
-	 	downloadSpeed,
-	 	uploadSpeed,
-	 	latency,
-	 	jitter,
-	 	packetLoss,
-		testStartTime,
-		testDuration
-	 ) VALUES (
-		?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-		?,
-		?
-	 )`,
-		rand.Int()%200, //TODO better way to generate id
-		r.PhoneID,
-		r.TestID,
-		r.DownloadSpeed,
-		r.UploadSpeed,
-		r.Latency,
-		r.Jitter,
-		r.PacketLoss,
-		time.Now(),             //TODO needs to come from frontend
-		time.Since(time.Now()), //TODO needs to come from frontend
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	rows, err := result.RowsAffected()
-	if err != nil {
-		log.Println(err)
-	}
-	if rows != 1 {
-		log.Fatal("Rows not inserted properly")
-	}
-}
-
-func getSpeedTestResultsFromDB(id string) *PastResults {
-	if db == nil {
-		log.Fatal("DB not connected")
-	}
-
-	var pr PastResults
-
-	result, err := db.Query(`SELECT
-		phoneID,
-		testID,
-		downloadSpeed,
-		uploadSpeed,
-		latency,
-		jitter,
-		packetLoss,
-		testStartTime
-			FROM SpeedTests WHERE phoneID = ?
-			ORDER BY testStartTime DESC`, id)
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-	defer result.Close()
-
-	for result.Next() {
-		var r SpeedTestResult
-		err := result.Scan(
-			&r.PhoneID,
-			&r.TestID,
-			&r.DownloadSpeed,
-			&r.UploadSpeed,
-			&r.Latency,
-			&r.Jitter,
-			&r.PacketLoss,
-			&r.TestStartTime,
-		)
-		if err != nil {
-			log.Println(err)
-			return nil
-		}
-		pr.Results = append(pr.Results, r)
-	}
-
-	pr.LastUpdated = time.Now()
-	pr.PhoneID = id
-
-	return &pr
 }
 
 var tempInfo []byte
