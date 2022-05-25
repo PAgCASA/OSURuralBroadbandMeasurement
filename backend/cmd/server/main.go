@@ -167,16 +167,24 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	r.Jitter = o.Jitter
 	r.PacketLoss = o.PacketLoss
 
-	if r.DownloadSpeed < 1 {
+	if r.DownloadSpeed < 0 {
 		c.Response().AppendBodyString("Invalid value for downloadSpeed")
 		return c.SendStatus(400)
 	}
-	if r.UploadSpeed < 1 {
+	if r.UploadSpeed < 0 {
 		c.Response().AppendBodyString("Invalid value for uploadSpeed")
 		return c.SendStatus(400)
 	}
 	if r.PacketLoss > 100 {
 		c.Response().AppendBodyString("packetLoss must be less than 100")
+		return c.SendStatus(400)
+	}
+	if r.PacketLoss < 0 {
+		c.Response().AppendBodyString("packetLoss must be greater than 0")
+		return c.SendStatus(400)
+	}
+	if r.Latency < 0 {
+		c.Response().AppendBodyString("latency must be greater than 0")
 		return c.SendStatus(400)
 	}
 
