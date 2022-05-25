@@ -365,5 +365,6 @@ func getFrontendSummary(c *fiber.Ctx) error {
 
 	c.Response().SetBody(json)
 	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+	c.Response().Header.Add(fiber.HeaderAccessControlAllowOrigin, "*") //make sure this is accessible for frontend
 	return c.SendStatus(200)
 }
