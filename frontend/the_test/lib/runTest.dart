@@ -92,13 +92,30 @@ class _RunTestState extends State<RunTest> {
     });
 
     //get latency (var is updated within the function so no need to set)
-    await getLatency();
+    await getLatencyAndJitter();
+
+    if (!testRunning) {
+      return;
+    }
 
     await getPacketLoss();
 
+    if (!testRunning) {
+      return;
+    }
+
     var downloadUploadTargets = await getTargets();
     downloadSpeed = await doDownloadTest(downloadUploadTargets);
+
+    if (!testRunning) {
+      return;
+    }
+
     uploadSpeed = await doUploadTest(downloadUploadTargets);
+
+    if (!testRunning) {
+      return;
+    }
 
     //we are now done running the test so update appropriately
     setState(() {
@@ -296,8 +313,9 @@ class _RunTestState extends State<RunTest> {
     if (running) {
       return FloatingActionButton.extended(
         onPressed: () {
-          //TODO actually cancel test
-          print("TESTING");
+          setState(() {
+            testRunning = false;
+          });
         },
         label: const Text("Cancel Test"),
         icon: const Icon(Icons.cancel),
@@ -328,7 +346,9 @@ class _RunTestState extends State<RunTest> {
     }
   }
 
-  Future getLatency() async {
+  Future getLatencyAndJitter() async {
+    List<int> allPings = [];
+
     int lowestPing = Constants.MAX_INITIAL_PING;
     List<Future> futuresToResolve = [];
 
@@ -349,12 +369,28 @@ class _RunTestState extends State<RunTest> {
             latency = pt;
           });
         }
+
+        if (pt != Constants.MAX_INITIAL_PING) {
+          allPings.add(pt);
+        }
       });
 
       futuresToResolve.add(future);
     }
 
     await Future.wait(futuresToResolve);
+
+    // callculate average Instantaneous packet delay variation
+    if (allPings.length > 1) {
+      List<int> PDV = [];
+      for (int i = 1; i < allPings.length; i++) {
+        int IPDV = (allPings[i] - allPings[i - 1]).abs();
+        PDV.add(IPDV);
+      }
+      setState(() {
+        jitter = (PDV.reduce((v1, v2) => v1 + v2) / PDV.length).round();
+      });
+    }
   }
 
   Future getPacketLoss() async {
@@ -370,6 +406,10 @@ class _RunTestState extends State<RunTest> {
 
     for (int i = 0; i < packetsToSend; i++) {
       await sender.send(id.codeUnits, destination);
+      //exit if test canceled
+      if (!testRunning) {
+        return;
+      }
     }
 
     sender.close();
