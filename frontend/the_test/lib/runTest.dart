@@ -155,8 +155,10 @@ class _RunTestState extends State<RunTest> {
             fit: BoxFit.cover,
           ),
         ),
-        child: Column(
-          children: <Widget>[
+        child: ListView(
+          // shrinkWrap: true,
+          padding: const EdgeInsets.all(20.0),
+          children: [
             const SizedBox(height: 10),
             testRunning ? getAnimation() : getMap(),
             const SizedBox(height: 10),
