@@ -140,105 +140,106 @@ class _RunTestState extends State<RunTest> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test Run a Test'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Container(
-          // color: Colors.grey[400],
-          decoration: const BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/HomepageBackground.jpg"),
-              fit: BoxFit.cover,
-            ),
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test Run a Test'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Container(
+        // color: Colors.grey[400],
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/HomepageBackground.jpg"),
+            fit: BoxFit.cover,
           ),
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 10),
-              testRunning ? getAnimation() : getMap(),
-              const SizedBox(height: 10),
-              Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border.all(color: (Colors.brown[800])!, width: 7),
-                      borderRadius:
-                          const BorderRadius.all(Radius.circular(10))),
-                  padding: const EdgeInsets.all(10),
-                  child: haveData()
-                      ? DataTable(
-                          columns: const <DataColumn>[
-                            DataColumn(
-                              label: Text(
-                                'Metric',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
+        ),
+        child: Column(
+          children: <Widget>[
+            const SizedBox(height: 10),
+            testRunning ? getAnimation() : getMap(),
+            const SizedBox(height: 10),
+            Center(
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: (Colors.brown[800])!, width: 7),
+                    borderRadius: const BorderRadius.all(Radius.circular(10))),
+                padding: const EdgeInsets.all(10),
+                child: haveData()
+                    ? DataTable(
+                        columns: const <DataColumn>[
+                          DataColumn(
+                            label: Text(
+                              'Metric',
+                              style: TextStyle(fontStyle: FontStyle.italic),
                             ),
-                            DataColumn(
-                              label: Text(
-                                'Result',
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
+                          ),
+                          DataColumn(
+                            label: Text(
+                              'Result',
+                              style: TextStyle(fontStyle: FontStyle.italic),
                             ),
-                          ],
+                          ),
+                        ],
 
-                          // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
-                          rows: <DataRow?>[
-                            downloadSpeed != -1
-                                ? DataRow(
-                                    cells: <DataCell>[
-                                      const DataCell(Text('Download Speed')),
-                                      DataCell(Text(
-                                          downloadSpeed.toStringAsFixed(2))),
-                                    ],
-                                  )
-                                : null,
-                            uploadSpeed != -1
-                                ? DataRow(
-                                    cells: <DataCell>[
-                                      const DataCell(Text('Upload Speed')),
-                                      DataCell(
-                                          Text(uploadSpeed.toStringAsFixed(2))),
-                                    ],
-                                  )
-                                : null,
-                            jitter != -1
-                                ? DataRow(
-                                    cells: <DataCell>[
-                                      const DataCell(Text('Jitter')),
-                                      DataCell(Text('$jitter')),
-                                    ],
-                                  )
-                                : null,
-                            latency != -1
-                                ? DataRow(
-                                    cells: <DataCell>[
-                                      const DataCell(Text('Latency')),
-                                      DataCell(Text('$latency')),
-                                    ],
-                                  )
-                                : null,
-                            packetLoss != -1
-                                ? DataRow(
-                                    cells: <DataCell>[
-                                      const DataCell(Text('Packet Loss')),
-                                      DataCell(Text('$packetLoss')),
-                                    ],
-                                  )
-                                : null,
-                          ].whereType<DataRow>().toList(),
-                        )
-                      : const Text("Results will appear here"),
-                ),
-              )
-            ],
-          ),
+                        // rows:  ['2-11-2022 15:03:07','23.5Mbps','3.4Mbps','4','12ms','3%','12.33s'],
+                        rows: <DataRow?>[
+                          downloadSpeed != -1
+                              ? DataRow(
+                                  cells: <DataCell>[
+                                    const DataCell(Text('Download Speed')),
+                                    DataCell(
+                                        Text(downloadSpeed.toStringAsFixed(2))),
+                                  ],
+                                )
+                              : null,
+                          uploadSpeed != -1
+                              ? DataRow(
+                                  cells: <DataCell>[
+                                    const DataCell(Text('Upload Speed')),
+                                    DataCell(
+                                        Text(uploadSpeed.toStringAsFixed(2))),
+                                  ],
+                                )
+                              : null,
+                          jitter != -1
+                              ? DataRow(
+                                  cells: <DataCell>[
+                                    const DataCell(Text('Jitter')),
+                                    DataCell(Text('$jitter')),
+                                  ],
+                                )
+                              : null,
+                          latency != -1
+                              ? DataRow(
+                                  cells: <DataCell>[
+                                    const DataCell(Text('Latency')),
+                                    DataCell(Text('$latency')),
+                                  ],
+                                )
+                              : null,
+                          packetLoss != -1
+                              ? DataRow(
+                                  cells: <DataCell>[
+                                    const DataCell(Text('Packet Loss')),
+                                    DataCell(Text('$packetLoss')),
+                                  ],
+                                )
+                              : null,
+                        ].whereType<DataRow>().toList(),
+                      )
+                    : const Text("Results will appear here"),
+              ),
+            )
+          ],
         ),
-        floatingActionButton: getActionButton(context, testRunning, haveData()),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      );
+      ),
+      floatingActionButton: getActionButton(context, testRunning, haveData()),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
 
   Future<List<NDT.Target>> getTargets() async {
     var locator = NDT.Client.newClient("PAgCASA-Flutter-App");
