@@ -46,3 +46,6 @@ const String FILE_PATH3 = '/downloads/file3';
 //personal information
 const String PERSONAL_INFO_UPLOAD_URL = 'http://54.218.174.61:8080/api/v0/submitPersonalInfo';
 const String PERSONAL_INFO_DOWNLOAD_URL = 'http://54.218.174.61:8080/api/v0/getPersonalInfo/eventuallyIDHe';
+
+//screen item sizes
+const double SPACER_BOX_HEIGHT = .04;

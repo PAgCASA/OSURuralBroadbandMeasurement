@@ -12,8 +12,8 @@ import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_countdown_timer/flutter_countdown_timer.dart';
 import 'dart:math';
+import 'package:auto_size_text/auto_size_text.dart';
 
-//flip x y axis on chart
 
 // import 'package:ndt_7_dart/src/download.dart';
 // import 'package:ndt_7_dart/src/locator.dart';
@@ -23,6 +23,7 @@ void main() => runApp(MyApp());
 
 //Class for test result object which will be sent to the back end
 class TestResult {
+
   //object fields
   String phone_ID;
   String test_ID;
@@ -102,7 +103,6 @@ class incomingTestResult {
 }
 
 //Class for sending personal information to the backend
-//TODO consider implementing passcode for security
 class PersonalInformation {
   //object fields
   String firstName;
@@ -113,6 +113,7 @@ class PersonalInformation {
   String state;
   String internetPlan;
 
+  //Constructor
   PersonalInformation(this.firstName, this.lastName, this.street,
       this.postalCode, this.city, this.state, this.internetPlan);
 
@@ -128,156 +129,241 @@ class PersonalInformation {
       };
 }
 
-//The tutorial screen
+//The tutorial screen for the application
 //Accessed when pressing "start a test" on main screen
 class AboutScreen extends StatelessWidget {
+
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Center(
-          child: ListView(
-              // shrinkWrap: true,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                Center(
-                    child: Container(
-                  height: 600,
-                  width: 650,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/HomepageBackground.jpg"),
-                      fit: BoxFit.cover,
+  Widget build(BuildContext context) {
+
+
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Center(
+        child: ListView(
+          // shrinkWrap: true,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              Center(
+                  child: Container(
+                    height: height * .7,
+                    width: width * .9,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/HomepageBackground.jpg"),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                      child: Text(
-                    "The Precision Ag Connectivity & Accuracy Stakeholder Alliance (PAgCASA) is a not-for-profit education foundation whose mission is to design, field test, and deploy technical and policy tools needed to ensure accurate broadband mapping and deployment across America to ignite smart agriculture and rural prosperity. \n\nConsistent with the Broadband DATA Act of 2020 and the recent findings of the FCC's Precision Ag Task Force, PAgCASA aims to drive transparent broadband mapping methodology specific to rural America by establishing a standards-based, open source toolkit for collecting accurate, granular, crowdsourced, and citizen-centric data. \n\nAccurate broadband maps are essential to inform wise infrastructure investments and effective broadband deployment for communities still left behind. ",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    child: Center(
+                        child: Text(
+                          "The Precision Ag Connectivity & Accuracy Stakeholder Alliance (PAgCASA) is a not-for-profit education foundation whose mission is to design, field test, and deploy technical and policy tools needed to ensure accurate broadband mapping and deployment across America to ignite smart agriculture and rural prosperity. \n\nConsistent with the Broadband DATA Act of 2020 and the recent findings of the FCC's Precision Ag Task Force, PAgCASA aims to drive transparent broadband mapping methodology specific to rural America by establishing a standards-based, open source toolkit for collecting accurate, granular, crowdsourced, and citizen-centric data. \n\nAccurate broadband maps are essential to inform wise infrastructure investments and effective broadband deployment for communities still left behind. ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )),
                   )),
-                )),
-                SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      MaterialPageRoute(builder: (context) => AboutScreen()),
-                    );
-                  },
-                  child: Text("Go Back"),
+              SizedBox(
+                height: height * Constants.SPACER_BOX_HEIGHT,
+              ),
+              ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green[500],
+                    primary: Colors.green[400], // Background color
                   ),
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(builder: (context) => AboutScreen()),
+                  );
+                },
+                child:  Container(
+                    height: height * .1,
+                    width: width * .8,
+                    child:Center( child:
+                    AutoSizeText(
+                      'Go Back',
+                      style: TextStyle(fontSize: 20),
+                      minFontSize: 18,
+                      maxFontSize: 25,
+                    )
+                    )
                 )
-              ]),
-        ),
-      );
+              )
+            ]),
+      ),
+    );
+  }
 }
 
 //About us screen
 //Accessed when hitting "about us" from the main screen
 class TutorialScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test Homepage'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Center(
-          child: ListView(
-              // shrinkWrap: true,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                Center(
-                    child: Container(
-                  height: 600,
-                  width: 650,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/HomepageBackground.jpg"),
-                      fit: BoxFit.cover,
+  Widget build(BuildContext context) {
+
+
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test Tutorial'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Center(
+        child: ListView(
+          // shrinkWrap: true,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              Center(
+                  child: Container(
+                    height: height * .7,
+                    width: width * .9,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/HomepageBackground.jpg"),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                      child: Text(
-                    "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    child: Center(
+                        child: Text(
+                          "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )),
                   )),
-                )),
-                SizedBox(
-                  height: 20,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      MaterialPageRoute(builder: (context) => AboutScreen()),
-                    );
-                  },
-                  child: Text("Start Testing!"),
+              SizedBox(
+                 height: height * Constants.SPACER_BOX_HEIGHT,
+                // height: Constants.SPACER_BOX_HEIGHT,
+              ),
+              ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.green[500],
+                    primary: Colors.green[400], // Background color
                   ),
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(builder: (context) => AboutScreen()),
+                  );
+                },
+                child:
+                Container(
+                    height: height * .1,
+                    width: width * .8,
+                    child:Center( child:
+                    AutoSizeText(
+                      'Run a Test!',
+                      style: TextStyle(fontSize: 20),
+                      minFontSize: 18,
+                      maxFontSize: 25,
+                    )
+                    )
                 )
-              ]),
-        ),
-      );
+
+
+
+                // FittedBox(
+                //
+                //     fit: BoxFit.fitWidth,
+                //     child:    Text("Start Testing!",
+                //       style: TextStyle(
+                //       // primary: Colors.green[500],
+                //       )
+                //   ),
+                // ),
+                // Text("Start Testing!"),
+                // style: ElevatedButton.styleFrom(
+                //     primary: Colors.green[500],
+                //     fixedSize: Size(width*.9, height*.09)
+                // ),
+
+
+              )
+
+
+            ]),
+      ),
+    );
+  }
 }
 
+
+
+//This screen will display if the user attempts to start
 class MobileConnectionScreen extends StatelessWidget {
+
+
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Center(
-          child: ListView(
-              // shrinkWrap: true,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                Center(
-                    child: Container(
-                  height: 600,
-                  width: 650,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/HomepageBackground.jpg"),
-                      fit: BoxFit.cover,
+  Widget build(BuildContext context) {
+
+
+    return Scaffold(
+
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Center(
+        child: ListView(
+          // shrinkWrap: true,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              Center(
+                  child: Container(
+
+                    height: 600,
+                    width: 650,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/HomepageBackground.jpg"),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                      child: Text(
-                    "It appears that you are connected to a mobile network.  Please turn off your mobile data and connect to your wireless network to proceed.",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    child: Center(
+                        child: Text(
+                          "It appears that you are connected to a mobile network.  Please turn off your mobile data and connect to your wireless network to proceed.",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )),
                   )),
-                )),
-                SizedBox(
-                  height: 20,
+              SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => MobileConnectionScreen()),
+                  );
+                },
+                child: Text("Go back"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green[500],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      MaterialPageRoute(builder: (context) => MobileConnectionScreen()),
-                    );
-                  },
-                  child: Text("Go back"),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green[500],
-                  ),
-                )
-              ]),
-        ),
-      );
+              )
+            ]),
+      ),
+    );
+  }
 }
+
+
 
 class NoConnectionScreen extends StatelessWidget {
   @override
@@ -819,113 +905,148 @@ class _SettingsState extends State<Settings> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('PAgCASA: Upload Profile Information'),
-        centerTitle: true,
-        backgroundColor: Colors.lightGreen[700],
-      ),
-       body:Form(
-                  key: formKey,
-                  child: Container(
-                      color: Colors.yellow[200],
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          SizedBox(height: 10),
-                          Text(
-                              'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),),
-                          SizedBox(height: 10),
-                          _buildFirstName(),
-                          SizedBox(height: 10),
-                          _buildLastName(),
-                          SizedBox(height: 10),
-                          _buildStreetName(),
-                          SizedBox(height: 10),
-                          _buildPostal(),
-                          SizedBox(height: 10),
-                          _buildTown(),
-                          SizedBox(height: 10),
-                          _buildState(),
+  Widget build(BuildContext context) {
+
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
+        appBar: AppBar(
+          title: const Text('PAgCASA: Upload Profile Information'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body:
+        Center( child:
+        Container(
+
+
+          height: height * .75,
+            width: width * .9,
+
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/HomepageBackground.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child:
+
+        SingleChildScrollView( child:
+        Form(
+            key: formKey,
+            child: Container(
+                color: Colors.yellow[200],
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    Text(
+                      'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16),),
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    _buildFirstName(),
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    Center(child  : _buildLastName()),
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    _buildStreetName(),
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    _buildPostal(),
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    _buildTown(),
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    _buildState(),
 // Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
-                          SizedBox(height: 10),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.red,
-                                shape: new RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(20.0),
-                                ),
-                              ),
-                              child: Text('Upload an image of your internet bill from Gallery'),
-                              onPressed: () {
-                                _buildImageGallery();
-                                if (image != null) {
-                                  List<int> imageBytes =
-                                      image!.readAsBytesSync();
-                                  String base64Image =
-                                      base64.encode(imageBytes);
-                                  internetPlan = base64Image;
-                                } else {
-                                  print('Something is wrong with the image');
-                                }
-                              }),
-                          SizedBox(height: 10),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.red,
-                                shape: new RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(20.0),
-                                ),
-                              ),
-                              child: Text('Upload an image of your internet bill from Camera'),
-                              onPressed: () {
-                                _buildImageCamera();
-                                if (image != null) {
-                                  List<int> imageBytes =
-                                      image!.readAsBytesSync();
-                                  String base64Image =
-                                      base64.encode(imageBytes);
-                                  internetPlan = base64Image;
-                                } else {
-                                  print(
-                                      'Something is wrong with the image from the camera');
-                                }
-                              }),
-                          SizedBox(height: 10),
-                          ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.green,
-                                shape: new RoundedRectangleBorder(
-                                  borderRadius: new BorderRadius.circular(20.0),
-                                ),
-                              ),
-                              onPressed: () {
-                                final isValid =
-                                    formKey.currentState?.validate();
-                                if (formKey.currentState!.validate()) {
-                                  PersonalInformation person =
-                                       PersonalInformation(
-                                          firstName,
-                                          lastName,
-                                          street,
-                                          postalCode,
-                                          city,
-                                          state,
-                                          internetPlan);
+                    SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        child: Text(
+                            'Upload an image of your internet bill from Gallery'),
+                        onPressed: () {
+                          _buildImageGallery();
+                          if (image != null) {
+                            List<int> imageBytes =
+                            image!.readAsBytesSync();
+                            String base64Image =
+                            base64.encode(imageBytes);
+                            internetPlan = base64Image;
+                          } else {
+                            print('Something is wrong with the image');
+                          }
+                        }),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.red,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        child: Text(
+                            'Upload an image of your internet bill from Camera'),
+                        onPressed: () {
+                          _buildImageCamera();
+                          if (image != null) {
+                            List<int> imageBytes =
+                            image!.readAsBytesSync();
+                            String base64Image =
+                            base64.encode(imageBytes);
+                            internetPlan = base64Image;
+                          } else {
+                            print(
+                                'Something is wrong with the image from the camera');
+                          }
+                        }),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.green,
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(20.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          final isValid =
+                          formKey.currentState?.validate();
+                          if (formKey.currentState!.validate()) {
+                            PersonalInformation person =
+                            PersonalInformation(
+                                firstName,
+                                lastName,
+                                street,
+                                postalCode,
+                                city,
+                                state,
+                                internetPlan);
 //
-                                  print('sending data to method ');
-                                  print('this is the image $image ');
-                                  uploadPersonalInfo(person.toJSON());
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(builder: (context) => dataUploadScreen()),
-                                  );
-                                }
-                              },
-                              child: Text('Submit!'))
-                        ],
-                      ))));
+                            print('sending data to method ');
+                            print('this is the image $image ');
+                            uploadPersonalInfo(person.toJSON());
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => dataUploadScreen()),
+                            );
+                          }
+                        },
+                        child: Text('Submit!'))
+                  ],
+                )))
+        )
+        )
+            ));
+  }
 }
 
 class MyApp extends StatelessWidget {

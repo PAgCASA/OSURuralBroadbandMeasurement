@@ -49,6 +49,7 @@ dependencies:
     git: https://github.com/PAgCASA/ndt7-client-dart.git
   image_picker: ^0.8.5
   google_maps_flutter: ^2.1.4
+  auto_size_text: ^3.0.0
 
 
 dev_dependencies:
