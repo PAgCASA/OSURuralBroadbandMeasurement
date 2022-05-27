@@ -5,6 +5,7 @@ import 'package:the_test/utils.dart' as utils;
 import 'package:udp/udp.dart';
 import 'connectionScreens.dart';
 import 'constants.dart' as Constants;
+import 'connectionScreens.dart' as Screens;
 import 'package:dart_ping/dart_ping.dart';
 import 'package:http/http.dart' as http;
 import 'dart:io';
@@ -456,14 +457,14 @@ class _RunTestState extends State<RunTest> {
     else if (connectionCode == 2) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const MobileConnectionScreen()),
+        MaterialPageRoute(builder: (context) => const Screens.MobileConnectionScreen()),
       );
     }
     //if we don't have a connection, they will need to connect to a network
     else if (connectionCode == 3) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const NoConnectionScreen()),
+        MaterialPageRoute(builder: (context) => const Screens.NoConnectionScreen()),
       );
     } else {
       print(
