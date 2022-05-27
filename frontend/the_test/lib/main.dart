@@ -144,10 +144,8 @@ class AboutScreen extends StatelessWidget {
 
 
     double width = MediaQuery.of(context).size.width;
-    print('This is the value of the hold $width');
 
     double height = MediaQuery.of(context).size.height;
-    print('This is the value of the hold $width');
 
     return Scaffold(
       appBar: AppBar(
@@ -155,7 +153,10 @@ class AboutScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.lightGreen[700],
       ),
-      body: Center(
+      body:
+      Container(
+    child:
+      Center(
         child: ListView(
           // shrinkWrap: true,
             padding: const EdgeInsets.all(20.0),
@@ -170,12 +171,38 @@ class AboutScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    child: Center(
-                        child: Text(
-                          "The Precision Ag Connectivity & Accuracy Stakeholder Alliance (PAgCASA) is a not-for-profit education foundation whose mission is to design, field test, and deploy technical and policy tools needed to ensure accurate broadband mapping and deployment across America to ignite smart agriculture and rural prosperity. \n\nConsistent with the Broadband DATA Act of 2020 and the recent findings of the FCC's Precision Ag Task Force, PAgCASA aims to drive transparent broadband mapping methodology specific to rural America by establishing a standards-based, open source toolkit for collecting accurate, granular, crowdsourced, and citizen-centric data. \n\nAccurate broadband maps are essential to inform wise infrastructure investments and effective broadband deployment for communities still left behind. ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        )),
+                    child:
+
+                    Center(
+                        child:
+                        Container(
+                            padding: EdgeInsets.all(5.0),
+                          // decoration: BoxDecoration(
+                          //     border: Border.all(color: (Colors.brown), width: 7),
+                          //     borderRadius: BorderRadius.all(Radius.circular(10))),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: 3),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(2)),
+                                color: Colors.white
+                            ),
+                            height: height * .6,
+                            width: width * .8,
+                            //color: Colors.black, width:  10
+
+                            // color: Colors.white,
+                            child:
+                            Center( child:
+                            AutoSizeText(
+                              "The Precision Ag Connectivity & Accuracy Stakeholder Alliance (PAgCASA) is a not-for-profit education foundation whose mission is to design, field test, and deploy technical and policy tools needed to ensure accurate broadband mapping and deployment across America to ignite smart agriculture and rural prosperity. \n\nConsistent with the Broadband DATA Act of 2020 and the recent findings of the FCC's Precision Ag Task Force, PAgCASA aims to drive transparent broadband mapping methodology specific to rural America by establishing a standards-based, open source toolkit for collecting accurate, granular, crowdsourced, and citizen-centric data. \n\nAccurate broadband maps are essential to inform wise infrastructure investments and effective broadband deployment for communities still left behind. ",
+                              style: TextStyle(fontSize: 20),
+                              minFontSize: 12,
+                              maxFontSize: 25,
+                            )
+                            )
+                        )
+                    ),
+
                   )),
               SizedBox(
                 height: height * Constants.SPACER_BOX_HEIGHT,
@@ -205,6 +232,7 @@ class AboutScreen extends StatelessWidget {
               )
             ]),
       ),
+      )
     );
   }
 }
@@ -229,79 +257,142 @@ class TutorialScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.lightGreen[700],
       ),
-      body: Center(
-        child: ListView(
-          // shrinkWrap: true,
-            padding: const EdgeInsets.all(20.0),
-            children: [
-              Center(
-                  child: Container(
-                    height: height * .7,
-                    width: width * .9,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/HomepageBackground.jpg"),
-                        fit: BoxFit.cover,
+      body:
+
+      Container(
+        child:
+        Center(
+          child: ListView(
+            // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: [
+                Center(
+                    child: Container(
+                      height: height * .7,
+                      width: width * .9,
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage("assets/HomepageBackground.jpg"),
+                          fit: BoxFit.cover,
+                        ),
                       ),
+                      child:
+
+                      Center(
+                          child:
+                          Container(
+                              padding: EdgeInsets.all(5.0),
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(color: (Colors.brown), width: 7),
+                            //     borderRadius: BorderRadius.all(Radius.circular(10))),
+                              decoration: BoxDecoration(
+                                  border: Border.all(width: 3),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(2)),
+                                  color: Colors.white
+                              ),
+                              height: height * .6,
+                              width: width * .8,
+                              //color: Colors.black, width:  10
+
+                              // color: Colors.white,
+                              child:
+                              Center( child:
+                              AutoSizeText(
+                                "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
+                                style: TextStyle(fontSize: 20),
+                                minFontSize: 12,
+                                maxFontSize: 25,
+                              )
+                              )
+                          )
+                      ),
+
+                    )),
+                SizedBox(
+                  height: height * Constants.SPACER_BOX_HEIGHT,
+                ),
+                ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Colors.green[400], // Background color
                     ),
-                    child: Center(
-                        child: Text(
-                          "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        )),
-                  )),
-              SizedBox(
-                 height: height * Constants.SPACER_BOX_HEIGHT,
-                // height: Constants.SPACER_BOX_HEIGHT,
-              ),
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green[400], // Background color
-                  ),
-                onPressed: () {
-                  Navigator.pop(
-                    context,
-                    MaterialPageRoute(builder: (context) => AboutScreen()),
-                  );
-                },
-                child:
-                Container(
-                    height: height * .1,
-                    width: width * .8,
-                    child:Center( child:
-                    AutoSizeText(
-                      'Run a Test!',
-                      style: TextStyle(fontSize: 20),
-                      minFontSize: 18,
-                      maxFontSize: 25,
-                    )
+                    onPressed: () {
+
+                      Navigator.pop(
+                        context,
+                        MaterialPageRoute(builder: (context) => AboutScreen()),
+                      );
+                    },
+                    child:  Container(
+                        height: height * .1,
+                        width: width * .8,
+                        child:Center( child:
+                        AutoSizeText(
+                          "Run a Test!",
+                          style: TextStyle(fontSize: 20),
+                          minFontSize: 18,
+                          maxFontSize: 25,
+                        )
+                        )
                     )
                 )
+              ]),
+        ),
+      )
 
-
-
-                // FittedBox(
-                //
-                //     fit: BoxFit.fitWidth,
-                //     child:    Text("Start Testing!",
-                //       style: TextStyle(
-                //       // primary: Colors.green[500],
-                //       )
-                //   ),
-                // ),
-                // Text("Start Testing!"),
-                // style: ElevatedButton.styleFrom(
-                //     primary: Colors.green[500],
-                //     fixedSize: Size(width*.9, height*.09)
-                // ),
-
-
-              )
-
-
-            ]),
-      ),
+      //
+      // Center(
+      //   child: ListView(
+      //     // shrinkWrap: true,
+      //       padding: const EdgeInsets.all(20.0),
+      //       children: [
+      //         Center(
+      //             child: Container(
+      //               height: height * .7,
+      //               width: width * .9,
+      //               decoration: BoxDecoration(
+      //                 image: DecorationImage(
+      //                   image: AssetImage("assets/HomepageBackground.jpg"),
+      //                   fit: BoxFit.cover,
+      //                 ),
+      //               ),
+      //               child: Center(
+      //                   child: Text(
+      //                     "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
+      //                     style: TextStyle(
+      //                         fontWeight: FontWeight.bold, fontSize: 16),
+      //                   )),
+      //             )),
+      //         SizedBox(
+      //            height: height * Constants.SPACER_BOX_HEIGHT,
+      //           // height: Constants.SPACER_BOX_HEIGHT,
+      //         ),
+      //         ElevatedButton(
+      //             style: ElevatedButton.styleFrom(
+      //               primary: Colors.green[400], // Background color
+      //             ),
+      //           onPressed: () {
+      //             Navigator.pop(
+      //               context,
+      //               MaterialPageRoute(builder: (context) => AboutScreen()),
+      //             );
+      //           },
+      //           child:
+      //           Container(
+      //               height: height * .1,
+      //               width: width * .8,
+      //               child:Center( child:
+      //               AutoSizeText(
+      //                 'Run a Test!',
+      //                 style: TextStyle(fontSize: 20),
+      //                 minFontSize: 18,
+      //                 maxFontSize: 25,
+      //               )
+      //               )
+      //           )
+      //         )
+      //       ]),
+      // ),
     );
   }
 }
@@ -314,7 +405,15 @@ class MobileConnectionScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
 
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
 
     return Scaffold(
 
@@ -329,23 +428,53 @@ class MobileConnectionScreen extends StatelessWidget {
             padding: const EdgeInsets.all(20.0),
             children: [
               Center(
-                  child: Container(
+                  child:
+                  Center(
+                      child:
+                      Container(
+                        // decoration: BoxDecoration(
+                        //     border: Border.all(color: (Colors.brown), width: 7),
+                        //     borderRadius: BorderRadius.all(Radius.circular(10))),
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 3),
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(2)),
+                              color: Colors.white
+                          ),
+                          height: height * .07,
+                          width: width * .8,
+                          //color: Colors.black, width:  10
 
-                    height: 600,
-                    width: 650,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/HomepageBackground.jpg"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Center(
-                        child: Text(
-                          "It appears that you are connected to a mobile network.  Please turn off your mobile data and connect to your wireless network to proceed.",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
-                        )),
-                  )),
+                          // color: Colors.white,
+                          child: Center(child: Text(
+                            "It appears that you are connected to a mobile network.  Please turn off your mobile data and connect to your wireless network to proceed.",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
+                          )
+                          )
+                      )
+                  ),
+              ),
+
+
+                  //
+                  // Container(
+                  //
+                  //   height: 600,
+                  //   width: 650,
+                  //   decoration: BoxDecoration(
+                  //     image: DecorationImage(
+                  //       image: AssetImage("assets/HomepageBackground.jpg"),
+                  //       fit: BoxFit.cover,
+                  //     ),
+                  //   ),
+                  //   child: Center(
+                  //       child: Text(
+                  //         "It appears that you are connected to a mobile network.  Please turn off your mobile data and connect to your wireless network to proceed.",
+                  //         style: TextStyle(
+                  //             fontWeight: FontWeight.bold, fontSize: 16),
+                  //       )),
+                  // )),
               SizedBox(
                 height: 20,
               ),
@@ -372,102 +501,175 @@ class MobileConnectionScreen extends StatelessWidget {
 
 class NoConnectionScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Center(
-          child: ListView(
-              // shrinkWrap: true,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                Center(
-                    child: Container(
-                  height: 600,
-                  width: 650,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/HomepageBackground.jpg"),
-                      fit: BoxFit.cover,
+  Widget build(BuildContext context) {
+    double width = MediaQuery
+        .of(context)
+        .size
+        .width;
+
+    double height = MediaQuery
+        .of(context)
+        .size
+        .height;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Center(
+        child: ListView(
+          // shrinkWrap: true,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              Center(
+                  child: Container(
+                    height: 600,
+                    width: 650,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/HomepageBackground.jpg"),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                      child: Text(
-                    "It appears that you do not have network connectivity..  Please turn off your mobile data and connect to your wireless network to proceed.",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    child:
+
+                    Center(
+                        child:
+                        Container(
+                          // decoration: BoxDecoration(
+                          //     border: Border.all(color: (Colors.brown), width: 7),
+                          //     borderRadius: BorderRadius.all(Radius.circular(10))),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: 3),
+                                borderRadius: BorderRadius.all(
+                                    Radius.circular(2)),
+                                color: Colors.white
+                            ),
+                            height: height * .07,
+                            width: width * .8,
+                            //color: Colors.black, width:  10
+
+                            // color: Colors.white,
+                            child: Center(child: Text(
+                              "Thank you for uploading your personal data!",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            )
+                            )
+                        )
+                    ),
                   )),
-                )),
-                SizedBox(
-                  height: 20,
+
+
+              //   Center(
+              //       child: Text(
+              //     "It appears that you do not have network connectivity..  Please turn off your mobile data and connect to your wireless network to proceed.",
+              //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              //   )),
+              // )),
+              SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NoConnectionScreen()),
+                  );
+                },
+                child: Text("It appears that you do not have network connectivity..  Please turn off your mobile data and connect to your wireless network to proceed."),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green[500],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      MaterialPageRoute(builder: (context) => NoConnectionScreen()),
-                    );
-                  },
-                  child: Text("Go back"),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green[500],
-                  ),
-                )
-              ]),
-        ),
-      );
+              )
+            ]),
+      ),
+    );
+  }
 }
 
 
 
 class dataUploadScreen extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Speed Test Homepage'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Center(
-      child: ListView(
-        // shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: [
-            Center(
-                child: Container(
-                  height: 600,
-                  width: 650,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/HomepageBackground.jpg"),
-                      fit: BoxFit.cover,
+  Widget build(BuildContext context) {
+
+
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test Homepage'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Center(
+        child: ListView(
+          // shrinkWrap: true,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              Center(
+                  child: Container(
+                    height: height * .7,
+                    width: width * .9,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/HomepageBackground.jpg"),
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
-                  child: Center(
-                      child: Text(
-                        "Thank you for uploading your personal data!",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                      )),
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(
-                  context,
-                  MaterialPageRoute(builder: (context) => dataUploadScreen()),
-                );
-              },
-              child: Text("Go back"),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.green[500],
+                    child: Center(
+                        child:
+                        Container(
+                            // decoration: BoxDecoration(
+                            //     border: Border.all(color: (Colors.brown), width: 7),
+                            //     borderRadius: BorderRadius.all(Radius.circular(10))),
+                            decoration: BoxDecoration(
+                              border: Border.all(width: 3),
+                                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                                  color: Colors.white
+                            ),
+                            height: height * .07,
+                            width: width * .8,
+                          //color: Colors.black, width:  10
+
+                          // color: Colors.white,
+                            child: Center( child:Text(
+                          "Thank you for uploading your personal data!",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )
+                            )
+                        )
+                    ),
+                  )),
+              SizedBox(
+                height: 20,
               ),
-            )
-          ]),
-    ),
-  );
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(builder: (context) => dataUploadScreen()),
+                  );
+                },
+                child: Text("Go back"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green[500],
+                ),
+              )
+            ]),
+      ),
+    );
+  }
 }
 
 // class CountDownPage extends StatefulWidget {
@@ -562,58 +764,103 @@ class _LoadingScreenState extends State<LoadingScreen> {
 //Homepage, the main page for the app
 class HomePage extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('PAgCASA: Speed Test Homepage'),
-        centerTitle: true,
-        backgroundColor: Colors.lightGreen[700],
-      ),
-      body: Container(
+  Widget build(BuildContext context) {
+
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('PAgCASA: Speed Test Homepage'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Container(
           // color: Colors.grey[400],
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/HomepageBackground.jpg"),
-              fit: BoxFit.cover,
-            ),
-          ),
-          child: Column(children: <Widget>[
-            Center(),
-            Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: (Colors.brown[800])!, width: 7),
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                margin: const EdgeInsets.all(10.0),
-                // color: Colors.grey[600],
-                width: 319.0,
-                height: 515.0,
-                child: Image(
-                  image: AssetImage('assets/HomepageImage.jpg'),
-                )),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => AboutScreen()),
-                );
-              },
-              child: Text('About Us'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.green[500],
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/HomepageBackground.jpg"),
+                fit: BoxFit.cover,
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TutorialScreen()),
-                );
-              },
-              child: Text('Start a Test!'),
-              style: ElevatedButton.styleFrom(
-                primary: Colors.red,
+            child: Column(children: <Widget>[
+              SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+              Center(),
+              Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(color: (Colors.brown[800])!, width: 7),
+                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                  margin: const EdgeInsets.all(10.0),
+                  // color: Colors.grey[600],
+                  // width: 319.0,
+                  // height: 515.0,
+                  width: width * .8,
+                  height: height * .55,
+                  child: Image(
+                    image: AssetImage('assets/HomepageImage.jpg'),
+                    fit: BoxFit.fill
+                  )),
+              SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[400], // Background color
+                  ),
+
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AboutScreen()),
+                  );
+                },
+                 child:
+                 Container(
+                     height: height * Constants.SPACER_BOX_HEIGHT,
+                     width: width * .7,
+                     child:Center( child:
+                     AutoSizeText(
+                       'About Us',
+                       style: TextStyle(fontSize: 20),
+                       minFontSize: 18,
+                       maxFontSize: 25,
+                     )
+                     )
+                 )
+
+                // Text('About Us'),
+                // style: ElevatedButton.styleFrom(
+                //   primary: Colors.green[500],
+                // ),
               ),
-            )
-          ])));
+              SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+              ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.green[400], // Background color
+                  ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TutorialScreen()),
+                  );
+                },
+                child:   Container(
+                    height: height * Constants.SPACER_BOX_HEIGHT,
+                    width: width * .7,
+                    child:Center( child:
+                    AutoSizeText(
+                      'Start a Test!',
+                      style: TextStyle(fontSize: 20),
+                      minFontSize: 18,
+                      maxFontSize: 25,
+                    )
+                    )
+                )
+              )
+            ])));
+  }
 }
 
 //Page for displaying past results
@@ -668,44 +915,59 @@ class _ResultsState extends State<Results> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test Results'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Container(
-          // color: Colors.grey[400],
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              image: AssetImage("assets/HomepageBackground.jpg"),
-              fit: BoxFit.cover,
-            ),
-          ),
+  Widget build(BuildContext context) {
 
-          child: Center(
-            child: Container(
-              color: Colors.white,
-              height: 500,
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: FutureBuilder<List<incomingTestResult>>(
-                          future: testsToDisplay,
-                          builder: (context, snapshot) {
-                            var data = snapshot.data;
-                            if (snapshot.hasData && data != null) {
-                              return buildTable(data);
-                            } else if (snapshot.hasError) {
-                              return Text('${snapshot.error}');
-                            }
-                            return const CircularProgressIndicator();
-                          }))),
-            ),
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test Results'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Container(
+        // color: Colors.grey[400],
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/HomepageBackground.jpg"),
+            fit: BoxFit.cover,
           ),
         ),
-      );
+
+        child: Center(
+          child: Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: (Colors.brown[800])!, width: 7),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Colors.white
+            ),
+            // color: Colors.white,
+            height: height * .7,
+            width: width * .8,
+            child: SingleChildScrollView(
+                scrollDirection: Axis.vertical,
+                child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: FutureBuilder<List<incomingTestResult>>(
+                        future: testsToDisplay,
+                        builder: (context, snapshot) {
+                          var data = snapshot.data;
+                          if (snapshot.hasData && data != null) {
+                            return buildTable(data);
+                          } else if (snapshot.hasError) {
+                            return Text('${snapshot.error}');
+                          }
+                          return const CircularProgressIndicator();
+                        }))),
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget buildTable(List<incomingTestResult> results) {
     const columns = Constants.COLUMN_TITLES_RESULTS;
@@ -815,6 +1077,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildFirstName() {
     return TextFormField(
+      textAlign: TextAlign.center,
       decoration: InputDecoration(labelText: "Enter your first name"
       ),
       validator: (value) {
@@ -829,6 +1092,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildLastName() {
     return TextFormField(
+        textAlign: TextAlign.center,
         decoration: InputDecoration(labelText: "Enter your last name"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
@@ -841,6 +1105,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildStreetName() {
     return TextFormField(
+      textAlign: TextAlign.center,
       decoration: InputDecoration(labelText: "Enter your street name"),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
@@ -854,6 +1119,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildPostal() {
     return TextFormField(
+      textAlign: TextAlign.center,
         decoration: InputDecoration(labelText: "Enter your postal code"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[0-9]+$').hasMatch(value)) {
@@ -866,7 +1132,9 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildTown() {
     return TextFormField(
-        decoration: InputDecoration(labelText: "Enter your city or town name"),
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(labelText: "Enter your city or town name",
+        ),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid city or town name";
@@ -878,7 +1146,7 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildState() {
     return TextFormField(
-
+        textAlign: TextAlign.center,
         decoration: InputDecoration(labelText: "Enter your state" ),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
@@ -926,35 +1194,52 @@ class _SettingsState extends State<Settings> {
           backgroundColor: Colors.lightGreen[700],
         ),
         body:
+            Container(
+
+                decoration: BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/HomepageBackground.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+
+                child:
         Center( child:
         Container(
-
-
+            decoration: BoxDecoration(
+                border: Border.all(color: (Colors.brown[800])!, width: 7),
+                borderRadius: BorderRadius.all(Radius.circular(10)),
+                color: Colors.white
+            ),
           height: height * .75,
             width: width * .9,
-
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage("assets/HomepageBackground.jpg"),
-                fit: BoxFit.cover,
-              ),
-            ),
             child:
-
         SingleChildScrollView( child:
         Form(
             key: formKey,
             child: Container(
+                padding: const EdgeInsets.all(20),
                 color: Colors.yellow[200],
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                    Text(
+                    // Text(
+                    //   'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
+                    //   style: TextStyle(
+                    //       fontWeight: FontWeight.bold, fontSize: 16),),
+
+
+                    AutoSizeText(
                       'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),),
+                      style: TextStyle(fontSize: 18),
+                      textAlign: TextAlign.center,
+                      minFontSize: 12,
+                      maxFontSize: 25,
+                    ),
+
+
                     SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
                     _buildFirstName(),
                     SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
@@ -976,8 +1261,19 @@ class _SettingsState extends State<Settings> {
                             borderRadius: new BorderRadius.circular(20.0),
                           ),
                         ),
-                        child: Text(
-                            'Upload an image of your internet bill from Gallery'),
+                        child:
+
+                        Center( child:
+                        AutoSizeText(
+                          'Upload an image of your internet bill from Gallery',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16),
+                          minFontSize: 12,
+                          maxFontSize: 25,
+                        )
+                        ),
+
+
                         onPressed: () {
                           _buildImageGallery();
                           if (image != null) {
@@ -998,8 +1294,15 @@ class _SettingsState extends State<Settings> {
                             borderRadius: new BorderRadius.circular(20.0),
                           ),
                         ),
-                        child: Text(
-                            'Upload an image of your internet bill from Camera'),
+                        child:   Center( child:
+                        AutoSizeText(
+                          'Upload an image of your internet bill from Camera',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16),
+                          minFontSize: 12,
+                          maxFontSize: 25,
+                        )
+                        ),
                         onPressed: () {
                           _buildImageCamera();
                           if (image != null) {
@@ -1015,6 +1318,7 @@ class _SettingsState extends State<Settings> {
                         }),
                     SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
                     ElevatedButton(
+
                         style: ElevatedButton.styleFrom(
                           primary: Colors.green,
                           shape: new RoundedRectangleBorder(
@@ -1045,13 +1349,28 @@ class _SettingsState extends State<Settings> {
                             );
                           }
                         },
-                        child: Text('Submit!')),
+                        child:
+                        Center( child:
+                        AutoSizeText(
+                          'Submit',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 16),
+                          minFontSize: 12,
+                          maxFontSize: 25,
+                        )
+                        ),
+
+
+                    ),
                     SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
                   ],
                 )))
         )
         )
-            ));
+            )
+            )
+    );
+
   }
 }
 

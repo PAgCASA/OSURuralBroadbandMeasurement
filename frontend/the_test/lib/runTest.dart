@@ -14,6 +14,7 @@ import 'package:ndt_7_dart/exports.dart' as NDT;
 import 'main.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:geolocator/geolocator.dart';
 
 const position =
     CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
@@ -140,11 +141,64 @@ class _RunTestState extends State<RunTest> {
     uploadTest(context, jsonToServer);
   }
 
+  // var geoLocator = GeoLocator();
+
+
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Test if location services are enabled.
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // Location services are not enabled don't continue
+      // accessing the position and request users of the
+      // App to enable the location services.
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // Permissions are denied, next time you could try
+        // requesting permissions again (this is also where
+        // Android's shouldShowRequestPermissionRationale
+        // returned true. According to Android guidelines
+        // your App should show an explanatory UI now.
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // Permissions are denied forever, handle appropriately.
+      return Future.error(
+          'Location permissions are permanently denied, we cannot request permissions.');
+    }
+
+    // When we reach here, permissions are granted and we can
+    // continue accessing the position of the device.
+    return await Geolocator.getCurrentPosition();
+  }
+
+
+
+  // position =
+  // CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
+
+
   @override
   Widget build(BuildContext context) {
+
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('PAgCASA: Speed Test Run a Test'),
+        title: const Text('PAgCASA: Speed Test Start a Test'),
         centerTitle: true,
         backgroundColor: Colors.lightGreen[700],
       ),
@@ -160,9 +214,9 @@ class _RunTestState extends State<RunTest> {
           // shrinkWrap: true,
           padding: const EdgeInsets.all(20.0),
           children: [
-            const SizedBox(height: 10),
-            testRunning ? getAnimation() : getMap(),
-            const SizedBox(height: 10),
+            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+            testRunning ? getAnimation(height, width) : getMap(height, width),
+            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
             Center(
               child: Container(
                 decoration: BoxDecoration(
@@ -235,12 +289,14 @@ class _RunTestState extends State<RunTest> {
                       )
                     : const Text("Results will appear here"),
               ),
-            )
+            ),
+            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
           ],
         ),
       ),
       floatingActionButton: getActionButton(context, testRunning, haveData()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+
     );
   }
 
@@ -285,25 +341,63 @@ class _RunTestState extends State<RunTest> {
     return utils.bitsPerSecToMegaBitsPerSec(finalStatus.bps);
   }
 
-  Container getMap() {
+
+  Container getMap(double height, double width)  {
+
     return Container(
         decoration: BoxDecoration(
             color: Colors.orange,
-            border: Border.all(color: (Colors.red[800])!, width: 7),
+            border: Border.all(color: (Colors.brown[800])!, width: 7),
             borderRadius: const BorderRadius.all(Radius.circular(10))),
         padding: const EdgeInsets.all(15.0),
-        height: 250.0,
-        width: 350.0,
-        child: const GoogleMap(
+        height: height * .3,
+        width: width * .8,
+
+        //    CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
+
+
+        // Position bob = 1;
+
+        child: GoogleMap(
           initialCameraPosition: position,
           myLocationButtonEnabled: false,
         ));
   }
 
-  Container getAnimation() {
+
+
+  //
+  // Future<Container> getMap(double height, double width) async {
+  //
+  //
+  //   var position1 = await _determinePosition();
+  //
+  //   var positionHold = CameraPosition(target: LatLng(position1.latitude, position1.longitude), zoom: 11.5);
+  //
+  //   return Container(
+  //       decoration: BoxDecoration(
+  //           color: Colors.orange,
+  //           border: Border.all(color: (Colors.brown[800])!, width: 7),
+  //           borderRadius: const BorderRadius.all(Radius.circular(10))),
+  //       padding: const EdgeInsets.all(15.0),
+  //       height: height * .3,
+  //       width: width * .8,
+  //
+  //       //    CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
+  //
+  //
+  //     // Position bob = 1;
+  //
+  //       child: GoogleMap(
+  //         initialCameraPosition: positionHold,
+  //         myLocationButtonEnabled: false,
+  //       ));
+  // }
+
+  Container getAnimation(double height, double width) {
     return Container(
-      height: 250.0,
-      width: 350.0,
+      height: height * .4,
+      width: width * .8,
       // color: Colors.grey[400],
       decoration: const BoxDecoration(
           image: DecorationImage(
@@ -319,6 +413,7 @@ class _RunTestState extends State<RunTest> {
         onPressed: () {
           setState(() {
             testRunning = false;
+            tabCallback(1);
           });
         },
         label: const Text("Cancel Test"),
@@ -326,6 +421,8 @@ class _RunTestState extends State<RunTest> {
       );
     } else if (haveData) {
       return FloatingActionButton.extended(
+          foregroundColor: Colors.black,
+          backgroundColor: Colors.green,
           onPressed: () {
             print("Switching to results page");
             tabCallback(2); //switch to results page
