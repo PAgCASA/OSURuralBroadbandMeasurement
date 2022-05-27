@@ -339,60 +339,6 @@ class TutorialScreen extends StatelessWidget {
               ]),
         ),
       )
-
-      //
-      // Center(
-      //   child: ListView(
-      //     // shrinkWrap: true,
-      //       padding: const EdgeInsets.all(20.0),
-      //       children: [
-      //         Center(
-      //             child: Container(
-      //               height: height * .7,
-      //               width: width * .9,
-      //               decoration: BoxDecoration(
-      //                 image: DecorationImage(
-      //                   image: AssetImage("assets/HomepageBackground.jpg"),
-      //                   fit: BoxFit.cover,
-      //                 ),
-      //               ),
-      //               child: Center(
-      //                   child: Text(
-      //                     "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
-      //                     style: TextStyle(
-      //                         fontWeight: FontWeight.bold, fontSize: 16),
-      //                   )),
-      //             )),
-      //         SizedBox(
-      //            height: height * Constants.SPACER_BOX_HEIGHT,
-      //           // height: Constants.SPACER_BOX_HEIGHT,
-      //         ),
-      //         ElevatedButton(
-      //             style: ElevatedButton.styleFrom(
-      //               primary: Colors.green[400], // Background color
-      //             ),
-      //           onPressed: () {
-      //             Navigator.pop(
-      //               context,
-      //               MaterialPageRoute(builder: (context) => AboutScreen()),
-      //             );
-      //           },
-      //           child:
-      //           Container(
-      //               height: height * .1,
-      //               width: width * .8,
-      //               child:Center( child:
-      //               AutoSizeText(
-      //                 'Run a Test!',
-      //                 style: TextStyle(fontSize: 20),
-      //                 minFontSize: 18,
-      //                 maxFontSize: 25,
-      //               )
-      //               )
-      //           )
-      //         )
-      //       ]),
-      // ),
     );
   }
 }
@@ -772,6 +718,8 @@ class HomePage extends StatelessWidget {
     double height = MediaQuery.of(context).size.height;
     print('This is the value of the hold $width');
 
+    var padding = MediaQuery.of(context).viewPadding;
+    double height2 = height - padding.top - kToolbarHeight;
 
     return Scaffold(
         appBar: AppBar(
@@ -787,7 +735,9 @@ class HomePage extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            child: Column(children: <Widget>[
+            child:
+    SingleChildScrollView( child:
+            Column(children: <Widget>[
               SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
               Center(),
               Container(
@@ -799,14 +749,16 @@ class HomePage extends StatelessWidget {
                   // width: 319.0,
                   // height: 515.0,
                   width: width * .8,
-                  height: height * .55,
+                  height: height2 * .55,
                   child: Image(
                     image: AssetImage('assets/HomepageImage.jpg'),
                     fit: BoxFit.fill
                   )),
               SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
               ElevatedButton(
+                  //width:width * .8, height: height2 * .02)
                   style: ElevatedButton.styleFrom(
+                    fixedSize: Size((width * .8),(height2 * .01)),
                     primary: Colors.green[400], // Background color
                   ),
 
@@ -858,8 +810,10 @@ class HomePage extends StatelessWidget {
                     )
                     )
                 )
-              )
-            ])));
+              ),
+              SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+            ])
+    )));
   }
 }
 
