@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/database"
 	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/util"
 	"github.com/gofiber/fiber/v2"
 	_ "modernc.org/sqlite"
@@ -14,7 +16,7 @@ import (
 
 func TestSubmitSpeedTestAndroid(t *testing.T) {
 	// connect to db
-	newDB, err := connectToDB("sqlite", ":memory:")
+	newDB, err := database.ConnectToDB("sqlite", ":memory:")
 	db = newDB
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -48,7 +50,7 @@ func TestSubmitSpeedTestAndroid(t *testing.T) {
 
 func TestSubmitSpeedTestIOSXSID(t *testing.T) {
 	// connect to db
-	newDB, err := connectToDB("sqlite", ":memory:")
+	newDB, err := database.ConnectToDB("sqlite", ":memory:")
 	db = newDB
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -82,7 +84,7 @@ func TestSubmitSpeedTestIOSXSID(t *testing.T) {
 
 func TestSubmitSpeedTestIOSX(t *testing.T) {
 	// connect to db
-	newDB, err := connectToDB("sqlite", ":memory:")
+	newDB, err := database.ConnectToDB("sqlite", ":memory:")
 	db = newDB
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -116,7 +118,7 @@ func TestSubmitSpeedTestIOSX(t *testing.T) {
 
 func TestSubmitSpeedTestFails(t *testing.T) {
 	// connect to db
-	newDB, err := connectToDB("sqlite", ":memory:")
+	newDB, err := database.ConnectToDB("sqlite", ":memory:")
 	db = newDB
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -194,7 +196,7 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 
 func TestSpeedTestDatabaseSubmition(t *testing.T) {
 	// connect to db
-	newDB, err := connectToDB("sqlite", ":memory:")
+	newDB, err := database.ConnectToDB("sqlite", ":memory:")
 	db = newDB
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
@@ -280,7 +282,10 @@ func setUpTestTables(t *testing.T) {
 		fmt.Printf("Err reading file: %v", err)
 	}
 
-	_, err = db.Exec(string(content))
+	contentStr := string(content)
+	contentStr = strings.ReplaceAll(contentStr, "AUTO_INCREMENT", "AUTOINCREMENT") //make sure our schema works in sqlite
+
+	_, err = db.Exec(contentStr)
 	if err != nil {
 		t.Errorf("Expected no error, got %v", err)
 	}

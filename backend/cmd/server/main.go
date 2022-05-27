@@ -8,26 +8,12 @@ import (
 	"os"
 	"time"
 
+	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/database"
+	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/types"
+	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/util"
 	"github.com/go-sql-driver/mysql"
 	"github.com/gofiber/fiber/v2"
 )
-
-type SpeedTestResult struct {
-	PhoneID       string
-	TestID        string
-	DownloadSpeed float64
-	UploadSpeed   float64
-	Latency       int
-	Jitter        int
-	PacketLoss    int
-	TestStartTime time.Time
-}
-
-type PastResults struct {
-	PhoneID     string
-	LastUpdated time.Time
-	Results     []SpeedTestResult // needs to be lastest first
-}
 
 var db *sql.DB
 
@@ -55,7 +41,7 @@ func main() {
 	// connect
 	const maxConnectionAttempts = 10
 	for i := 0; i < maxConnectionAttempts; i++ {
-		dbConnection, err := connectToDB("mysql", cfg.FormatDSN())
+		dbConnection, err := database.ConnectToDB("mysql", cfg.FormatDSN())
 		//if connected then start server
 		if err == nil {
 			db = dbConnection //actually assign the db connection
@@ -107,31 +93,9 @@ func createApp() *fiber.App {
 	api.Post("/submitPersonalInfo", submitPersonalInfo)
 	api.Get("/getPersonalInfo/:id", getPersonalInfo)
 
+	api.Get("/frontend/summary/:id", getFrontendSummary)
+
 	return app
-}
-
-func connectToDB(dbType string, DSN string) (*sql.DB, error) {
-	var err error
-	// Connect to the database
-	newDB, err := sql.Open(dbType, DSN)
-	if err != nil {
-		return newDB, err
-	}
-
-	// Test the connection to the database with a ping
-	err = newDB.Ping()
-	if err != nil {
-		return newDB, err
-	}
-
-	// run query to test connection
-	var test int
-	err = newDB.QueryRow("SELECT 1").Scan(&test)
-	if err != nil {
-		return newDB, err
-	}
-
-	return newDB, nil
 }
 
 //TODO match incoming data with what will actually be submitted by the frontend
@@ -154,7 +118,7 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	if err := c.BodyParser(o); err != nil {
 		return err
 	}
-	var r SpeedTestResult
+	var r types.SpeedTestResult
 
 	r.PhoneID = o.AndroidID + o.IphoneXSID + o.IphoneID + o.PhoneID
 	r.TestID = o.TestID
@@ -164,11 +128,11 @@ func submitSpeedTest(c *fiber.Ctx) error {
 	r.Jitter = o.Jitter
 	r.PacketLoss = o.PacketLoss
 
-	if r.DownloadSpeed < 1 {
+	if r.DownloadSpeed < 0 {
 		c.Response().AppendBodyString("Invalid value for downloadSpeed")
 		return c.SendStatus(400)
 	}
-	if r.UploadSpeed < 1 {
+	if r.UploadSpeed < 0 {
 		c.Response().AppendBodyString("Invalid value for uploadSpeed")
 		return c.SendStatus(400)
 	}
@@ -176,8 +140,16 @@ func submitSpeedTest(c *fiber.Ctx) error {
 		c.Response().AppendBodyString("packetLoss must be less than 100")
 		return c.SendStatus(400)
 	}
+	if r.PacketLoss < 0 {
+		c.Response().AppendBodyString("packetLoss must be greater than 0")
+		return c.SendStatus(400)
+	}
+	if r.Latency < 0 {
+		c.Response().AppendBodyString("latency must be greater than 0")
+		return c.SendStatus(400)
+	}
 
-	insertSpeedTestResultToDB(r)
+	database.InsertSpeedTestResultToDB(db, r)
 
 	c.Response().AppendBodyString("OK")
 	return c.SendStatus(200)
@@ -190,7 +162,7 @@ func getSpeedTestResults(c *fiber.Ctx) error {
 		return c.SendStatus(400)
 	}
 
-	r := getSpeedTestResultsFromDB(id)
+	r := database.GetSpeedTestResultsFromDB(db, id)
 	if r == nil {
 		c.Response().AppendBodyString("No results found")
 		return c.SendStatus(404)
@@ -205,106 +177,6 @@ func getSpeedTestResults(c *fiber.Ctx) error {
 	c.Response().SetBody(json)
 	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return c.SendStatus(200)
-}
-
-func insertSpeedTestResultToDB(r SpeedTestResult) {
-	if db == nil {
-		log.Fatal("DB not connected")
-	}
-
-	result, err := db.Exec(`INSERT INTO SpeedTests (
-		id,
-	 	phoneID,
-	 	testID,
-	 	downloadSpeed,
-	 	uploadSpeed,
-	 	latency,
-	 	jitter,
-	 	packetLoss,
-		testStartTime,
-		testDuration
-	 ) VALUES (
-		?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-	 	?,
-		?,
-		?
-	 )`,
-		rand.Int()%200, //TODO better way to generate id
-		r.PhoneID,
-		r.TestID,
-		r.DownloadSpeed,
-		r.UploadSpeed,
-		r.Latency,
-		r.Jitter,
-		r.PacketLoss,
-		time.Now(),             //TODO needs to come from frontend
-		time.Since(time.Now()), //TODO needs to come from frontend
-	)
-	if err != nil {
-		log.Println(err)
-	}
-	rows, err := result.RowsAffected()
-	if err != nil {
-		log.Println(err)
-	}
-	if rows != 1 {
-		log.Fatal("Rows not inserted properly")
-	}
-}
-
-func getSpeedTestResultsFromDB(id string) *PastResults {
-	if db == nil {
-		log.Fatal("DB not connected")
-	}
-
-	var pr PastResults
-
-	result, err := db.Query(`SELECT
-		phoneID,
-		testID,
-		downloadSpeed,
-		uploadSpeed,
-		latency,
-		jitter,
-		packetLoss,
-		testStartTime
-			FROM SpeedTests WHERE phoneID = ?
-			ORDER BY testStartTime DESC`, id)
-	if err != nil {
-		log.Println(err)
-		return nil
-	}
-	defer result.Close()
-
-	for result.Next() {
-		var r SpeedTestResult
-		err := result.Scan(
-			&r.PhoneID,
-			&r.TestID,
-			&r.DownloadSpeed,
-			&r.UploadSpeed,
-			&r.Latency,
-			&r.Jitter,
-			&r.PacketLoss,
-			&r.TestStartTime,
-		)
-		if err != nil {
-			log.Println(err)
-			return nil
-		}
-		pr.Results = append(pr.Results, r)
-	}
-
-	pr.LastUpdated = time.Now()
-	pr.PhoneID = id
-
-	return &pr
 }
 
 var tempInfo []byte
@@ -324,5 +196,36 @@ func getPersonalInfo(c *fiber.Ctx) error {
 
 	c.Response().AppendBody(tempInfo)
 	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+	return c.SendStatus(200)
+}
+
+func getFrontendSummary(c *fiber.Ctx) error {
+	type Summary struct {
+		Upload     float64 `json:"upload"`
+		Download   float64 `json:"download"`
+		Jitter     float64 `json:"jitter"`
+		Latency    float64 `json:"latency"`
+		PacketLoss float64 `json:"packetLoss"`
+	}
+
+	var s Summary
+	id := c.Params("id")
+	rand.Seed(int64(util.HashString(id)))
+
+	s.Download = rand.Float64() * 180
+	s.Upload = rand.Float64() * 20
+	s.Jitter = rand.Float64() * 4
+	s.Latency = rand.Float64() * 40
+	s.PacketLoss = rand.Float64() * 5
+
+	json, err := json.Marshal(s)
+	if err != nil {
+		c.Response().AppendBodyString("Error marshalling results")
+		return c.SendStatus(500)
+	}
+
+	c.Response().SetBody(json)
+	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+	c.Response().Header.Add(fiber.HeaderAccessControlAllowOrigin, "*") //make sure this is accessible for frontend
 	return c.SendStatus(200)
 }

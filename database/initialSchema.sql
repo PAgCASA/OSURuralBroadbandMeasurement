@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS SpeedTests (
-    id INTEGER PRIMARY KEY, -- will need to be unique but we can be a little lax with assignment
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     testID TEXT NOT NULL,
     phoneID TEXT NOT NULL,
     uploadSpeed DECIMAL NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS SpeedTests (
 );
 
 CREATE TABLE IF NOT EXISTS PersonalData (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
     phoneID TEXT NOT NULL,
 
     longitude DECIMAL NOT NULL,

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'package:device_info/device_info.dart';
 
-Future<String> getDeviceID() async{
+Future<String> getDeviceID() async {
   //TODO look into another device ID finding library as this one is out of date
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   var phoneID = "";
@@ -15,8 +15,7 @@ Future<String> getDeviceID() async{
   else if (Platform.isIOS) {
     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
     phoneID = iosInfo.identifierForVendor.toString();
-  }
-  else {
+  } else {
     print('error detecting device type');
   }
   //print("This is the phone ID $phoneID");
@@ -24,7 +23,7 @@ Future<String> getDeviceID() async{
   return phoneID;
 }
 
-int getTestID(String PhoneID){
+int getTestID(String PhoneID) {
   //TODO do we want to have me send a phone ID and backend
   //TODO returns a valid test ID to use, or would it be easier to return all the used test Ids and have frontend generate test ID
   Random testRand = Random();
@@ -34,3 +33,8 @@ int getTestID(String PhoneID){
 double bitsPerSecToMegaBitsPerSec(int bps) {
   return bps * 8 / 1000 / 1000;
 }
+
+const _chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+Random _rnd = Random();
+String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+    length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));

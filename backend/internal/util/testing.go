@@ -1,6 +1,7 @@
 package util
 
 import (
+	"hash/fnv"
 	"io/ioutil"
 	"net/http"
 	"testing"
@@ -28,4 +29,10 @@ func ExpectBadResponse(t *testing.T, resp *http.Response, expectedStatusCode int
 	} else {
 		t.Errorf("Expected status code %d, got %d", expectedStatusCode, resp.StatusCode)
 	}
+}
+
+func HashString(s string) uint64 {
+	h := fnv.New64a()
+	h.Write([]byte(s))
+	return h.Sum64()
 }

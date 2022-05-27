@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:the_test/personalInfoScreen.dart';
+import 'package:the_test/resultsScreen.dart';
 import 'package:the_test/runTest.dart';
+<<<<<<< HEAD
 import 'package:the_test/utils.dart' as utils;
 import 'constants.dart' as Constants;
 import 'package:dart_ping/dart_ping.dart';
@@ -20,6 +23,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 // import 'package:ndt_7_dart/src/upload.dart';
 
 void main() => runApp(MyApp());
+=======
+import 'homeScreen.dart';
+
+void main() => runApp(const MyApp());
+>>>>>>> a0e30a78887723212ab932ee222b7bc7dd28ca62
 
 //Class for test result object which will be sent to the back end
 class TestResult {
@@ -129,6 +137,7 @@ class PersonalInformation {
       };
 }
 
+<<<<<<< HEAD
 //The tutorial screen for the application
 //Accessed when pressing "start a test" on main screen
 class AboutScreen extends StatelessWidget {
@@ -507,6 +516,8 @@ class dataUploadScreen extends StatelessWidget {
 //   }
 // }
 
+=======
+>>>>>>> a0e30a78887723212ab932ee222b7bc7dd28ca62
 //The animation going across the screen when a test is implemented
 class LoadingScreen extends StatefulWidget {
   @override
@@ -525,24 +536,24 @@ class _LoadingScreenState extends State<LoadingScreen> {
         backgroundColor: Colors.lightGreen[700],
       ),
       body: Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             image: DecorationImage(
               image: AssetImage("assets/HomepageBackground.jpg"),
               fit: BoxFit.cover,
             ),
           ),
           child: Column(children: <Widget>[
-            Container(
-                child: Text("Please wait while we run your test!",
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.bold))),
-            SizedBox(height: 10),
+            const Text("Please wait while we run your test!",
+                style:
+                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
             Center(child: Image.asset("assets/hillfarmer.gif")),
           ])),
     );
   }
 }
 
+<<<<<<< HEAD
 //TODO pass in the phone ID for all incoming results, parse results by the test duration
 //incoming results array parse through type PastResults struct {
 //     PhoneID string
@@ -1049,6 +1060,8 @@ class _SettingsState extends State<Settings> {
   }
 }
 
+=======
+>>>>>>> a0e30a78887723212ab932ee222b7bc7dd28ca62
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -1070,10 +1083,11 @@ class NavBarPrimary extends StatefulWidget {
 class _NavBarPrimaryState extends State<NavBarPrimary> {
   int _selectedIndex = 0;
 
+  var buttonList = <Widget>[];
 
-  // //TODO put these widgets in separate files
-
-  final buttonList = <Widget>[HomePage(), RunTest(), Results(), Settings()];
+  _NavBarPrimaryState() {
+    buttonList = <Widget>[const HomePage(), RunTest(onPressed), const Results(), const Settings()];
+  }
 
   void onPressed(int index) {
     setState(() {
