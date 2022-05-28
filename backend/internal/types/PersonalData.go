@@ -1,6 +1,7 @@
 package types
 
 type PersonalData struct {
+	DeviceID  string `json:"deviceID"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Street    string `json:"street"`
