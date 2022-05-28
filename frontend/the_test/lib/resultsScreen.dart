@@ -3,13 +3,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:the_test/utils.dart';
 
 import 'constants.dart' as Constants;
 import 'utils.dart' as utils;
 import 'main.dart';
 
 class Results extends StatefulWidget {
+  const Results({Key? key}) : super(key: key);
+
   @override
   State<Results> createState() => _ResultsState();
 }
@@ -25,11 +26,8 @@ class _ResultsState extends State<Results> {
 
     //request the test at the full URL
     final response = await http.get(Uri.parse(fullURL));
-    //if we recieved record with no error, print what we recieved
+    //if we received record with no error, print what we received
     if (response.statusCode == 200) {
-      String body = response.body;
-      // print('This is what we received from the server \n\n  $body   \n\n');
-
       var json = jsonDecode(response.body);
       var rows = json['Results'];
       // print('\n\n\n\n this is the incoming rows $rows \n\n\n\n\n\n');
@@ -76,7 +74,7 @@ class _ResultsState extends State<Results> {
       ),
       body: Container(
         // color: Colors.grey[400],
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           image: DecorationImage(
             image: AssetImage("assets/HomepageBackground.jpg"),
             fit: BoxFit.cover,
@@ -87,7 +85,7 @@ class _ResultsState extends State<Results> {
           child: Container(
             decoration: BoxDecoration(
                 border: Border.all(color: (Colors.brown[800])!, width: 7),
-                borderRadius: BorderRadius.all(Radius.circular(10)),
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
                 color: Colors.white
             ),
             // color: Colors.white,

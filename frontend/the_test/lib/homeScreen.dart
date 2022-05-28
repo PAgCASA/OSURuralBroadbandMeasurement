@@ -6,6 +6,8 @@ import 'homeTutorialAndAbout.dart';
 import 'constants.dart';
 
 class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
 
@@ -26,7 +28,7 @@ class HomePage extends StatelessWidget {
         ),
         body: Container(
           // color: Colors.grey[400],
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/HomepageBackground.jpg"),
                 fit: BoxFit.cover,
@@ -36,18 +38,18 @@ class HomePage extends StatelessWidget {
             SingleChildScrollView( child:
             Column(children: <Widget>[
               SizedBox(height: height * SPACER_BOX_HEIGHT),
-              Center(),
+              const Center(),
               Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: (Colors.brown[800])!, width: 7),
-                      borderRadius: BorderRadius.all(Radius.circular(10))),
+                      borderRadius: const BorderRadius.all(Radius.circular(10))),
                   margin: const EdgeInsets.all(10.0),
                   // color: Colors.grey[600],
                   // width: 319.0,
                   // height: 515.0,
                   width: width * .8,
                   height: height2 * .55,
-                  child: Image(
+                  child: const Image(
                       image: AssetImage('assets/HomepageImage.jpg'),
                       fit: BoxFit.fill
                   )),
@@ -66,10 +68,10 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   child:
-                  Container(
+                  SizedBox(
                       height: height * SPACER_BOX_HEIGHT,
                       width: width * .7,
-                      child:Center( child:
+                      child:const Center( child:
                       AutoSizeText(
                         'About Us',
                         style: TextStyle(fontSize: 20),
@@ -95,10 +97,10 @@ class HomePage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => TutorialScreen()),
                     );
                   },
-                  child:   Container(
+                  child:   SizedBox(
                       height: height * SPACER_BOX_HEIGHT,
                       width: width * .7,
-                      child:Center( child:
+                      child:const Center( child:
                       AutoSizeText(
                         'Start a Test!',
                         style: TextStyle(fontSize: 20),

@@ -358,7 +358,7 @@ class _RunTestState extends State<RunTest> {
 
         // Position bob = 1;
 
-        child: GoogleMap(
+        child: const GoogleMap(
           initialCameraPosition: position,
           myLocationButtonEnabled: false,
         ));
@@ -554,14 +554,14 @@ class _RunTestState extends State<RunTest> {
     else if (connectionCode == 2) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Screens.MobileConnectionScreen()),
+        MaterialPageRoute(builder: (context) => const Screens.MobileConnectionScreen()),
       );
     }
     //if we don't have a connection, they will need to connect to a network
     else if (connectionCode == 3) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => Screens.NoConnectionScreen()),
+        MaterialPageRoute(builder: (context) => const Screens.NoConnectionScreen()),
       );
     } else {
       print(
