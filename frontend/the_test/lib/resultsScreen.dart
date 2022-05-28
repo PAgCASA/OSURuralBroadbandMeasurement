@@ -60,10 +60,7 @@ class _ResultsState extends State<Results> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    print('This is the value of the hold $width');
-
     double height = MediaQuery.of(context).size.height;
-    print('This is the value of the hold $width');
 
     return Scaffold(
       appBar: AppBar(

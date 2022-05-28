@@ -93,6 +93,7 @@ class incomingTestResult {
 //Class for sending personal information to the backend
 class PersonalInformation {
   //object fields
+  String deviceID;
   String firstName;
   String lastName;
   String street;
@@ -102,11 +103,12 @@ class PersonalInformation {
   String internetPlan;
 
   //Constructor
-  PersonalInformation(this.firstName, this.lastName, this.street,
+  PersonalInformation(this.deviceID, this.firstName, this.lastName, this.street,
       this.postalCode, this.city, this.state, this.internetPlan);
 
   //JSON conversion method
-  Map<String, dynamic> toJSON() => {
+  Map<String, String> toJSON() => {
+        "deviceID": deviceID,
         "firstName": firstName,
         "lastName": lastName,
         "street": street,
@@ -115,6 +117,18 @@ class PersonalInformation {
         "state": state,
         "internetPlan": internetPlan,
       };
+
+  factory PersonalInformation.fromJson(Map<String, dynamic> json) {
+    return PersonalInformation(
+        json['deviceID'],
+        json['firstName'],
+        json['lastName'],
+        json['street'],
+        json['postalCode'],
+        json['city'],
+        json['state'],
+        "");
+  }
 }
 
 //The animation going across the screen when a test is implemented
