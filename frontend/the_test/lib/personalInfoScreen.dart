@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
@@ -9,22 +10,20 @@ import 'main.dart';
 import 'constants.dart' as Constants;
 
 class personalInfoFormSubmit extends StatelessWidget {
-  const personalInfoFormSubmit({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(
-          title: const Text('PAgCASA: Submit Personal Information'),
-          centerTitle: true,
-          backgroundColor: Colors.lightGreen[700],
-        ),
-        body: Center(
-          child: ListView(
-              // shrinkWrap: true,
-              padding: const EdgeInsets.all(20.0),
-              children: [Center(child: Text('PAg4 hold \n '))]),
-        ),
-      );
+    appBar: AppBar(
+      title: const Text('PAgCASA: Submit Personal Information'),
+      centerTitle: true,
+      backgroundColor: Colors.lightGreen[700],
+    ),
+    body: Center(
+      child: ListView(
+        // shrinkWrap: true,
+          padding: const EdgeInsets.all(20.0),
+          children: const [Center(child: Text('PAg4 hold \n '))]),
+    ),
+  );
 }
 
 class Settings extends StatefulWidget {
@@ -44,7 +43,7 @@ class _SettingsState extends State<Settings> {
   String internetPlan = '-';
 
   //this will store the image in cache
-  File? image;
+  File? image = null;
 
   final formKey = GlobalKey<FormState>();
 
@@ -52,9 +51,9 @@ class _SettingsState extends State<Settings> {
   uploadPersonalInfo(var incomingMap) async {
     //create a POST request and anticipate a json object
     var response =
-        await http.post(Uri.parse(Constants.PERSONAL_INFO_UPLOAD_URL),
-            //    headers: {"Content-Type": "application/json; charset=UTF-8"},
-            body: incomingMap);
+    await http.post(Uri.parse(Constants.PERSONAL_INFO_UPLOAD_URL),
+        //    headers: {"Content-Type": "application/json; charset=UTF-8"},
+        body: incomingMap);
     //store the body in a variable
     var holder = response.body;
     print('sending data to server ');
@@ -74,7 +73,9 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildFirstName() {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Enter your first name"),
+      textAlign: TextAlign.center,
+      decoration: InputDecoration(labelText: "Enter your first name"
+      ),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
           return "Please enter a valid first name";
@@ -87,7 +88,8 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildLastName() {
     return TextFormField(
-        decoration: const InputDecoration(labelText: "Enter your last name"),
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(labelText: "Enter your last name"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid last name";
@@ -99,7 +101,8 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildStreetName() {
     return TextFormField(
-      decoration: const InputDecoration(labelText: "Enter your street name"),
+      textAlign: TextAlign.center,
+      decoration: InputDecoration(labelText: "Enter your street name"),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
           return "Please enter a valid last name";
@@ -112,7 +115,8 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildPostal() {
     return TextFormField(
-        decoration: const InputDecoration(labelText: "Enter your postal code"),
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(labelText: "Enter your postal code"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[0-9]+$').hasMatch(value)) {
             return "Please enter a valid postal code";
@@ -124,7 +128,9 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildTown() {
     return TextFormField(
-        decoration: const InputDecoration(labelText: "Enter your city or town name"),
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(labelText: "Enter your city or town name",
+        ),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid city or town name";
@@ -136,7 +142,8 @@ class _SettingsState extends State<Settings> {
 
   Widget _buildState() {
     return TextFormField(
-        decoration: const InputDecoration(labelText: "Enter your state"),
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(labelText: "Enter your state" ),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid state name";
@@ -167,165 +174,277 @@ class _SettingsState extends State<Settings> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(
-        title: const Text('PAgCASA: Upload Profile Information'),
-        centerTitle: true,
-        backgroundColor: Colors.lightGreen[700],
-      ),
-      body: ListView(addAutomaticKeepAlives: true, children: [
-        Form(
-            key: formKey,
-            child: Container(
-                color: Colors.yellow[200],
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    const SizedBox(height: 10),
-                    _buildFirstName(),
-                    const SizedBox(height: 10),
-                    _buildLastName(),
-                    const SizedBox(height: 10),
-                    _buildStreetName(),
-                    const SizedBox(height: 10),
-                    _buildPostal(),
-                    const SizedBox(height: 10),
-                    _buildTown(),
-                    const SizedBox(height: 10),
-                    _buildState(),
-// Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        child: const Text(
-                            'Upload an image of your internet bill from Gallery'),
-                        onPressed: () {
-                          _buildImageGallery();
-                          if (image != null) {
-                            List<int> imageBytes = image!.readAsBytesSync();
-                            String base64Image = base64.encode(imageBytes);
-                            internetPlan = base64Image;
-                          } else {
-                            print('Something is wrong with the image');
-                          }
-                        }),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.red,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        child: const Text(
-                            'Upload an image of your internet bill from Camera'),
-                        onPressed: () {
-                          _buildImageCamera();
-                          if (image != null) {
-                            List<int> imageBytes = image!.readAsBytesSync();
-                            String base64Image = base64.encode(imageBytes);
-                            internetPlan = base64Image;
-                          } else {
-                            print(
-                                'Something is wrong with the image from the camera');
-                          }
-                        }),
-                    const SizedBox(height: 10),
-                    ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.green,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
-                          ),
-                        ),
-                        onPressed: () {
-                          final isValid = formKey.currentState?.validate();
-                          if (formKey.currentState!.validate()) {
-                            PersonalInformation person = PersonalInformation(
-                                firstName,
-                                lastName,
-                                street,
-                                postalCode,
-                                city,
-                                state,
-                                internetPlan);
-//
-                            print('sending data to method ');
-                            print('this is the image $image ');
-                            uploadPersonalInfo(person.toJSON());
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => dataUploadScreen()),
-                            );
-                          }
-                        },
-                        child: const Text('Submit!'))
-                  ],
-                )))
-      ]));
-}
+  Widget build(BuildContext context) {
 
-class dataUploadScreen extends StatelessWidget {
-  const dataUploadScreen({Key? key}) : super(key: key);
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
 
-  @override
-  Widget build(BuildContext context) => Scaffold(
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+    return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('PAgCASA: Speed Test Homepage'),
+          title: const Text('PAgCASA: Upload Profile Information'),
           centerTitle: true,
           backgroundColor: Colors.lightGreen[700],
         ),
-        body: Center(
-          child: ListView(
-              // shrinkWrap: true,
-              padding: const EdgeInsets.all(20.0),
-              children: [
-                Center(
-                    child: Container(
-                  height: 600,
-                  width: 650,
-                  decoration: const BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/HomepageBackground.jpg"),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                  child: const Center(
-                      child: Text(
-                    "Thank you for uploading your personal data!",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  )),
-                )),
-                const SizedBox(
-                  height: 20,
+        body:
+        Container(
+
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/HomepageBackground.jpg"),
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            child:
+            Center( child:
+            Container(
+                decoration: BoxDecoration(
+                    border: Border.all(color: (Colors.brown[800])!, width: 7),
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                    color: Colors.white
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.pop(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const dataUploadScreen()),
-                    );
-                  },
-                  child: const Text("Go back"),
-                  style: ElevatedButton.styleFrom(
-                    primary: Colors.green[500],
-                  ),
+                height: height * .75,
+                width: width * .9,
+                child:
+                SingleChildScrollView( child:
+                Form(
+                    key: formKey,
+                    child: Container(
+                        padding: const EdgeInsets.all(20),
+                        color: Colors.yellow[200],
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            // Text(
+                            //   'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
+                            //   style: TextStyle(
+                            //       fontWeight: FontWeight.bold, fontSize: 16),),
+
+
+                            AutoSizeText(
+                              'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
+                              style: TextStyle(fontSize: 18),
+                              textAlign: TextAlign.center,
+                              minFontSize: 12,
+                              maxFontSize: 25,
+                            ),
+
+
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            _buildFirstName(),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            Center(child  : _buildLastName()),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            _buildStreetName(),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            _buildPostal(),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            _buildTown(),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            _buildState(),
+// Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.red,
+                                  shape: new RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                                child:
+
+                                Center( child:
+                                AutoSizeText(
+                                  'Upload an image of your internet bill from Gallery',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
+                                  minFontSize: 12,
+                                  maxFontSize: 25,
+                                )
+                                ),
+
+
+                                onPressed: () {
+                                  _buildImageGallery();
+                                  if (image != null) {
+                                    List<int> imageBytes =
+                                    image!.readAsBytesSync();
+                                    String base64Image =
+                                    base64.encode(imageBytes);
+                                    internetPlan = base64Image;
+                                  } else {
+                                    print('Something is wrong with the image');
+                                  }
+                                }),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.red,
+                                  shape: new RoundedRectangleBorder(
+                                    borderRadius: new BorderRadius.circular(20.0),
+                                  ),
+                                ),
+                                child:   Center( child:
+                                AutoSizeText(
+                                  'Upload an image of your internet bill from Camera',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 16),
+                                  minFontSize: 12,
+                                  maxFontSize: 25,
+                                )
+                                ),
+                                onPressed: () {
+                                  _buildImageCamera();
+                                  if (image != null) {
+                                    List<int> imageBytes =
+                                    image!.readAsBytesSync();
+                                    String base64Image =
+                                    base64.encode(imageBytes);
+                                    internetPlan = base64Image;
+                                  } else {
+                                    print(
+                                        'Something is wrong with the image from the camera');
+                                  }
+                                }),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                            ElevatedButton(
+
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.green,
+                                shape: new RoundedRectangleBorder(
+                                  borderRadius: new BorderRadius.circular(20.0),
+                                ),
+                              ),
+                              onPressed: () {
+                                final isValid =
+                                formKey.currentState?.validate();
+                                if (formKey.currentState!.validate()) {
+                                  PersonalInformation person =
+                                  PersonalInformation(
+                                      firstName,
+                                      lastName,
+                                      street,
+                                      postalCode,
+                                      city,
+                                      state,
+                                      internetPlan);
+//
+                                  print('sending data to method ');
+                                  print('this is the image $image ');
+                                  uploadPersonalInfo(person.toJSON());
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => dataUploadScreen()),
+                                  );
+                                }
+                              },
+                              child:
+                              Center( child:
+                              AutoSizeText(
+                                'Submit',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: 16),
+                                minFontSize: 12,
+                                maxFontSize: 25,
+                              )
+                              ),
+
+
+                            ),
+                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
+                          ],
+                        )))
                 )
-              ]),
-        ),
-      );
+            )
+            )
+        )
+    );
+
+  }
+}
+
+class dataUploadScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+
+
+    double width = MediaQuery.of(context).size.width;
+    print('This is the value of the hold $width');
+
+    double height = MediaQuery.of(context).size.height;
+    print('This is the value of the hold $width');
+
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('PAgCASA: Speed Test Homepage'),
+        centerTitle: true,
+        backgroundColor: Colors.lightGreen[700],
+      ),
+      body: Center(
+        child: ListView(
+          // shrinkWrap: true,
+            padding: const EdgeInsets.all(20.0),
+            children: [
+              Center(
+                  child: Container(
+                    height: height * .7,
+                    width: width * .9,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: AssetImage("assets/HomepageBackground.jpg"),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Center(
+                        child:
+                        Container(
+                          // decoration: BoxDecoration(
+                          //     border: Border.all(color: (Colors.brown), width: 7),
+                          //     borderRadius: BorderRadius.all(Radius.circular(10))),
+                            decoration: BoxDecoration(
+                                border: Border.all(width: 3),
+                                borderRadius: BorderRadius.all(Radius.circular(2)),
+                                color: Colors.white
+                            ),
+                            height: height * .07,
+                            width: width * .8,
+                            //color: Colors.black, width:  10
+
+                            // color: Colors.white,
+                            child: Center( child:Text(
+                              "Thank you for uploading your personal data!",
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            )
+                            )
+                        )
+                    ),
+                  )),
+              SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(
+                    context,
+                    MaterialPageRoute(builder: (context) => dataUploadScreen()),
+                  );
+                },
+                child: Text("Go back"),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.green[500],
+                ),
+              )
+            ]),
+      ),
+    );
+  }
 }
