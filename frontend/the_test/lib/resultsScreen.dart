@@ -38,7 +38,7 @@ class _ResultsState extends State<Results> {
         // turning them into test results
         for (var i = 0; i < (rows as List).length; i++) {
           var result =
-          incomingTestResult.fromJson(rows[i] as Map<String, dynamic>);
+              incomingTestResult.fromJson(rows[i] as Map<String, dynamic>);
           results.insert(i, result);
           // print("$results");
         }
@@ -59,7 +59,6 @@ class _ResultsState extends State<Results> {
 
   @override
   Widget build(BuildContext context) {
-
     double width = MediaQuery.of(context).size.width;
     print('This is the value of the hold $width');
 
@@ -86,8 +85,7 @@ class _ResultsState extends State<Results> {
             decoration: BoxDecoration(
                 border: Border.all(color: (Colors.brown[800])!, width: 7),
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
-                color: Colors.white
-            ),
+                color: Colors.white),
             // color: Colors.white,
             height: height * .7,
             width: width * .8,
@@ -117,29 +115,28 @@ class _ResultsState extends State<Results> {
     return DataTable(
         columnSpacing: 10,
         columns: getColumns(columns),
-        rows:
-        results
+        rows: results
             .map(
               (result) => DataRow(
-            cells: <DataCell>[
-              DataCell(Text(getDateFormat(result.date))),
-              DataCell(Text(result.downloadSpeed.toString())),
-              DataCell(Text(result.uploadSpeed.toString())),
-              DataCell(Text(result.jitter.toString())),
-              DataCell(Text(result.latency.toString())),
-              DataCell(Text(result.packetLoss.toString())),
-            ],
-          ),
-        )
+                cells: <DataCell>[
+                  DataCell(Text(getDateFormat(result.date))),
+                  DataCell(Text(result.downloadSpeed.toString())),
+                  DataCell(Text(result.uploadSpeed.toString())),
+                  DataCell(Text(result.jitter.toString())),
+                  DataCell(Text(result.latency.toString())),
+                  DataCell(Text(result.packetLoss.toString())),
+                ],
+              ),
+            )
             .toList());
   }
 
   List<DataColumn> getColumns(List<String> columns) =>
       columns.map((String column) => DataColumn(label: Text(column))).toList();
+
   String getDateFormat(String data) {
     var date = DateTime.parse(data).toLocal();
-    return "${date.day}-${date.month}-${date.year-2000} ${date.hour}:"
-        "${date.minute.toString().length == 1 ?
-    "0"+ date.minute.toString() : date.minute.toString()}";
+    return "${date.day}-${date.month}-${date.year - 2000} ${date.hour}:"
+        "${date.minute.toString().length == 1 ? "0" + date.minute.toString() : date.minute.toString()}";
   }
 }

@@ -14,18 +14,18 @@ class PersonalInfoFormSubmit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: const Text('PAgCASA: Submit Personal Information'),
-      centerTitle: true,
-      backgroundColor: Colors.lightGreen[700],
-    ),
-    body: Center(
-      child: ListView(
-        // shrinkWrap: true,
-          padding: const EdgeInsets.all(20.0),
-          children: const [Center(child: Text('PAg4 hold \n '))]),
-    ),
-  );
+        appBar: AppBar(
+          title: const Text('PAgCASA: Submit Personal Information'),
+          centerTitle: true,
+          backgroundColor: Colors.lightGreen[700],
+        ),
+        body: Center(
+          child: ListView(
+              // shrinkWrap: true,
+              padding: const EdgeInsets.all(20.0),
+              children: const [Center(child: Text('PAg4 hold \n '))]),
+        ),
+      );
 }
 
 class Settings extends StatefulWidget {
@@ -53,26 +53,24 @@ class _SettingsState extends State<Settings> {
   uploadPersonalInfo(var incomingMap) async {
     //create a POST request and anticipate a json object
     var response =
-    await http.post(Uri.parse(Constants.PERSONAL_INFO_UPLOAD_URL),
-        //    headers: {"Content-Type": "application/json; charset=UTF-8"},
-        body: incomingMap);
+        await http.post(Uri.parse(Constants.PERSONAL_INFO_UPLOAD_URL),
+            //    headers: {"Content-Type": "application/json; charset=UTF-8"},
+            body: incomingMap);
     //store the body in a variable
     var holder = response.body;
     print('sending data to server ');
 
     //TODO increase error checking
 
-      //print the server response from upload
-      print(
-          '\n This is the response from the server for personal info uploading: $holder\n');
-
+    //print the server response from upload
+    print(
+        '\n This is the response from the server for personal info uploading: $holder\n');
   }
 
   Widget _buildFirstName() {
     return TextFormField(
       textAlign: TextAlign.center,
-      decoration: const InputDecoration(labelText: "Enter your first name"
-      ),
+      decoration: const InputDecoration(labelText: "Enter your first name"),
       validator: (value) {
         if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
           return "Please enter a valid first name";
@@ -126,7 +124,8 @@ class _SettingsState extends State<Settings> {
   Widget _buildTown() {
     return TextFormField(
         textAlign: TextAlign.center,
-        decoration: const InputDecoration(labelText: "Enter your city or town name",
+        decoration: const InputDecoration(
+          labelText: "Enter your city or town name",
         ),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
@@ -140,7 +139,7 @@ class _SettingsState extends State<Settings> {
   Widget _buildState() {
     return TextFormField(
         textAlign: TextAlign.center,
-        decoration: const InputDecoration(labelText: "Enter your state" ),
+        decoration: const InputDecoration(labelText: "Enter your state"),
         validator: (value) {
           if (value!.isEmpty || !RegExp(r'^[a-z A-Z]+$').hasMatch(value)) {
             return "Please enter a valid state name";
@@ -172,7 +171,6 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
-
     double width = MediaQuery.of(context).size.width;
     print('This is the value of the hold $width');
 
@@ -186,184 +184,188 @@ class _SettingsState extends State<Settings> {
           centerTitle: true,
           backgroundColor: Colors.lightGreen[700],
         ),
-        body:
-        Container(
-
+        body: Container(
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/HomepageBackground.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
+            child: Center(
+                child: Container(
+                    decoration: BoxDecoration(
+                        border:
+                            Border.all(color: (Colors.brown[800])!, width: 7),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(10)),
+                        color: Colors.white),
+                    height: height * .75,
+                    width: width * .9,
+                    child: SingleChildScrollView(
+                        child: Form(
+                            key: formKey,
+                            child: Container(
+                                padding: const EdgeInsets.all(20),
+                                color: Colors.yellow[200],
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    // Text(
+                                    //   'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
+                                    //   style: TextStyle(
+                                    //       fontWeight: FontWeight.bold, fontSize: 16),),
 
-            child:
-            Center( child:
-            Container(
-                decoration: BoxDecoration(
-                    border: Border.all(color: (Colors.brown[800])!, width: 7),
-                    borderRadius: const BorderRadius.all(Radius.circular(10)),
-                    color: Colors.white
-                ),
-                height: height * .75,
-                width: width * .9,
-                child:
-                SingleChildScrollView( child:
-                Form(
-                    key: formKey,
-                    child: Container(
-                        padding: const EdgeInsets.all(20),
-                        color: Colors.yellow[200],
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            // Text(
-                            //   'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
-                            //   style: TextStyle(
-                            //       fontWeight: FontWeight.bold, fontSize: 16),),
+                                    const AutoSizeText(
+                                      'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
+                                      style: TextStyle(fontSize: 18),
+                                      textAlign: TextAlign.center,
+                                      minFontSize: 12,
+                                      maxFontSize: 25,
+                                    ),
 
-
-                            const AutoSizeText(
-                              'Please enter your personal information below.  All data is stored securely and will NEVER be sold or distributed.',
-                              style: TextStyle(fontSize: 18),
-                              textAlign: TextAlign.center,
-                              minFontSize: 12,
-                              maxFontSize: 25,
-                            ),
-
-
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            _buildFirstName(),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            Center(child  : _buildLastName()),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            _buildStreetName(),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            _buildPostal(),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            _buildTown(),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            _buildState(),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    _buildFirstName(),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    Center(child: _buildLastName()),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    _buildStreetName(),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    _buildPostal(),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    _buildTown(),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    _buildState(),
 // Use imagepicker for uploading image https://pub.dev/packages/image_picker/install
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                                child:
-
-                                const Center( child:
-                                AutoSizeText(
-                                  'Upload an image of your internet bill from Gallery',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 16),
-                                  minFontSize: 12,
-                                  maxFontSize: 25,
-                                )
-                                ),
-
-
-                                onPressed: () {
-                                  _buildImageGallery();
-                                  if (image != null) {
-                                    List<int> imageBytes =
-                                    image!.readAsBytesSync();
-                                    String base64Image =
-                                    base64.encode(imageBytes);
-                                    internetPlan = base64Image;
-                                  } else {
-                                    print('Something is wrong with the image');
-                                  }
-                                }),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20.0),
-                                  ),
-                                ),
-                                child:   const Center( child:
-                                AutoSizeText(
-                                  'Upload an image of your internet bill from Camera',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(fontSize: 16),
-                                  minFontSize: 12,
-                                  maxFontSize: 25,
-                                )
-                                ),
-                                onPressed: () {
-                                  _buildImageCamera();
-                                  if (image != null) {
-                                    List<int> imageBytes =
-                                    image!.readAsBytesSync();
-                                    String base64Image =
-                                    base64.encode(imageBytes);
-                                    internetPlan = base64Image;
-                                  } else {
-                                    print(
-                                        'Something is wrong with the image from the camera');
-                                  }
-                                }),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                            ElevatedButton(
-
-                              style: ElevatedButton.styleFrom(
-                                primary: Colors.green,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                              ),
-                              onPressed: () {
-                                final isValid =
-                                formKey.currentState?.validate();
-                                if (formKey.currentState!.validate()) {
-                                  PersonalInformation person =
-                                  PersonalInformation(
-                                      firstName,
-                                      lastName,
-                                      street,
-                                      postalCode,
-                                      city,
-                                      state,
-                                      internetPlan);
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.red,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                        ),
+                                        child: const Center(
+                                            child: AutoSizeText(
+                                          'Upload an image of your internet bill from Gallery',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 16),
+                                          minFontSize: 12,
+                                          maxFontSize: 25,
+                                        )),
+                                        onPressed: () {
+                                          _buildImageGallery();
+                                          if (image != null) {
+                                            List<int> imageBytes =
+                                                image!.readAsBytesSync();
+                                            String base64Image =
+                                                base64.encode(imageBytes);
+                                            internetPlan = base64Image;
+                                          } else {
+                                            print(
+                                                'Something is wrong with the image');
+                                          }
+                                        }),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                          primary: Colors.red,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0),
+                                          ),
+                                        ),
+                                        child: const Center(
+                                            child: AutoSizeText(
+                                          'Upload an image of your internet bill from Camera',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(fontSize: 16),
+                                          minFontSize: 12,
+                                          maxFontSize: 25,
+                                        )),
+                                        onPressed: () {
+                                          _buildImageCamera();
+                                          if (image != null) {
+                                            List<int> imageBytes =
+                                                image!.readAsBytesSync();
+                                            String base64Image =
+                                                base64.encode(imageBytes);
+                                            internetPlan = base64Image;
+                                          } else {
+                                            print(
+                                                'Something is wrong with the image from the camera');
+                                          }
+                                        }),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        primary: Colors.green,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20.0),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        final isValid =
+                                            formKey.currentState?.validate();
+                                        if (formKey.currentState!.validate()) {
+                                          PersonalInformation person =
+                                              PersonalInformation(
+                                                  firstName,
+                                                  lastName,
+                                                  street,
+                                                  postalCode,
+                                                  city,
+                                                  state,
+                                                  internetPlan);
 //
-                                  print('sending data to method ');
-                                  print('this is the image $image ');
-                                  uploadPersonalInfo(person.toJSON());
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const DataUploadScreen()),
-                                  );
-                                }
-                              },
-                              child:
-                              const Center( child:
-                              AutoSizeText(
-                                'Submit',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(fontSize: 16),
-                                minFontSize: 12,
-                                maxFontSize: 25,
-                              )
-                              ),
-
-
-                            ),
-                            SizedBox(height: height * Constants.SPACER_BOX_HEIGHT),
-                          ],
-                        )))
-                )
-            )
-            )
-        )
-    );
-
+                                          print('sending data to method ');
+                                          print('this is the image $image ');
+                                          uploadPersonalInfo(person.toJSON());
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    const DataUploadScreen()),
+                                          );
+                                        }
+                                      },
+                                      child: const Center(
+                                          child: AutoSizeText(
+                                        'Submit',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(fontSize: 16),
+                                        minFontSize: 12,
+                                        maxFontSize: 25,
+                                      )),
+                                    ),
+                                    SizedBox(
+                                        height: height *
+                                            Constants.SPACER_BOX_HEIGHT),
+                                  ],
+                                ))))))));
   }
 }
 
@@ -372,14 +374,11 @@ class DataUploadScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     double width = MediaQuery.of(context).size.width;
     print('This is the value of the hold $width');
 
     double height = MediaQuery.of(context).size.height;
     print('This is the value of the hold $width');
-
 
     return Scaffold(
       appBar: AppBar(
@@ -389,44 +388,41 @@ class DataUploadScreen extends StatelessWidget {
       ),
       body: Center(
         child: ListView(
-          // shrinkWrap: true,
+            // shrinkWrap: true,
             padding: const EdgeInsets.all(20.0),
             children: [
               Center(
                   child: Container(
-                    height: height * .7,
-                    width: width * .9,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage("assets/HomepageBackground.jpg"),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: Center(
-                        child:
-                        Container(
-                          // decoration: BoxDecoration(
-                          //     border: Border.all(color: (Colors.brown), width: 7),
-                          //     borderRadius: BorderRadius.all(Radius.circular(10))),
-                            decoration: BoxDecoration(
-                                border: Border.all(width: 3),
-                                borderRadius: const BorderRadius.all(Radius.circular(2)),
-                                color: Colors.white
-                            ),
-                            height: height * .07,
-                            width: width * .8,
-                            //color: Colors.black, width:  10
+                height: height * .7,
+                width: width * .9,
+                decoration: const BoxDecoration(
+                  image: DecorationImage(
+                    image: AssetImage("assets/HomepageBackground.jpg"),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                child: Center(
+                    child: Container(
+                        // decoration: BoxDecoration(
+                        //     border: Border.all(color: (Colors.brown), width: 7),
+                        //     borderRadius: BorderRadius.all(Radius.circular(10))),
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 3),
+                            borderRadius:
+                                const BorderRadius.all(Radius.circular(2)),
+                            color: Colors.white),
+                        height: height * .07,
+                        width: width * .8,
+                        //color: Colors.black, width:  10
 
-                            // color: Colors.white,
-                            child: const Center( child:Text(
-                              "Thank you for uploading your personal data!",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            )
-                            )
-                        )
-                    ),
-                  )),
+                        // color: Colors.white,
+                        child: const Center(
+                            child: Text(
+                          "Thank you for uploading your personal data!",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        )))),
+              )),
               const SizedBox(
                 height: 20,
               ),
@@ -434,7 +430,8 @@ class DataUploadScreen extends StatelessWidget {
                 onPressed: () {
                   Navigator.pop(
                     context,
-                    MaterialPageRoute(builder: (context) => const DataUploadScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const DataUploadScreen()),
                   );
                 },
                 child: const Text("Go back"),

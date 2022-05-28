@@ -143,7 +143,6 @@ class _RunTestState extends State<RunTest> {
 
   // var geoLocator = GeoLocator();
 
-
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -181,15 +180,11 @@ class _RunTestState extends State<RunTest> {
     return await Geolocator.getCurrentPosition();
   }
 
-
-
   // position =
   // CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
 
-
   @override
   Widget build(BuildContext context) {
-
     double width = MediaQuery.of(context).size.width;
     print('This is the value of the hold $width');
 
@@ -296,7 +291,6 @@ class _RunTestState extends State<RunTest> {
       ),
       floatingActionButton: getActionButton(context, testRunning, haveData()),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-
     );
   }
 
@@ -341,9 +335,7 @@ class _RunTestState extends State<RunTest> {
     return utils.bitsPerSecToMegaBitsPerSec(finalStatus.bps);
   }
 
-
-  Container getMap(double height, double width)  {
-
+  Container getMap(double height, double width) {
     return Container(
         decoration: BoxDecoration(
             color: Colors.orange,
@@ -355,7 +347,6 @@ class _RunTestState extends State<RunTest> {
 
         //    CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
 
-
         // Position bob = 1;
 
         child: const GoogleMap(
@@ -363,8 +354,6 @@ class _RunTestState extends State<RunTest> {
           myLocationButtonEnabled: false,
         ));
   }
-
-
 
   //
   // Future<Container> getMap(double height, double width) async {
@@ -554,14 +543,16 @@ class _RunTestState extends State<RunTest> {
     else if (connectionCode == 2) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const Screens.MobileConnectionScreen()),
+        MaterialPageRoute(
+            builder: (context) => const Screens.MobileConnectionScreen()),
       );
     }
     //if we don't have a connection, they will need to connect to a network
     else if (connectionCode == 3) {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => const Screens.NoConnectionScreen()),
+        MaterialPageRoute(
+            builder: (context) => const Screens.NoConnectionScreen()),
       );
     } else {
       print(

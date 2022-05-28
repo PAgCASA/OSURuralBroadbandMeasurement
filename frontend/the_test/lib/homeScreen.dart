@@ -10,7 +10,6 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     double width = MediaQuery.of(context).size.width;
     print('This is the value of the hold $width');
 
@@ -27,22 +26,22 @@ class HomePage extends StatelessWidget {
           backgroundColor: Colors.lightGreen[700],
         ),
         body: Container(
-          // color: Colors.grey[400],
+            // color: Colors.grey[400],
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage("assets/HomepageBackground.jpg"),
                 fit: BoxFit.cover,
               ),
             ),
-            child:
-            SingleChildScrollView( child:
-            Column(children: <Widget>[
+            child: SingleChildScrollView(
+                child: Column(children: <Widget>[
               SizedBox(height: height * SPACER_BOX_HEIGHT),
               const Center(),
               Container(
                   decoration: BoxDecoration(
                       border: Border.all(color: (Colors.brown[800])!, width: 7),
-                      borderRadius: const BorderRadius.all(Radius.circular(10))),
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(10))),
                   margin: const EdgeInsets.all(10.0),
                   // color: Colors.grey[600],
                   // width: 319.0,
@@ -51,41 +50,36 @@ class HomePage extends StatelessWidget {
                   height: height2 * .55,
                   child: const Image(
                       image: AssetImage('assets/HomepageImage.jpg'),
-                      fit: BoxFit.fill
-                  )),
+                      fit: BoxFit.fill)),
               SizedBox(height: height * SPACER_BOX_HEIGHT),
               ElevatedButton(
-                //width:width * .8, height: height2 * .02)
+                  //width:width * .8, height: height2 * .02)
                   style: ElevatedButton.styleFrom(
-                    fixedSize: Size((width * .8),(height2 * .01)),
+                    fixedSize: Size((width * .8), (height2 * .01)),
                     primary: Colors.green[400], // Background color
                   ),
-
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => AboutScreen()),
                     );
                   },
-                  child:
-                  SizedBox(
+                  child: SizedBox(
                       height: height * SPACER_BOX_HEIGHT,
                       width: width * .7,
-                      child:const Center( child:
-                      AutoSizeText(
+                      child: const Center(
+                          child: AutoSizeText(
                         'About Us',
                         style: TextStyle(fontSize: 20),
                         minFontSize: 18,
                         maxFontSize: 25,
-                      )
-                      )
-                  )
+                      )))
 
-                // Text('About Us'),
-                // style: ElevatedButton.styleFrom(
-                //   primary: Colors.green[500],
-                // ),
-              ),
+                  // Text('About Us'),
+                  // style: ElevatedButton.styleFrom(
+                  //   primary: Colors.green[500],
+                  // ),
+                  ),
               SizedBox(height: height * SPACER_BOX_HEIGHT),
               ElevatedButton(
                   style: ElevatedButton.styleFrom(
@@ -97,21 +91,17 @@ class HomePage extends StatelessWidget {
                       MaterialPageRoute(builder: (context) => TutorialScreen()),
                     );
                   },
-                  child:   SizedBox(
+                  child: SizedBox(
                       height: height * SPACER_BOX_HEIGHT,
                       width: width * .7,
-                      child:const Center( child:
-                      AutoSizeText(
+                      child: const Center(
+                          child: AutoSizeText(
                         'Start a Test!',
                         style: TextStyle(fontSize: 20),
                         minFontSize: 18,
                         maxFontSize: 25,
-                      )
-                      )
-                  )
-              ),
+                      )))),
               SizedBox(height: height * SPACER_BOX_HEIGHT),
-            ])
-            )));
+            ]))));
   }
 }

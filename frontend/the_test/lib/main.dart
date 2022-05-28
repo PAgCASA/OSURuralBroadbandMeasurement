@@ -8,13 +8,10 @@ import 'homeScreen.dart';
 // import 'package:ndt_7_dart/src/locator.dart';
 // import 'package:ndt_7_dart/src/upload.dart';
 
-
-
 void main() => runApp(const MyApp());
 
 //Class for test result object which will be sent to the back end
 class TestResult {
-
   //object fields
   String phone_ID;
   String test_ID;
@@ -120,7 +117,6 @@ class PersonalInformation {
       };
 }
 
-
 //The animation going across the screen when a test is implemented
 class LoadingScreen extends StatefulWidget {
   @override
@@ -147,15 +143,13 @@ class _LoadingScreenState extends State<LoadingScreen> {
           ),
           child: Column(children: <Widget>[
             const Text("Please wait while we run your test!",
-                style:
-                    TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
             Center(child: Image.asset("assets/hillfarmer.gif")),
           ])),
     );
   }
 }
-
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -181,7 +175,12 @@ class _NavBarPrimaryState extends State<NavBarPrimary> {
   var buttonList = <Widget>[];
 
   _NavBarPrimaryState() {
-    buttonList = <Widget>[ HomePage(), RunTest(onPressed),  Results(), const Settings()];
+    buttonList = <Widget>[
+      HomePage(),
+      RunTest(onPressed),
+      Results(),
+      const Settings()
+    ];
   }
 
   void onPressed(int index) {
