@@ -176,9 +176,9 @@ class _NavBarPrimaryState extends State<NavBarPrimary> {
 
   _NavBarPrimaryState() {
     buttonList = <Widget>[
-      HomePage(),
+      HomePage(onPressed),
       RunTest(onPressed),
-      Results(),
+      const Results(),
       const Settings()
     ];
   }

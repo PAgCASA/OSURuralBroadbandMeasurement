@@ -90,7 +90,8 @@ class AboutScreen extends StatelessWidget {
 //About us screen
 //Accessed when hitting "about us" from the main screen
 class TutorialScreen extends StatelessWidget {
-  const TutorialScreen({Key? key}) : super(key: key);
+  final Function tabCallback;
+  const TutorialScreen(this.tabCallback, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +140,7 @@ class TutorialScreen extends StatelessWidget {
                           // color: Colors.white,
                           child: const Center(
                               child: AutoSizeText(
-                            "Please read this brief tutorial on how to use our applicatiion \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
+                            "Please read this brief tutorial on how to use our application \n\n1. You may begin a test by navigating to the \"run a test\" page.  Press the wifi icon on the bottom bar to reach this page. \n\n2. You will be greeted by a screen displaying your current approximate location and an empty field where the test results will appear.  Begin a test by hitting the red \"Begin Test\" button on the bottom bar.\n\n3. After the test is complete, results will be displayed and recorded.  You may now view your previous test history by navigating to the \"Results\" page.  You can navigate to this page by hitting the rewinding clock icon on the bottom bar.  \n\n4.  Finally, we ask that you upload some personal information to help us accomplish our goals.  You may view and modify this information by navigating to the \"Profile Settings\" page.  You may navigate to this page by hitting the person icon on the bottom bar. \n\nFor additional support, please email holder@holder.com or contact us at 111-222-3333.  Thank you! ",
                             style: TextStyle(fontSize: 20),
                             minFontSize: 12,
                             maxFontSize: 25,
@@ -153,11 +154,8 @@ class TutorialScreen extends StatelessWidget {
                       primary: Colors.green[400], // Background color
                     ),
                     onPressed: () {
-                      Navigator.pop(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const AboutScreen()),
-                      );
+                      tabCallback(1);
+                      Navigator.pop(context);
                     },
                     child: SizedBox(
                         height: height * .1,

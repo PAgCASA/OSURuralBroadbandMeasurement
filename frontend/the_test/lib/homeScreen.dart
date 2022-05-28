@@ -6,7 +6,9 @@ import 'homeTutorialAndAbout.dart';
 import 'constants.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  final Function tabCallback;
+
+  const HomePage(this.tabCallback, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +90,7 @@ class HomePage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => TutorialScreen()),
+                      MaterialPageRoute(builder: (context) => TutorialScreen(tabCallback)),
                     );
                   },
                   child: SizedBox(
