@@ -16,9 +16,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:geolocator/geolocator.dart';
 
-const position =
-    CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
-
 class RunTest extends StatefulWidget {
   final Function tabCallback;
 
@@ -40,10 +37,7 @@ class _RunTestState extends State<RunTest> {
 
   bool testRunning = false;
 
-  //trackers for UDP
-  int packetsSent = 0;
-  int packetsReceived = 1;
-  int errorPackets = 0;
+  CameraPosition? position;
 
   //function to call if we want to switch tabs
   Function tabCallback;
@@ -186,11 +180,7 @@ class _RunTestState extends State<RunTest> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
-    print('This is the value of the hold $width');
-
     double height = MediaQuery.of(context).size.height;
-    print('This is the value of the hold $width');
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('PAgCASA: Speed Test Start a Test'),
@@ -336,6 +326,15 @@ class _RunTestState extends State<RunTest> {
   }
 
   Container getMap(double height, double width) {
+    if (position == null) {
+      _determinePosition().then((value) => {
+            setState(() {
+              position = CameraPosition(
+                  target: LatLng(value.latitude, value.longitude), zoom: 11.5);
+            })
+          });
+    }
+
     return Container(
         decoration: BoxDecoration(
             color: Colors.orange,
@@ -349,39 +348,13 @@ class _RunTestState extends State<RunTest> {
 
         // Position bob = 1;
 
-        child: const GoogleMap(
-          initialCameraPosition: position,
+        child: GoogleMap(
+          initialCameraPosition: position != null
+              ? position as CameraPosition
+              : const CameraPosition(target: LatLng(0, 0)),
           myLocationButtonEnabled: false,
         ));
   }
-
-  //
-  // Future<Container> getMap(double height, double width) async {
-  //
-  //
-  //   var position1 = await _determinePosition();
-  //
-  //   var positionHold = CameraPosition(target: LatLng(position1.latitude, position1.longitude), zoom: 11.5);
-  //
-  //   return Container(
-  //       decoration: BoxDecoration(
-  //           color: Colors.orange,
-  //           border: Border.all(color: (Colors.brown[800])!, width: 7),
-  //           borderRadius: const BorderRadius.all(Radius.circular(10))),
-  //       padding: const EdgeInsets.all(15.0),
-  //       height: height * .3,
-  //       width: width * .8,
-  //
-  //       //    CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
-  //
-  //
-  //     // Position bob = 1;
-  //
-  //       child: GoogleMap(
-  //         initialCameraPosition: positionHold,
-  //         myLocationButtonEnabled: false,
-  //       ));
-  // }
 
   Container getAnimation(double height, double width) {
     return Container(
