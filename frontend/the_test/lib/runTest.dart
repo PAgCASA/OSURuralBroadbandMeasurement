@@ -344,16 +344,11 @@ class _RunTestState extends State<RunTest> {
         height: height * .3,
         width: width * .8,
 
-        //    CameraPosition(target: LatLng(37.444444, -122.431297), zoom: 11.5);
-
-        // Position bob = 1;
-
-        child: GoogleMap(
-          initialCameraPosition: position != null
-              ? position as CameraPosition
-              : const CameraPosition(target: LatLng(0, 0)),
+        child: position != null ? GoogleMap(
+          initialCameraPosition: position as CameraPosition,
           myLocationButtonEnabled: false,
-        ));
+        ) : const Center(child: Text("Finding location"))
+    );
   }
 
   Container getAnimation(double height, double width) {
