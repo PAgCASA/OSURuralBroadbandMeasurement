@@ -87,6 +87,17 @@ class _RunTestState extends State<RunTest> {
       testRunning = true;
     });
 
+    //make sure we are connected before running test
+    if(!(await goodConnectionToStartTest())){
+      setState(() {
+        testRunning = false;
+      });
+    }
+
+    if (!testRunning) {
+      return;
+    }
+
     //get latency (var is updated within the function so no need to set)
     await getLatencyAndJitter();
 
