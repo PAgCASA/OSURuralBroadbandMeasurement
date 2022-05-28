@@ -179,10 +179,16 @@ func getSpeedTestResults(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-var tempInfo []byte
+var tempInfo *types.PersonalData
 
 func submitPersonalInfo(c *fiber.Ctx) error {
-	tempInfo = c.Request().Body()
+	payload := &types.PersonalData{}
+
+	if err := c.BodyParser(payload); err != nil {
+		return err
+	}
+
+	tempInfo = payload
 
 	c.Response().AppendBodyString("OK")
 	return c.SendStatus(200)
@@ -194,7 +200,13 @@ func getPersonalInfo(c *fiber.Ctx) error {
 		return c.SendStatus(404)
 	}
 
-	c.Response().AppendBody(tempInfo)
+	json, err := json.Marshal(tempInfo)
+	if err != nil {
+		c.Response().AppendBodyString("Error marshalling results")
+		return c.SendStatus(500)
+	}
+
+	c.Response().SetBody(json)
 	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
 	return c.SendStatus(200)
 }
