@@ -16,7 +16,8 @@ func ExpectGoodResponse(t *testing.T, resp *http.Response) {
 			t.Errorf("Expected OK, got %s", string(body))
 		}
 	} else {
-		t.Errorf("Expected status code %d, got %d", fiber.StatusOK, resp.StatusCode)
+		body, _ := ioutil.ReadAll(resp.Body)
+		t.Errorf("Expected status code %d, got %d with body %s", fiber.StatusOK, resp.StatusCode, string(body))
 	}
 }
 

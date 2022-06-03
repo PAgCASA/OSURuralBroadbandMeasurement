@@ -22,7 +22,10 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 	 	jitter,
 	 	packetLoss,
 		testStartTime,
-		testDuration
+		testDuration,
+		latitude,
+		longitude,
+		accuracy
 	 ) VALUES (
 	 	?,
 	 	?,
@@ -31,6 +34,9 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 	 	?,
 	 	?,
 	 	?,
+		?,
+		?,
+		?,
 		?,
 		?
 	 )`,
@@ -41,8 +47,11 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 		r.Latency,
 		r.Jitter,
 		r.PacketLoss,
-		time.Now(),             //TODO needs to come from frontend
-		time.Since(time.Now()), //TODO needs to come from frontend
+		r.TestStartTime,
+		r.TestDuration,
+		r.Latitude,
+		r.Longitude,
+		r.Accuracy,
 	)
 	if err != nil {
 		log.Println(err)

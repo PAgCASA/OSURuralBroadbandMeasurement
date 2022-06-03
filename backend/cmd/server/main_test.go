@@ -14,7 +14,7 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-func TestSubmitSpeedTestAndroid(t *testing.T) {
+func TestSubmitSpeedTest(t *testing.T) {
 	// connect to db
 	newDB, err := database.ConnectToDB("sqlite", ":memory:")
 	db = newDB
@@ -29,81 +29,18 @@ func TestSubmitSpeedTestAndroid(t *testing.T) {
 		"POST",
 		"http://localhost:8080/api/v0/submitSpeedTest",
 		bytes.NewBuffer([]byte(`{
-			"androidID": "android-25621ofk8and221h",
+			"phoneID": "android-25621ofk8and221h",
 			"testID": "23js984jl9",
 			"downloadSpeed": 14.24736,
 			"uploadSpeed": 85.744,
 			"latency": 31,
 			"jitter": 6,
-			"packetLoss": 1
-		}`)))
-	req.Header.Set("Content-Type", "application/json")
-
-	app := createApp()
-	resp, err := app.Test(req)
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-
-	util.ExpectGoodResponse(t, resp)
-}
-
-func TestSubmitSpeedTestIOSXSID(t *testing.T) {
-	// connect to db
-	newDB, err := database.ConnectToDB("sqlite", ":memory:")
-	db = newDB
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-	defer db.Close()
-	setUpTestTables(t)
-
-	// http.Request
-	req := httptest.NewRequest(
-		"POST",
-		"http://localhost:8080/api/v0/submitSpeedTest",
-		bytes.NewBuffer([]byte(`{
-			"iphoneXSID": "fjs934ks-8k3nslfneiskanqq3",
-			"testID": "jfkd943kd9",
-			"downloadSpeed": 14.24736,
-			"uploadSpeed": 85.744,
-			"latency": 31,
-			"jitter": 6,
-			"packetLoss": 1
-		}`)))
-	req.Header.Set("Content-Type", "application/json")
-
-	app := createApp()
-	resp, err := app.Test(req)
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-
-	util.ExpectGoodResponse(t, resp)
-}
-
-func TestSubmitSpeedTestIOSX(t *testing.T) {
-	// connect to db
-	newDB, err := database.ConnectToDB("sqlite", ":memory:")
-	db = newDB
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-	defer db.Close()
-	setUpTestTables(t)
-
-	// http.Request
-	req := httptest.NewRequest(
-		"POST",
-		"http://localhost:8080/api/v0/submitSpeedTest",
-		bytes.NewBuffer([]byte(`{
-			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
-			"testID": "92kd84ndk1",
-			"downloadSpeed": 14.24736,
-			"uploadSpeed": 85.744,
-			"latency": 31,
-			"jitter": 6,
-			"packetLoss": 1
+			"packetLoss": 1,
+			"testStartTime": "2020-04-01T12:00:00Z",
+			"testDuration": 14300,
+			"latitude": -33.867,
+			"longitude": 151.206,
+			"accuracy": 100
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -131,13 +68,18 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 		"POST",
 		"http://localhost:8080/api/v0/submitSpeedTest",
 		bytes.NewBuffer([]byte(`{
-			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
+			"phoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 			"testID": "92kd84ndk1",
 			"downloadSpeed": -14.24736,
 			"uploadSpeed": 85.744,
 			"latency": 31,
 			"jitter": 6,
-			"packetLoss": 1
+			"packetLoss": 1,
+			"testStartTime": "2020-04-01T12:00:00Z",
+			"testDuration": 14300,
+			"latitude": -33.867,
+			"longitude": 151.206,
+			"accuracy": 100
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -154,13 +96,18 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 		"POST",
 		"http://localhost:8080/api/v0/submitSpeedTest",
 		bytes.NewBuffer([]byte(`{
-			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
+			"phoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 			"testID": "92kd84ndk1",
 			"downloadSpeed": 14.24736,
 			"uploadSpeed": -85.744,
 			"latency": 31,
 			"jitter": 6,
-			"packetLoss": 1
+			"packetLoss": 1,
+			"testStartTime": "2020-04-01T12:00:00Z",
+			"testDuration": 14300,
+			"latitude": -33.867,
+			"longitude": 151.206,
+			"accuracy": 100
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -176,13 +123,18 @@ func TestSubmitSpeedTestFails(t *testing.T) {
 		"POST",
 		"http://localhost:8080/api/v0/submitSpeedTest",
 		bytes.NewBuffer([]byte(`{
-				"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
+				"phoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 				"testID": "92kd84ndk1",
 				"downloadSpeed": 14.24736,
 				"uploadSpeed": 85.744,
 				"latency": 31,
 				"jitter": 6,
-				"packetLoss": 101
+				"packetLoss": 101,
+				"testStartTime": "2020-04-01T12:00:00Z",
+				"testDuration": 14300,
+				"latitude": -33.867,
+				"longitude": 151.206,
+				"accuracy": 100
 			}`)))
 	req.Header.Set("Content-Type", "application/json")
 
@@ -210,13 +162,18 @@ func TestSpeedTestDatabaseSubmition(t *testing.T) {
 		"POST",
 		"http://localhost:8080/api/v0/submitSpeedTest",
 		bytes.NewBuffer([]byte(`{
-			"iphoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
+			"phoneID": "lsn98cm3j7di4ks9r0l4o0p2215ndksmnqakxmzs",
 			"testID": "92kd84ndk1",
 			"downloadSpeed": 5,
 			"uploadSpeed": 456,
 			"latency": 3,
 			"jitter": 1,
-			"packetLoss": 0
+			"packetLoss": 0,
+			"testStartTime": "2020-04-01T12:00:00Z",
+			"testDuration": 14300,
+			"latitude": -33.867,
+			"longitude": 151.206,
+			"accuracy": 100
 		}`)))
 	req.Header.Set("Content-Type", "application/json")
 

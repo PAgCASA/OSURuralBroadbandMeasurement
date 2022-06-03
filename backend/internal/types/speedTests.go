@@ -3,14 +3,20 @@ package types
 import "time"
 
 type SpeedTestResult struct {
-	PhoneID       string
-	TestID        string
-	DownloadSpeed float64
-	UploadSpeed   float64
-	Latency       int
-	Jitter        int
-	PacketLoss    int
-	TestStartTime time.Time
+	PhoneID       string  `json:"phoneID"`
+	TestID        string  `json:"testID"`
+	DownloadSpeed float64 `json:"downloadSpeed"`
+	UploadSpeed   float64 `json:"uploadSpeed"`
+	Latency       int     `json:"latency"`
+	Jitter        int     `json:"jitter"`
+	PacketLoss    int     `json:"packetLoss"`
+
+	TestStartTime time.Time `json:"testStartTime"`
+	TestDuration  int       `json:"testDuration"` // in milliseconds
+
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Accuracy  float64 `json:"accuracy"` // in meters
 }
 
 type PastResults struct {

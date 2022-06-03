@@ -10,19 +10,16 @@ CREATE TABLE IF NOT EXISTS SpeedTests (
     
     testStartTime DATETIME NOT NULL, -- in UTC, time the test started
     testDuration INTEGER NOT NULL, -- in milliseconds
-    recievedTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    recievedTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    longitude DECIMAL NOT NULL, -- location data
+    latitude DECIMAL NOT NULL,
+    accuracy DECIMAL NOT NULL -- in meters
 );
 
 CREATE TABLE IF NOT EXISTS PersonalData (
     id INTEGER PRIMARY KEY AUTO_INCREMENT,
     phoneID TEXT NOT NULL,
-
-    longitude DECIMAL NOT NULL,
-    latitude DECIMAL NOT NULL,
-    accuracy DECIMAL NOT NULL,
-    altitude DECIMAL NOT NULL,
-    speed DECIMAL NOT NULL,
-    heading DECIMAL NOT NULL,
 
     name TEXT NOT NULL,
     email TEXT NOT NULL,

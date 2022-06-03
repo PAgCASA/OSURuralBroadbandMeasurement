@@ -98,35 +98,12 @@ func createApp() *fiber.App {
 	return app
 }
 
-//TODO match incoming data with what will actually be submitted by the frontend
 // where speed tests are submitted
 func submitSpeedTest(c *fiber.Ctx) error {
-	type SpeedTestResultOriginal struct {
-		AndroidID     string  `json:"androidID"`
-		IphoneXSID    string  `json:"iphoneXSID"`
-		IphoneID      string  `json:"iphoneID"`
-		PhoneID       string  `json:"phoneID"`
-		TestID        string  `json:"testID"`
-		DownloadSpeed float64 `json:"downloadSpeed"`
-		UploadSpeed   float64 `json:"uploadSpeed"`
-		Latency       int     `json:"latency"`
-		Jitter        int     `json:"jitter"`
-		PacketLoss    int     `json:"packetLoss"`
-	}
-
-	o := new(SpeedTestResultOriginal)
-	if err := c.BodyParser(o); err != nil {
+	var r types.SpeedTestResult
+	if err := c.BodyParser(&r); err != nil {
 		return err
 	}
-	var r types.SpeedTestResult
-
-	r.PhoneID = o.AndroidID + o.IphoneXSID + o.IphoneID + o.PhoneID
-	r.TestID = o.TestID
-	r.DownloadSpeed = o.DownloadSpeed
-	r.UploadSpeed = o.UploadSpeed
-	r.Latency = o.Latency
-	r.Jitter = o.Jitter
-	r.PacketLoss = o.PacketLoss
 
 	if r.DownloadSpeed < 0 {
 		c.Response().AppendBodyString("Invalid value for downloadSpeed")
