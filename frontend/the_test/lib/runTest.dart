@@ -141,7 +141,7 @@ class _RunTestState extends State<RunTest> {
         packetLoss: packetLoss,
         position: await _determinePosition(),
         testStartTime: startTime,
-        testDuration: startTime.difference(DateTime.now()),
+        testDuration: DateTime.now().difference(startTime),
         );
     //encode the created object using defaults
     var jsonToServer = jsonEncode(testResults.toJSON());

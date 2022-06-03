@@ -48,8 +48,8 @@ class TestResult {
         "latency": latency,
         "jitter": jitter,
         "packetLoss": packetLoss,
-        "testStartTime": testStartTime.toIso8601String(),
-        "testDuration": testDuration.inMilliseconds.toString(),
+        "testStartTime": testStartTime.toUtc().toIso8601String(),
+        "testDuration": testDuration.inMilliseconds,
         "latitude": position.latitude,
         "longitude": position.longitude,
         "accuracy": position.accuracy
@@ -64,46 +64,11 @@ class TestResult {
         latency: json['latency'] as int,
         jitter: json['jitter'] as int,
         packetLoss: json['packetLoss'] as int,
+        //try and parse a string
+        testStartTime: DateTime.tryParse(json['testStartTime']) ?? DateTime.now(),
         //the below is just fake data
         testDuration: const Duration(),
-        testStartTime: DateTime.now(),
         position: const Position(speedAccuracy: 0, timestamp: null, latitude: 0, accuracy: 0, speed: 0, altitude: 0, longitude: 0, heading: 0)
-    );
-  }
-}
-
-//Class for test result to be displayed
-class incomingTestResult {
-  String date;
-  String phone_ID;
-  String test_ID;
-  double downloadSpeed;
-  double uploadSpeed;
-  int latency;
-  int jitter;
-  int packetLoss;
-
-  incomingTestResult({
-    required this.phone_ID,
-    required this.test_ID,
-    required this.downloadSpeed,
-    required this.uploadSpeed,
-    required this.latency,
-    required this.jitter,
-    required this.packetLoss,
-    required this.date,
-  });
-
-  factory incomingTestResult.fromJson(Map<String, dynamic> json) {
-    return incomingTestResult(
-      phone_ID: json['PhoneID'],
-      test_ID: json['TestID'],
-      downloadSpeed: json['DownloadSpeed'] + 0.0,
-      uploadSpeed: json['UploadSpeed'] + 0.0,
-      latency: json['Latency'] as int,
-      jitter: json['Jitter'] as int,
-      packetLoss: json['PacketLoss'] as int,
-      date: json['TestStartTime'],
     );
   }
 }

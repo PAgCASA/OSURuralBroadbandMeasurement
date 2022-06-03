@@ -17,10 +17,10 @@ class Results extends StatefulWidget {
 
 class _ResultsState extends State<Results> {
   //future object for incoming data
-  late Future<List<incomingTestResult>> testsToDisplay;
+  late Future<List<TestResult>> testsToDisplay;
 
   //get the test with the specified ID
-  Future<List<incomingTestResult>> fetchTests(Future<String> incomingID) async {
+  Future<List<TestResult>> fetchTests(Future<String> incomingID) async {
     //create the full url by appending ID to the base url stored in the constants file
     String fullURL = Constants.SERVER_RESULT_REQUEST_URL + await incomingID;
 
@@ -31,14 +31,14 @@ class _ResultsState extends State<Results> {
       var json = jsonDecode(response.body);
       var rows = json['Results'];
       // print('\n\n\n\n this is the incoming rows $rows \n\n\n\n\n\n');
-      List<incomingTestResult> results = List.empty(growable: true);
+      List<TestResult> results = List.empty(growable: true);
 
       if (rows != null) {
         // this is a really ugly way of looping through the results array and
         // turning them into test results
         for (var i = 0; i < (rows as List).length; i++) {
           var result =
-              incomingTestResult.fromJson(rows[i] as Map<String, dynamic>);
+          TestResult.fromJson(rows[i] as Map<String, dynamic>);
           results.insert(i, result);
           // print("$results");
         }
@@ -90,7 +90,7 @@ class _ResultsState extends State<Results> {
                 scrollDirection: Axis.vertical,
                 child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
-                    child: FutureBuilder<List<incomingTestResult>>(
+                    child: FutureBuilder<List<TestResult>>(
                         future: testsToDisplay,
                         builder: (context, snapshot) {
                           var data = snapshot.data;
@@ -107,7 +107,7 @@ class _ResultsState extends State<Results> {
     );
   }
 
-  Widget buildTable(List<incomingTestResult> results) {
+  Widget buildTable(List<TestResult> results) {
     const columns = Constants.COLUMN_TITLES_RESULTS;
     return DataTable(
         columnSpacing: 10,
@@ -116,7 +116,7 @@ class _ResultsState extends State<Results> {
             .map(
               (result) => DataRow(
                 cells: <DataCell>[
-                  DataCell(Text(getDateFormat(result.date))),
+                  DataCell(Text(getDateFormat(result.testStartTime))),
                   DataCell(Text(result.downloadSpeed.toString())),
                   DataCell(Text(result.uploadSpeed.toString())),
                   DataCell(Text(result.jitter.toString())),
@@ -131,8 +131,8 @@ class _ResultsState extends State<Results> {
   List<DataColumn> getColumns(List<String> columns) =>
       columns.map((String column) => DataColumn(label: Text(column))).toList();
 
-  String getDateFormat(String data) {
-    var date = DateTime.parse(data).toLocal();
+  String getDateFormat(DateTime data) {
+    var date = data.toLocal();
     return "${date.day}-${date.month}-${date.year - 2000} ${date.hour}:"
         "${date.minute.toString().length == 1 ? "0" + date.minute.toString() : date.minute.toString()}";
   }

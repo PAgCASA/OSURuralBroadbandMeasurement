@@ -80,20 +80,26 @@ class _SettingsState extends State<Settings> {
   }
 
   getDataFromServer() async {
-    var deviceID = await getDeviceID();
-    var response = await http
-        .get(Uri.parse(Constants.PERSONAL_INFO_DOWNLOAD_URL + deviceID));
-    var json = jsonDecode(response.body);
-    var pd = PersonalInformation.fromJson(json);
-    setState(() {
-      firstName = pd.firstName;
-      lastName = pd.lastName;
-      street = pd.street;
-      postalCode = pd.postalCode;
-      city = pd.city;
-      state = pd.state;
-      loadedFromServer = true;
-    });
+    try {
+      var deviceID = await getDeviceID();
+      var response = await http
+          .get(Uri.parse(Constants.PERSONAL_INFO_DOWNLOAD_URL + deviceID));
+      var json = jsonDecode(response.body);
+      var pd = PersonalInformation.fromJson(json);
+      setState(() {
+        firstName = pd.firstName;
+        lastName = pd.lastName;
+        street = pd.street;
+        postalCode = pd.postalCode;
+        city = pd.city;
+        state = pd.state;
+        loadedFromServer = true;
+      });
+    } catch(exception) {
+      setState(() {
+        loadedFromServer = true;
+      });
+    }
   }
 
   Widget _buildFirstName() {
