@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:the_test/utils.dart' as utils;
 import 'package:udp/udp.dart';
-import 'connectionScreens.dart';
 import 'constants.dart' as Constants;
 import 'connectionScreens.dart' as Screens;
 import 'package:dart_ping/dart_ping.dart';
@@ -82,6 +81,8 @@ class _RunTestState extends State<RunTest> {
     phone_ID = await utils.getDeviceID();
     test_ID = utils.getTestID(phone_ID);
 
+    var startTime = DateTime.now();
+
     // start running the test
     setState(() {
       testRunning = true;
@@ -137,7 +138,11 @@ class _RunTestState extends State<RunTest> {
         uploadSpeed: uploadSpeed,
         latency: latency,
         jitter: jitter,
-        packetLoss: packetLoss);
+        packetLoss: packetLoss,
+        position: await _determinePosition(),
+        testStartTime: startTime,
+        testDuration: startTime.difference(DateTime.now()),
+        );
     //encode the created object using defaults
     var jsonToServer = jsonEncode(testResults.toJSON());
     print('We are now uploading the following '

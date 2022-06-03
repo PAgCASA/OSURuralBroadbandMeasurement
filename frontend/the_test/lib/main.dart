@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:the_test/personalInfoScreen.dart';
 import 'package:the_test/resultsScreen.dart';
 import 'package:the_test/runTest.dart';
@@ -20,6 +21,10 @@ class TestResult {
   int latency;
   int jitter;
   int packetLoss;
+  DateTime testStartTime;
+  Duration testDuration;
+
+  Position position;
 
   //constructor for object
   TestResult(
@@ -29,7 +34,10 @@ class TestResult {
       required this.uploadSpeed,
       required this.latency,
       required this.jitter,
-      required this.packetLoss});
+      required this.packetLoss,
+      required this.testStartTime,
+      required this.testDuration,
+      required this.position});
 
   //JSON conversion method
   Map toJSON() => {
@@ -40,17 +48,27 @@ class TestResult {
         "latency": latency,
         "jitter": jitter,
         "packetLoss": packetLoss,
+        "testStartTime": testStartTime.toIso8601String(),
+        "testDuration": testDuration.inMilliseconds.toString(),
+        "latitude": position.latitude,
+        "longitude": position.longitude,
+        "accuracy": position.accuracy
       };
 
   factory TestResult.fromJson(Map<String, dynamic> json) {
     return TestResult(
-        phone_ID: json['PhoneID'],
-        test_ID: json['TestID'],
-        downloadSpeed: json['DownloadSpeed'] + 0.0,
-        uploadSpeed: json['UploadSpeed'] + 0.0,
-        latency: json['Latency'] as int,
-        jitter: json['Jitter'] as int,
-        packetLoss: json['PacketLoss'] as int);
+        phone_ID: json['phoneID'],
+        test_ID: json['testID'],
+        downloadSpeed: json['downloadSpeed'] + 0.0,
+        uploadSpeed: json['uploadSpeed'] + 0.0,
+        latency: json['latency'] as int,
+        jitter: json['jitter'] as int,
+        packetLoss: json['packetLoss'] as int,
+        //the below is just fake data
+        testDuration: const Duration(),
+        testStartTime: DateTime.now(),
+        position: const Position(speedAccuracy: 0, timestamp: null, latitude: 0, accuracy: 0, speed: 0, altitude: 0, longitude: 0, heading: 0)
+    );
   }
 }
 
