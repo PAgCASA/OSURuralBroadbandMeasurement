@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
-	"math/rand"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/database"
@@ -189,23 +189,16 @@ func getPersonalInfo(c *fiber.Ctx) error {
 }
 
 func getFrontendSummary(c *fiber.Ctx) error {
-	type Summary struct {
-		Upload     float64 `json:"upload"`
-		Download   float64 `json:"download"`
-		Jitter     float64 `json:"jitter"`
-		Latency    float64 `json:"latency"`
-		PacketLoss float64 `json:"packetLoss"`
+	id := c.Params("id")
+	var s types.Summary
+
+	var sample []types.SimpleSummary
+	for i := 0; i < 10; i++ {
+		sample = append(sample, util.GenerateRandomSimpleSummary(id+"-"+strconv.Itoa(i)))
 	}
 
-	var s Summary
-	id := c.Params("id")
-	rand.Seed(int64(util.HashString(id)))
-
-	s.Download = rand.Float64() * 180
-	s.Upload = rand.Float64() * 20
-	s.Jitter = rand.Float64() * 4
-	s.Latency = rand.Float64() * 40
-	s.PacketLoss = rand.Float64() * 5
+	s.GeneralData = util.GenerateRandomSimpleSummary(id)
+	s.Sample = sample
 
 	json, err := json.Marshal(s)
 	if err != nil {
