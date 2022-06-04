@@ -249,7 +249,7 @@ class _RunTestState extends State<RunTest> {
                                   cells: <DataCell>[
                                     const DataCell(Text('Download Speed')),
                                     DataCell(
-                                        Text(downloadSpeed.toStringAsFixed(2))),
+                                        Text(downloadSpeed.toStringAsFixed(2) +"mbps")),
                                   ],
                                 )
                               : null,
@@ -258,7 +258,7 @@ class _RunTestState extends State<RunTest> {
                                   cells: <DataCell>[
                                     const DataCell(Text('Upload Speed')),
                                     DataCell(
-                                        Text(uploadSpeed.toStringAsFixed(2))),
+                                        Text(uploadSpeed.toStringAsFixed(2)+"mbps")),
                                   ],
                                 )
                               : null,
@@ -266,7 +266,7 @@ class _RunTestState extends State<RunTest> {
                               ? DataRow(
                                   cells: <DataCell>[
                                     const DataCell(Text('Jitter')),
-                                    DataCell(Text('$jitter')),
+                                    DataCell(Text('${jitter}ms')),
                                   ],
                                 )
                               : null,
@@ -274,7 +274,7 @@ class _RunTestState extends State<RunTest> {
                               ? DataRow(
                                   cells: <DataCell>[
                                     const DataCell(Text('Latency')),
-                                    DataCell(Text('$latency')),
+                                    DataCell(Text('${latency}ms')),
                                   ],
                                 )
                               : null,
