@@ -37,8 +37,7 @@ class _ResultsState extends State<Results> {
         // this is a really ugly way of looping through the results array and
         // turning them into test results
         for (var i = 0; i < (rows as List).length; i++) {
-          var result =
-          TestResult.fromJson(rows[i] as Map<String, dynamic>);
+          var result = TestResult.fromJson(rows[i] as Map<String, dynamic>);
           results.insert(i, result);
           // print("$results");
         }
@@ -46,7 +45,8 @@ class _ResultsState extends State<Results> {
 
       return results;
     } else {
-      throw Exception('Failed to load record with id $incomingID ');
+      throw Exception(
+          'Failed to load record because of error ${response.body}');
     }
   }
 

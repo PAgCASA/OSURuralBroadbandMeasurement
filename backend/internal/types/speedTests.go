@@ -8,8 +8,8 @@ type SpeedTestResult struct {
 	DownloadSpeed float64 `json:"downloadSpeed"`
 	UploadSpeed   float64 `json:"uploadSpeed"`
 	Latency       int     `json:"latency"`
-	Jitter        int     `json:"jitter"`
-	PacketLoss    int     `json:"packetLoss"`
+	Jitter        float64 `json:"jitter"`
+	PacketLoss    float64 `json:"packetLoss"`
 
 	TestStartTime time.Time `json:"testStartTime"`
 	TestDuration  int       `json:"testDuration"` // in milliseconds
