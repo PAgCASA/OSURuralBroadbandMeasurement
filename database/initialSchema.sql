@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS SpeedTests (
     testDuration INTEGER NOT NULL, -- in milliseconds
     recievedTime DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    longitude DECIMAL(8,6) NOT NULL, -- location data
-    latitude DECIMAL(9,6) NOT NULL,
-    accuracy DECIMAL(9, 2) NOT NULL -- in meters
+    longitude DECIMAL(9,6) NOT NULL, -- location data
+    latitude DECIMAL(8,6) NOT NULL,
+    accuracy DECIMAL(9,2) NOT NULL -- in meters
 );
 
 CREATE TABLE IF NOT EXISTS PersonalData (
