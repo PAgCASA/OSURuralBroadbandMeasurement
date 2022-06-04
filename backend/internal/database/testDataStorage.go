@@ -2,13 +2,14 @@ package database
 
 import (
 	"database/sql"
+	"errors"
 	"log"
 	"time"
 
 	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/types"
 )
 
-func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
+func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) error {
 	if db == nil {
 		log.Println("DB not connected")
 	}
@@ -54,15 +55,17 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 		r.Accuracy,
 	)
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 	rows, err := result.RowsAffected()
 	if err != nil {
-		log.Println(err)
+		return err
 	}
 	if rows != 1 {
-		log.Println("Rows not inserted properly")
+		return errors.New("rows not inserted properly")
 	}
+
+	return nil
 }
 
 func GetSpeedTestResultsFromDB(db *sql.DB, id string) *types.PastResults {

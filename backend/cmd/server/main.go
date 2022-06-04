@@ -126,7 +126,11 @@ func submitSpeedTest(c *fiber.Ctx) error {
 		return c.SendStatus(400)
 	}
 
-	database.InsertSpeedTestResultToDB(db, r)
+	err := database.InsertSpeedTestResultToDB(db, r)
+	if err != nil {
+		c.Response().AppendBodyString("Error inserting result to DB" + err.Error())
+		return c.SendStatus(500)
+	}
 
 	c.Response().AppendBodyString("OK")
 	return c.SendStatus(200)
