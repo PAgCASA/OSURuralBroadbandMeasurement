@@ -10,7 +10,7 @@ import (
 
 func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 	if db == nil {
-		log.Fatal("DB not connected")
+		log.Println("DB not connected")
 	}
 
 	result, err := db.Exec(`INSERT INTO SpeedTests (
@@ -61,13 +61,13 @@ func InsertSpeedTestResultToDB(db *sql.DB, r types.SpeedTestResult) {
 		log.Println(err)
 	}
 	if rows != 1 {
-		log.Fatal("Rows not inserted properly")
+		log.Println("Rows not inserted properly")
 	}
 }
 
 func GetSpeedTestResultsFromDB(db *sql.DB, id string) *types.PastResults {
 	if db == nil {
-		log.Fatal("DB not connected")
+		log.Println("DB not connected")
 	}
 
 	var pr types.PastResults
