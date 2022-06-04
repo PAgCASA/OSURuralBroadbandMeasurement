@@ -31,3 +31,14 @@
   ansible.posix.selinux:
     policy: targeted
     state: permissive
+
+#add ssh keys to ec2-user
+- name: "Add Ethan's key to ec2-user"
+  authorized_key:
+    user: "ec2-user"
+    key: "{{ lookup('file', 'files/EMH.key.pub') }}"
+
+- name: "Add general PAgCASA key to ec2-user"
+  authorized_key:
+    user: "ec2-user"
+    key: "{{ lookup('file', 'files/PAgCASA.key.pub') }}"
