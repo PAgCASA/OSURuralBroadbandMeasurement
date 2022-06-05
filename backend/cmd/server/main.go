@@ -160,8 +160,6 @@ func getSpeedTestResults(c *fiber.Ctx) error {
 	return c.SendStatus(200)
 }
 
-var tempInfo *types.PersonalData
-
 func submitPersonalInfo(c *fiber.Ctx) error {
 	payload := &types.PersonalData{}
 
@@ -169,19 +167,30 @@ func submitPersonalInfo(c *fiber.Ctx) error {
 		return err
 	}
 
-	tempInfo = payload
+	err := database.InsertOrUpdatePersonalDataToDB(db, *payload)
+	if err != nil {
+		c.Response().AppendBodyString("Error inserting result to DB" + err.Error())
+		return c.SendStatus(500)
+	}
 
 	c.Response().AppendBodyString("OK")
 	return c.SendStatus(200)
 }
 
 func getPersonalInfo(c *fiber.Ctx) error {
-	if tempInfo == nil {
-		c.Response().AppendBodyString("No info submitted")
-		return c.SendStatus(404)
+	id := c.Params("id")
+	if id == "" {
+		c.Response().AppendBodyString("Invalid ID")
+		return c.SendStatus(400)
 	}
 
-	json, err := json.Marshal(tempInfo)
+	r, err := database.GetBasicPersonalData(db, id)
+	if err != nil {
+		c.Response().AppendBodyString("Error getting personal data" + err.Error())
+		return c.SendStatus(500)
+	}
+
+	json, err := json.Marshal(r)
 	if err != nil {
 		c.Response().AppendBodyString("Error marshalling results")
 		return c.SendStatus(500)
