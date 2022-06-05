@@ -32,7 +32,7 @@
     policy: targeted
     state: permissive
 
-#add ssh keys to ec2-user
+# add ssh keys to ec2-user
 - name: "Add Ethan's key to ec2-user"
   authorized_key:
     user: "ec2-user"
