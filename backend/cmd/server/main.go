@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/PAgCASA/OSURuralBroadbandMeasurement/backend/internal/database"
@@ -94,6 +95,7 @@ func createApp() *fiber.App {
 	api.Get("/getPersonalInfo/:id", getPersonalInfo)
 
 	api.Get("/frontend/summary/:id", getFrontendSummary)
+	api.Get("/frontend/summaryList/:index", getFrontendSummaryList)
 
 	return app
 }
@@ -214,6 +216,32 @@ func getFrontendSummary(c *fiber.Ctx) error {
 	s.Sample = sample
 
 	json, err := json.Marshal(s)
+	if err != nil {
+		c.Response().AppendBodyString("Error marshalling results")
+		return c.SendStatus(500)
+	}
+
+	c.Response().SetBody(json)
+	c.Response().Header.Add(fiber.HeaderContentType, fiber.MIMEApplicationJSON)
+	c.Response().Header.Add(fiber.HeaderAccessControlAllowOrigin, "*") //make sure this is accessible for frontend
+	return c.SendStatus(200)
+}
+
+func getFrontendSummaryList(c *fiber.Ctx) error {
+	id := c.Params("index")
+
+	var national = false
+	if strings.HasPrefix(id, "N") {
+		national = true
+		id = id[1:]
+	}
+
+	var sample []types.GeolocatedSimpleSummary
+	for i := 0; i < 100; i++ {
+		sample = append(sample, util.GenerateRandomGeolocatedSimpleSummary(id+"-"+strconv.Itoa(i), national))
+	}
+
+	json, err := json.Marshal(sample)
 	if err != nil {
 		c.Response().AppendBodyString("Error marshalling results")
 		return c.SendStatus(500)
